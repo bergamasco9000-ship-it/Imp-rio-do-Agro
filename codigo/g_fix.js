@@ -1,16 +1,16 @@
 // ===== Caminho inteligente (desvia de cercas) + baias do celeiro + cabresto =====
-const WALK=(x,y)=>x>=0&&y>=0&&x<MW&&y<RZ-1&&!SOL[ti(x,y)]&&!FEN[ti(x,y)]&&G[ti(x,y)]!==2;
-const PFQ=new Int32Array(MW*MH),PFP=new Int32Array(MW*MH),PFS=new Uint32Array(MW*MH);let PFT=0;
+const WALK=(x,y)=>x>=XMIN&&y>=YMIN&&x<MW&&y<RZ-1&&!SOL[ti(x,y)]&&!FEN[ti(x,y)]&&G[ti(x,y)]!==2;
+const PFQ=new Int32Array(NT),PFP=new Int32Array(NT),PFS=new Uint32Array(NT);let PFT=0;
 function findPath(fx,fy,tx,ty){
  let sx=Math.floor(fx/TS),sy=Math.floor((fy-2)/TS);const gx=Math.floor(tx/TS),gy=Math.floor((ty-2)/TS);
  if(!WALK(sx,sy)){let b=null;for(let r=1;r<=2&&!b;r++)for(let dy=-r;dy<=r&&!b;dy++)for(let dx=-r;dx<=r;dx++)if(WALK(sx+dx,sy+dy)){b=[sx+dx,sy+dy];break}if(!b)return null;sx=b[0];sy=b[1]}
  const gb=!WALK(gx,gy);PFT++;let h=0,t=0,si=ti(sx,sy),found=-1;PFQ[t++]=si;PFS[si]=PFT;PFP[si]=-1;
- while(h<t){const i=PFQ[h++],x=i%MW,y=(i/MW)|0;
+ while(h<t){const i=PFQ[h++],x=tix(i),y=tiy(i);
   if((x===gx&&y===gy)||(gb&&Math.abs(x-gx)<=1&&Math.abs(y-gy)<=1)){found=i;break}
   for(let k=0;k<4;k++){const nx=x+(k===0?1:k===1?-1:0),ny=y+(k===2?1:k===3?-1:0);if(!WALK(nx,ny))continue;const j=ti(nx,ny);if(PFS[j]===PFT)continue;PFS[j]=PFT;PFP[j]=i;PFQ[t++]=j}}
  if(found<0)return null;
  const tiles=[];for(let i=found;i>=0;i=PFP[i])tiles.push(i);tiles.reverse();
- const pts=[];for(let k=1;k<tiles.length;k++){const a=tiles[k-1],b=tiles[k],c=tiles[k+1];if(c!==undefined&&(b-a)===(c-b))continue;pts.push([(b%MW)*TS+8,((b/MW)|0)*TS+10])}
+ const pts=[];for(let k=1;k<tiles.length;k++){const a=tiles[k-1],b=tiles[k],c=tiles[k+1];if(c!==undefined&&(b-a)===(c-b))continue;pts.push([tix(b)*TS+8,tiy(b)*TS+10])}
  if(!gb)pts.push([tx,ty]);if(!pts.length)pts.push([tx,ty]);return pts;
 }
 function lineFree(x0,y0,x1,y1){const d=Math.hypot(x1-x0,y1-y0),n=Math.ceil(d/6);for(let i=1;i<=n;i++){const x=x0+(x1-x0)*i/n,y=y0+(y1-y0)*i/n;if(solidAt(x,y-1)||solidAt(x-3,y-1)||solidAt(x+3,y-1))return false}return true}

@@ -18,14 +18,14 @@ const MALLS=[
  {id:'lj_mm',dn:'Magazine da Moda',st:'moda',x:188,n:'MAGAZINE DA MODA',wall:'#f0e0c8',trim:'#2a6ab0',floor:'tile',sc:'#ffffff',bg:'#2a6ab0',clk:{n:'Caixa Jéssica',shirt:'#2a6ab0',hair:'#5a3a22',g:'f',pants:'#2a2a3a'},
   items:[{k:'rack',x:1,y:3,w:3,h:1,c:['#2a5aa0','#a8c8e8','#b8342a','#f0e060']},{k:'rack',x:8,y:3,w:3,h:1,c:['#2a4a7a','#a8905a','#5a8a3a']},{k:'rack',x:1,y:6,w:3,h:1,c:['#d86a8a','#f4f4f0','#3a3a3a']},{k:'counter',x:5,y:3,w:3,h:1,act:'lxs'},{k:'clerk',x:6,y:2},{k:'pilha',x:8,y:5,w:2,h:1},{k:'provador',x:10,y:7,w:1,h:1}]}
 ];
-MALLS.forEach(m=>{ROOMS[m.id]=Object.assign({id:m.id,x:m.x,y:184,w:12,h:10,floor:m.floor,wall:m.wall,trim:m.trim,win:[],mall:m,items:m.items,wallx:[{k:'brand',x:3,n:m.n,c:m.sc,bg:m.bg}]});CLERK[m.id]=m.clk});
+MALLS.forEach(m=>{ROOMS[m.id]=Object.assign({id:m.id,x:m.x,y:RZ+16,w:12,h:10,floor:m.floor,wall:m.wall,trim:m.trim,win:[],mall:m,items:m.items,wallx:[{k:'brand',x:3,n:m.n,c:m.sc,bg:m.bg}]});CLERK[m.id]=m.clk});
 // salas VIP (salinha separada)
-ROOMS.vip_ro={id:'vip_ro',x:203,y:184,w:9,h:8,floor:'marble',wall:'#0c2a1a',trim:'#c8a040',win:[],vipOf:'lj_ro',items:[{k:'velvet',x:2,y:3,w:3,h:1},{k:'traytable',x:3,y:5,w:3,h:1,act:'lxvipshop'},{k:'clerk',x:6,y:4},{k:'champ',x:7,y:6},{k:'luxplant',x:1,y:6}],wallx:[{k:'brand',x:2,n:'SALA PRIVATIVA',c:'#c8a040',bg:'#0c2a1a'}]};
-ROOMS.vip_lv={id:'vip_lv',x:215,y:184,w:9,h:8,floor:'wood',wall:'#2a1c12',trim:'#c8a040',win:[],vipOf:'lj_lv',items:[{k:'velvet',x:2,y:3,w:3,h:1},{k:'traytable',x:3,y:5,w:3,h:1,act:'lxvipshop',bags:1},{k:'clerk',x:6,y:4},{k:'champ',x:7,y:6},{k:'mirror',x:1,y:5,w:1,h:1}],wallx:[{k:'brand',x:2,n:'SALA PRIVATIVA',c:'#c8a040',bg:'#2a1c12'}]};
+ROOMS.vip_ro={id:'vip_ro',x:203,y:RZ+16,w:9,h:8,floor:'marble',wall:'#0c2a1a',trim:'#c8a040',win:[],vipOf:'lj_ro',items:[{k:'velvet',x:2,y:3,w:3,h:1},{k:'traytable',x:3,y:5,w:3,h:1,act:'lxvipshop'},{k:'clerk',x:6,y:4},{k:'champ',x:7,y:6},{k:'luxplant',x:1,y:6}],wallx:[{k:'brand',x:2,n:'SALA PRIVATIVA',c:'#c8a040',bg:'#0c2a1a'}]};
+ROOMS.vip_lv={id:'vip_lv',x:215,y:RZ+16,w:9,h:8,floor:'wood',wall:'#2a1c12',trim:'#c8a040',win:[],vipOf:'lj_lv',items:[{k:'velvet',x:2,y:3,w:3,h:1},{k:'traytable',x:3,y:5,w:3,h:1,act:'lxvipshop',bags:1},{k:'clerk',x:6,y:4},{k:'champ',x:7,y:6},{k:'mirror',x:1,y:5,w:1,h:1}],wallx:[{k:'brand',x:2,n:'SALA PRIVATIVA',c:'#c8a040',bg:'#2a1c12'}]};
 CLERK.vip_ro={n:'Gerente Sr. Augusto',shirt:'#f4f4f0',hair:'#c8c8c8',pants:'#0c2a1a',beard:1};CLERK.vip_lv={n:'Gerente Madame Celine',shirt:'#1a1a1a',hair:'#c8a050',g:'f',pants:'#1a1a1a'};
 // corredor do shopping
 const MFRONT=MALLS.map((m,i)=>({k:'front',x:1+i*5+(i>3?1:0),y:2,w:4,h:1,act:'lxenter',to:m.id,m}));
-ROOMS.mall={id:'mall',x:34,y:184,w:46,h:12,floor:'marble',wall:'#e8e2d8',trim:'#c8a040',win:[],items:MFRONT.concat([
+ROOMS.mall={id:'mall',x:34,y:RZ+16,w:46,h:12,floor:'marble',wall:'#e8e2d8',trim:'#c8a040',win:[],items:MFRONT.concat([
  {k:'mfountain',x:21,y:6,w:3,h:2},{k:'luxplant',x:2,y:7},{k:'luxplant',x:43,y:7},{k:'mbench',x:8,y:7,w:2,h:1},{k:'mbench',x:35,y:7,w:2,h:1},{k:'kiosk',x:13,y:6,w:2,h:1,act:'lxcafe'},{k:'infodesk',x:29,y:6,w:3,h:1,act:'lxinfo'},{k:'luxplant',x:17,y:9},{k:'luxplant',x:27,y:9},{k:'escada',x:40,y:5,w:3,h:2}])};
 CLERK.mall={n:'Moça do balcão de informações',shirt:'#c8a040',hair:'#2a1a10',g:'f',pants:'#1a1a1a'};
 const MSHOP=[];(function(){for(let i=0;i<9;i++)MSHOP.push({x:(36+hs(i,3)*40)*TS,y:(190+hs(3,i)*4)*TS,tx:0,ty:0,wait:rnd(0,4),dir:0,ph:0,mv:0,o:{shirt:pick(['#c83a2a','#3a6ab0','#f4f4f0','#1a1a1a','#e0a431','#d86a8a','#5a8a3a']),hair:pick(['#2a1a10','#c8a050','#1a1a1a','#8a5a2a']),pants:pick(['#1a1a22','#2a4a7a','#e8e2d4']),g:i%2?'f':null,hat:null},bag:i%3===0?pick(['#c8a040','#b8342a','#1a1a1a']):null})})();

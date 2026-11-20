@@ -47,7 +47,7 @@ function eliteInvited(){return S&&((S.rep||0)>=50||myNW()>=5e6||(S.cel&&S.cel.in
 // ---------- o salão por dentro (40 x 12)
 const GT=[[3,6],[7,6],[11,6],[15,6],[24,6],[28,6],[32,6],[36,6],[3,9],[7,9],[11,9],[15,9],[24,9],[28,9],[32,9],[36,9]];// mesas redondas
 const MYT=12;// a mesa do jogador (índice em GT)
-ROOMS.elite={id:'elite',x:90,y:198,w:41,h:12,door:110,floor:'marble',wall:'#2a1018',trim:'#c8a040',win:[],items:[
+ROOMS.elite={id:'elite',x:90,y:RZ+30,w:41,h:12,door:110,floor:'marble',wall:'#2a1018',trim:'#c8a040',win:[],items:[
  {k:'tapetegala',x:0,y:0,w:0,h:0},
  {k:'palco',x:16,y:2,w:9,h:1},{k:'pistag',x:15,y:3,w:11,h:2},{k:'pisteiro',x:13,y:4},{k:'pisteiro',x:27,y:4},
  {k:'barchamp',x:36,y:2,w:3,h:1,act:'champ'},{k:'recep',x:106-90,y:10,w:2,h:1},{k:'segur',x:113-90,y:10},{k:'segur',x:106-90-2,y:10},

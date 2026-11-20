@@ -63,7 +63,7 @@ function farmCarve(){
 function rfCarve(){farmCarve();
  const inR=(x,y,m)=>RF.some(f=>x>=f.x0-m&&x<=f.x1+m&&y>=f.y0-m&&y<=f.y1+m);
  for(const f of RF){
-  for(let y=f.y0-1;y<=f.y1+1;y++)for(let x=f.x0-1;x<=f.x1+1;x++){if(x<1||y<1||x>=MW-1||y>=RZ-1)continue;const i=ti(x,y);if(G[i]!==3)G[i]=0;SOL[i]=0}
+  for(let y=f.y0-1;y<=f.y1+1;y++)for(let x=f.x0-1;x<=f.x1+1;x++){if(x<XMIN+1||y<YMIN+1||x>=MW-1||y>=RZ-1)continue;const i=ti(x,y);if(G[i]!==3)G[i]=0;SOL[i]=0}
   const Y=f.yard;for(let y=Y.y0;y<=Y.y1;y++)for(let x=Y.x0;x<=Y.x1;x++)G[ti(x,y)]=3;
   if(f.gate==='n')for(let y=f.y0;y<Y.y0;y++){G[ti(f.gx,y)]=3;G[ti(f.gx+1,y)]=3}else for(let x=f.x0;x<=f.x0+2;x++){G[ti(x,f.gy)]=3;G[ti(x,f.gy+1)]=3}
   for(const r of f.road)carve(3,r[0],r[1],r[2]+(f.gate==='n'?1:0),r[3]+(f.gate==='w'?1:0));
@@ -85,8 +85,8 @@ function rfCarve(){farmCarve();
 }
 const _gwMap=genWorld;
 genWorld=function(){
- if(S&&S.sea&&S.sea.burn&&(S.mapW||160)!==MW){const ow=S.mapW||160,nb={};for(const k in S.sea.burn){const i=+k,x=i%ow,y=(i/ow)|0;nb[y*MW+x]=S.sea.burn[k]}S.sea.burn=nb}
- if(S)S.mapW=MW;
+ if(S&&S.sea&&S.sea.burn&&S.mapV!==2){const ow=S.mapW||160,nb={};for(const k in S.sea.burn){const i=+k,x=i%ow,y=(i/ow)|0;nb[ti(x,y)]=S.sea.burn[k]}S.sea.burn=nb}
+ if(S){S.mapW=MW;S.mapV=2}
  PRDEF=1;PRDIRTY=0;try{_gwMap();rfCarve()}finally{PRDEF=0}
  prerender();
 };
@@ -145,17 +145,17 @@ interactList=function(){const L=_ilMap();if(inRoom())return L;
 const MAPPOI=()=>[
  {n:pclean(S.farmName||'Sua fazenda'),x:30,y:45,c:'#ffd75e',big:1},{n:'VILA',x:120,y:56,c:'#ffffff',big:1},{n:'MATA',x:78,y:58,c:'#b8f0a0',big:1},{n:'BAIRRO NOVO',x:130,y:80,c:'#ffffff'},
  {n:'LOJA DO CACADOR',x:50,y:9,c:'#ffffff'},{n:'SERRA',x:130,y:28,c:'#cfe8ff',big:1},{n:'PANTANAL',x:140,y:60,c:'#cfe8a0',big:1},{n:'CERRADO',x:80,y:146,c:'#ffe0a0',big:1},
- {n:'LOTE SUL',x:30,y:78,c:'#b8f0a0'},{n:'VARZEA',x:30,y:96,c:'#b8f0a0'},{n:'RETIRO',x:30,y:118,c:'#b8f0a0'}
+ {n:'SERRA ALTA',x:160,y:-14,c:'#cfe8ff',big:1},{n:'MATA DO OESTE',x:-14,y:16,c:'#b8f0a0',big:1},{n:'CAMPOS DO OESTE',x:-15,y:88,c:'#ffe0a0',big:1},{n:'CERRADO DO SUL',x:62,y:186,c:'#ffe0a0',big:1},{n:'ALAGADOS',x:256,y:110,c:'#cfe8a0',big:1},{n:'LOTE SUL',x:30,y:78,c:'#b8f0a0'},{n:'VARZEA',x:30,y:96,c:'#b8f0a0'},{n:'RETIRO',x:30,y:118,c:'#b8f0a0'}
 ].concat(RF.map(f=>({n:pclean(rvFarm(f.i).replace(/^(Fazenda|Sítio) /,'')),x:(f.x0+f.x1)/2,y:f.y0-1.5,c:'#ffb080',rv:1})));
 function mapModal(){
  showModal('<h3>🗺️ Mapa da região</h3><div style="overflow:auto;max-height:62vh;border-radius:6px"><canvas id="wmapc" width="960" height="668" style="width:720px;max-width:none;image-rendering:pixelated;display:block"></canvas></div><div class="dim">Amarelo: você e sua fazenda · laranja: fazendas rivais · verde: terrenos da sua fazenda (compre em 🏗️ Obras).</div><div class="btns"><button class="b gray" data-act="close">Fechar</button></div>');
- const cv=document.getElementById('wmapc');if(!cv||!GC)return;const g=cv.getContext('2d'),s=4,H=(RZ-1)*s;cv.height=H;
- g.imageSmoothingEnabled=true;g.drawImage(GC,0,0,MW*TS,(RZ-1)*TS,0,0,MW*s,H);g.fillStyle='rgba(0,0,0,.15)';g.fillRect(0,0,MW*s,H);
+ const cv=document.getElementById('wmapc');if(!cv||!GC)return;const g=cv.getContext('2d'),s=4,W=AW*s,H=(RZ-1-YMIN)*s;cv.width=W;cv.height=H;cv.style.width=Math.round(W*.75)+'px';
+ g.imageSmoothingEnabled=true;g.drawImage(GC,0,0,AW*TS,(RZ-1-YMIN)*TS,0,0,W,H);g.fillStyle='rgba(0,0,0,.15)';g.fillRect(0,0,W,H);g.translate(-XMIN*s,-YMIN*s);
  for(const l of LOTS){const own=S.lots&&S.lots[l.id];g.strokeStyle=own?'rgba(255,215,94,.9)':'rgba(140,240,120,.7)';g.lineWidth=2;g.setLineDash(own?[]:[6,4]);g.strokeRect(l.x0*s,l.y0*s,(l.x1-l.x0+1)*s,(l.y1-l.y0+1)*s)}g.setLineDash([]);
  for(const f of RF){g.strokeStyle='#ff9a5a';g.lineWidth=2;g.strokeRect(f.x0*s,f.y0*s,(f.x1-f.x0+1)*s,(f.y1-f.y0+1)*s)}
  g.textAlign='center';for(const p of MAPPOI()){g.font=(p.big?'bold 19px':'bold 14px')+' monospace';g.lineWidth=4;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(p.n,p.x*s,p.y*s);g.fillStyle=p.c;g.fillText(p.n,p.x*s,p.y*s)}
  const px=P.x/TS*s,py=P.y/TS*s;g.fillStyle='#000';g.beginPath();g.arc(px,py,9,0,7);g.fill();g.fillStyle='#ffd75e';g.beginPath();g.arc(px,py,6,0,7);g.fill();g.font='bold 13px monospace';g.lineWidth=4;g.strokeStyle='#000';g.strokeText('VOCÊ',px,py-13);g.fillStyle='#ffd75e';g.fillText('VOCÊ',px,py-13);
- const wrap=cv.parentElement;wrap.scrollLeft=Math.max(0,px*wrap.clientWidth/cv.width-wrap.clientWidth/2);
+ const wrap=cv.parentElement,sc=wrap.scrollWidth/cv.width;wrap.scrollLeft=Math.max(0,(px-XMIN*s)*sc-wrap.clientWidth/2);wrap.scrollTop=Math.max(0,(py-YMIN*s)*sc-wrap.clientHeight/2);
 }
 ACT.wmap=()=>mapModal();
 addEventListener('keydown',e=>{if(e.key.toLowerCase()==='n'&&!paused()&&!(P&&P.drive)){mapModal()}});

@@ -9,7 +9,7 @@ const PEDS=[[4,7],[9,7],[4,4],[9,4]];
 function ensureCab(){if(!S.cab)S.cab={st:0,d:0,mounts:[],tinv:{laco:0,gaiola:0,cam:0},placed:[],photos:[],nid:1};const C=S.cab;C.tinv=C.tinv||{laco:0,gaiola:0,cam:0};C.placed=C.placed||[];C.photos=C.photos||[];C.mounts=C.mounts||[];return C}
 const cabSt=()=>{const C=S&&S.cab;if(!C||!C.st)return 0;return S.day<C.d?1:2};
 // ---------- cômodo interno (fica na zona de interiores, depois do matadouro)
-const CABRY=(()=>{let my=0;for(const id in ROOMS)my=Math.max(my,ROOMS[id].y);let mx=0;for(const id in ROOMS)if(ROOMS[id].y===my)mx=Math.max(mx,ROOMS[id].x+ROOMS[id].w);return mx+3+14<=MW-2?[mx+3,my]:[2,my+14]})();
+const CABRY=(()=>{let my=0;for(const id in ROOMS)my=Math.max(my,ROOMS[id].y);let mx=0;for(const id in ROOMS)if(ROOMS[id].y===my)mx=Math.max(mx,ROOMS[id].x+ROOMS[id].w);return mx+3+14<=238?[mx+3,my]:[2,my+14]})();
 ROOMS.cabana={id:'cabana',x:CABRY[0],y:CABRY[1],w:14,h:10,floor:'wood',wall:'#6a4428',trim:'#3a2414',log:1,win:[12],items:[
  {k:'cabguns',x:1,y:2,w:2,h:1,act:'cabguns'},{k:'fireplace',x:6,y:2,w:2,h:1},{k:'cabtaxi',x:10,y:2,w:3,h:1,act:'cabtaxi'},
  {k:'cabtraps',x:1,y:5,w:2,h:2,act:'cabtraps'},{k:'bearrug',x:5,y:4,w:0,h:0},{k:'cabtable',x:10,y:5,w:2,h:1,act:'cabtable'},{k:'chair',x:12,y:5},

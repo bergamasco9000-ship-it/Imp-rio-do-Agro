@@ -213,7 +213,7 @@ function loop(now){
   const pk=$('prog');if(AIM.pick){pk.style.display='block';$('progt').textContent='Coletando...';$('progb').style.width=Math.min(100,AIM.pick.t/AIM.pick.T*100)+'%'}else pk.style.display='none';
  }
  let tx=P.x-VW/2+P.vx*.2,ty=P.y-10-VH/2+P.vy*.2;if(P.aim){tx+=(AIM.rx-P.x)*.45;ty+=(AIM.ry-P.y)*.45}
- tx=clamp(tx,0,WW-VW);ty=clamp(ty,0,WH-VH);
+ tx=clamp(tx,XMIN*TS,WW-VW);ty=clamp(ty,YMIN*TS,WH-VH);
  if(!camInit){cam.x=tx;cam.y=ty;camInit=1}else{const k=1-Math.exp(-dt*8);cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k}
  drawScene();
  hudT+=dt;if(hudT>.2){hudT=0;updateHuntHud();if(!paused())renderHUD()}

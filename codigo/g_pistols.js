@@ -167,7 +167,7 @@ const _raCmd=roomAct;roomAct=function(it,r){if(r.id==='vipcab'&&it.act==='comend
 const _ilCmd=interactList;interactList=function(){const L=_ilCmd();if(!inRoom())return L;const r=roomAt(P.x,P.y);if(!r||r.id!=='vipcab')return L;for(const l of L){const it=r.items.find(i=>i.act==='comendador'&&Math.abs((r.x+i.x+.5)*TS-l.x)<1&&Math.abs((r.y+i.y+1)*TS+4-l.y)<1);if(it)l.label='🎩 Sentar à mesa do Comendador'}return L};
 if(typeof GUIDE!=='undefined')GUIDE.push({lv:5,ic:'🎩',t:'O Comendador',h:'No camarote do cabaré escondido fica o Comendador, um bilionário de terno branco. Ele oferece contratos de boi com ágio, touros de elite, empréstimos, dicas da bolsa… e vende revólveres e pistolas para quem tem reputação.'});
 // ---------- SALA VIP do Comendador (separada do cabaré, atrás da porta acolchoada com seguranças)
-ROOMS.vipcab={id:'vipcab',x:72,y:198,w:16,h:11,floor:'marble',wall:'#24101c',trim:'#c8a040',win:[],items:[
+ROOMS.vipcab={id:'vipcab',x:72,y:RZ+30,w:16,h:11,floor:'marble',wall:'#24101c',trim:'#c8a040',win:[],items:[
  {k:'tapetevip',x:0,y:0,w:0,h:0},
  {k:'adega',x:1,y:2,w:2,h:1,act:'uisque'},{k:'charutaria',x:14,y:2,w:1,h:2,act:'charuto'},
  {k:'guarda',x:5,y:3},{k:'comendador',x:7,y:3},{k:'guarda',x:9,y:3},{k:'mesacom',x:7,y:4,w:1,h:1,act:'comendador'},

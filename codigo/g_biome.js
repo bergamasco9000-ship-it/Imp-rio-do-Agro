@@ -7,7 +7,7 @@ const blob=(g,c,cx,cy,w,h)=>{for(let r=0;r<h;r++){const k=(r+.5-h/2)/(h/2),ww=Ma
 const _pr=prerender;
 prerender=function(){
  const ps0=PS;PS=1;_pr();const g=GC.getContext('2d');
- for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++){
+ for(let y=YMIN+1;y<RZ-1;y++)for(let x=XMIN+1;x<MW-1;x++){
   const t=G[ti(x,y)],bx=x*TS,by=y*TS,h=hs(x*13+5,y*7+3);
   if(t===2){
    if(inMountainLake(x,y)){Rr(g,'#bcd6e4',bx,by,TS,TS);Rr(g,'#d8eaf2',bx+((h*10)|0),by+3,5,2);if(h<.4){Rr(g,'#e8f4fa',bx+2,by+((h*14)|0),9,1);Rr(g,'#e8f4fa',bx+10,by+((h*14)|0)-2,1,3)}if(h>.8)Rr(g,'#9ac0d4',bx+6,by+9,4,4)}
@@ -37,7 +37,7 @@ genWorld=function(){
   else if(tx>=100&&ty<=40&&h<.07)t.k=6;
  }
  DECO.length=0;
- for(let y=2;y<MH-2;y++)for(let x=2;x<MW-2;x++){
+ for(let y=YMIN+2;y<MH-2;y++)for(let x=XMIN+2;x<MW-2;x++){
   const i=ti(x,y),t=G[i];if(SOL[i]||FEN[i]||t===3||t===2||nearBld(x,y))continue;
   if(G[ti(x,y+1)]===3||G[ti(x,y-1)]===3||G[ti(x+1,y)]===3||G[ti(x-1,y)]===3)continue;
   const h=hs(x*3+7,y*5+1),px=x*TS+4+hs(x,y+21)*8,py=y*TS+8+hs(x+21,y)*6;let k=null,sol=0;
@@ -104,7 +104,7 @@ evoItems=function(L,x0,x1,y0,y1){
 const _dfs2=drawFarmStatic;
 drawFarmStatic=function(g){
  _dfs2(g);
- const tx0=Math.max(0,Math.floor(CX/TS)),tx1=Math.min(MW-1,Math.ceil((CX+VW)/TS)),ty0=Math.max(0,Math.floor(CY/TS)),ty1=Math.min(MH-1,Math.ceil((CY+VH)/TS));
+ const tx0=Math.max(XMIN,Math.floor(CX/TS)),tx1=Math.min(MW-1,Math.ceil((CX+VW)/TS)),ty0=Math.max(YMIN,Math.floor(CY/TS)),ty1=Math.min(MH-1,Math.ceil((CY+VH)/TS));
  for(let y=ty0;y<=ty1;y++)for(let x=tx0;x<=tx1;x++){if(G[ti(x,y)]!==2||inMountainLake(x,y))continue;const h=hs(x+77,y+33);if(h>.35)continue;
   const a=.5+.5*Math.sin(frame/22+h*30);if(a>.55)Rr(g,'rgba(230,245,255,'+((a-.55)*1.4).toFixed(2)+')',x*TS+((h*40)|0)%12+Math.sin(frame/40+h*9)*1.5,y*TS+((h*90)|0)%13,3,1)}
  for(const p of PRINTS){const al=Math.max(0,1-p.t/p.l);Rr(g,p.c+(al*.5).toFixed(2)+')',p.x,p.y,p.w,p.h)}

@@ -128,7 +128,7 @@ function civFloor(g,r){const X=r.x*TS,Y=r.y*TS;const R=(c,a,b,w,h)=>Rr(g,c,X+a,Y
   for(let i=0;i<5;i++){const px=(8.6+i*2.6)*TS,py=6.3*TS;Rr(g,'#8a6a1a',X+px-1.5,Y+py+5,3,1.5);Rr(g,PFG,X+px-.6,Y+py-3,1.4,8);Rr(g,'#f0d060',X+px-1,Y+py-4,2.2,2);if(i<4)for(let k=1;k<10;k++){const t=k/10;Rr(g,'#2a3e8a',X+px+t*2.6*TS,Y+py-1.5+Math.sin(t*Math.PI)*2.4,1.6,1.2)}}}}
 const _drsCiv=drawRoomShell;drawRoomShell=function(g,r){_drsCiv(g,r);if(r.id==='pref'||r.id==='prefgab'||r.id==='banco')civFloor(g,r)};
 // ---------- BANCO DO AGRO: salão novo, bem maior (o prédio da vila continua o mesmo por fora)
-ROOMS.banco={id:'banco',x:192,y:197,w:28,h:13,floor:'marble',wall:'#d8dce4',trim:'#1a2a4a',win:[],items:[
+ROOMS.banco={id:'banco',x:192,y:RZ+29,w:28,h:13,floor:'marble',wall:'#d8dce4',trim:'#1a2a4a',win:[],items:[
  {k:'bk_caixas',x:6,y:4,w:14,h:1,act:'bk_caixa',lbl:'🏦 Caixas: empréstimos e finanças'},{k:'clerk',x:8,y:3,who:'t1'},{k:'clerk',x:12,y:3,who:'t2'},{k:'clerk',x:17,y:3,who:'t3'},
  {k:'clerk',x:8,y:5,who:'k1',dir:1,dy:3},{k:'clerk',x:11,y:6,who:'k2',dir:1,dy:4},{k:'clerk',x:13,y:6,who:'k3',dir:1,dy:4},
  {k:'bk_cofre',x:22,y:2,w:4,h:1,act:'bk_cofre',lbl:'🔒 Cofre-forte'},{k:'guard',x:21,y:3},
@@ -187,7 +187,7 @@ const _blPref=bLive;bLive=function(g,b){_blPref(g,b);if(b.id!=='pref')return;con
  pfFlag(g,x+dx+1,y-62,'br',frame/9);Rr(g,'#c8b890',x+dx,y-62,1,6);
  ['est','br','mun'].forEach((k,i)=>{const px=x+dx-82+i*14;Rr(g,'#d8d0bc',px,y+b.h*TS-34,1.2,32);Rr(g,PFG,px-.8,y+b.h*TS-36,2.8,2.4);pfFlag(g,px+1.2,y+b.h*TS-34,k,frame/9+i)})};
 // ---------- salão da prefeitura (36 x 14) e gabinete (18 x 11)
-ROOMS.pref={id:'pref',x:134,y:197,w:36,h:14,floor:'marble',wall:'#efe6d2',trim:'#2f5a3a',win:[],items:[
+ROOMS.pref={id:'pref',x:134,y:RZ+29,w:36,h:14,floor:'marble',wall:'#efe6d2',trim:'#2f5a3a',win:[],items:[
  {k:'pf_bandeiras',x:15,y:2,w:6,h:1},{k:'clerk',x:16,y:4,who:'rec',dy:-1},{k:'clerk',x:19,y:4,who:'rec2',dy:-1},
  {k:'pf_recep',x:14,y:5,w:8,h:1,act:'pf_recep',lbl:'💬 Recepção da Prefeitura'},
  {k:'pf_coluna',x:12,y:3,w:1,h:1},{k:'pf_coluna',x:23,y:3,w:1,h:1},{k:'pf_coluna',x:12,y:10,w:1,h:1},{k:'pf_coluna',x:23,y:10,w:1,h:1},
@@ -202,7 +202,7 @@ ROOMS.pref={id:'pref',x:134,y:197,w:36,h:14,floor:'marble',wall:'#efe6d2',trim:'
  {k:'pf_busto',x:9,y:11,w:1,h:1,act:'pf_busto',lbl:'🗿 Busto do fundador'},
  {k:'luxplant',x:1,y:12},{k:'luxplant',x:34,y:12},{k:'luxplant',x:14,y:12},{k:'luxplant',x:21,y:12},{k:'luxplant',x:34,y:5}],
  wallx:[{k:'pf_camarasign',x:2},{k:'pf_retrato',x:12},{k:'pf_brasao',x:16},{k:'pf_retrato',x:22},{k:'pf_mural',x:25},{k:'clock',x:28}]};
-ROOMS.prefgab={id:'prefgab',x:172,y:197,w:18,h:11,floor:'wood',wall:'#e8dcc0',trim:'#5a3a22',win:[13],items:[
+ROOMS.prefgab={id:'prefgab',x:172,y:RZ+29,w:18,h:11,floor:'wood',wall:'#e8dcc0',trim:'#5a3a22',win:[13],items:[
  {k:'pf_bandeira1',x:5,y:2,w:1,h:1,f:'br'},{k:'pf_bandeira1',x:11,y:2,w:1,h:1,f:'mun'},
  {k:'pf_cadeira',x:8,y:3,w:0,h:0},{k:'clerk',x:8,y:3,npc:'joao',when:'joao',dy:4},
  {k:'pf_mesagab',x:6,y:4,w:5,h:1,act:'pf_joao',lbl:'💬 Mesa do prefeito'},

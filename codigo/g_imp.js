@@ -50,9 +50,9 @@ const IROUTE=[[188.5,9.5],[188.5,13.6],[196.6,13.6],[196.6,48.6],[13,48.6]];
 let IMPT=null;
 function impStart(O){O.st='road';IMPT={i:0,x:IROUTE[0][0]*TS,y:IROUTE[0][1]*TS,dir:0,st:'go',t:0,cows:[],O};toast('🚚 O caminhão do Gringo saiu do rancho com seus '+O.a.length+' animais. A seta mostra onde ele está.','good')}
 function impArrive(O,quiet){const I=ensureImp();O.a.forEach(a=>{a.born=0;addA(a)});I.ord=null;I.n++;S.seenB=S.seenB||{};O.a.forEach(a=>S.seenB[a.breed]=1);if(!quiet)toast('🐄 Seus animais importados estão no pasto!','good');else toast('🐄 Enquanto você estava fora, o Gringo entregou '+O.a.length+' animais importados no pasto.','good')}
-function stepImp(dt){const I=S&&S.imp;if(!I||!I.ord)return;const O=I.ord;
- if(O.st==='wait'&&(S.day>O.day||(S.day===O.day&&dayHour()>=7))){if(S.day>O.day+1){impArrive(O,1);return}impStart(O)}
- if(O.st==='road'&&!IMPT){impArrive(O,1);return}
+function stepImp(dt){const I=S&&S.imp;if(!I)return;const O=I.ord;
+ if(O&&O.st==='wait'&&(S.day>O.day||(S.day===O.day&&dayHour()>=7))){if(S.day>O.day+1){impArrive(O,1);return}impStart(O)}
+ if(O&&O.st==='road'&&!IMPT){impArrive(O,1);return}
  if(!IMPT)return;const T=IMPT,mult=Math.max(1,Math.min(speed||1,20)),sp=58*mult;
  if(T.st==='go'){const w=IROUTE[T.i+1];if(!w){T.st='unload';T.t=0;return}const tx=w[0]*TS,ty=w[1]*TS,dx=tx-T.x,dy=ty-T.y,d=Math.hypot(dx,dy);
   if(d<sp*dt+1){T.x=tx;T.y=ty;T.i++}else{T.x+=dx/d*sp*dt;T.y+=dy/d*sp*dt}T.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1)}

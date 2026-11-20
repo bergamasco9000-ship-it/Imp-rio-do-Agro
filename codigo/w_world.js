@@ -1,6 +1,6 @@
-const TS=16,MW=240,MH=212,WW=MW*TS,WH=MH*TS;
-const G=new Uint8Array(MW*MH),SOL=new Uint8Array(MW*MH),FEN=new Uint8Array(MW*MH);
-const ti=(x,y)=>y*MW+x;
+const TS=16,EX=32,XMIN=-EX,YMIN=-EX,MW=240+EX,MH=212+EX,WW=MW*TS,WH=MH*TS,AW=MW-XMIN,AH=MH-YMIN,NT=AW*AH;// mapa ampliado igual para todos os lados (x de XMIN a MW, y de YMIN a MH)
+const G=new Uint8Array(NT),SOL=new Uint8Array(NT),FEN=new Uint8Array(NT);
+const ti=(x,y)=>(y-YMIN)*AW+(x-XMIN),tix=i=>i%AW+XMIN,tiy=i=>Math.floor(i/AW)+YMIN;
 function hs(x,y){let h=(x*374761393+y*668265263)|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296}
 const PWT=[14,18,22,27,32,38],PAS={x:10,y:50,h:14};
 const pasW=()=>PWT[S.up.land];
@@ -24,20 +24,21 @@ const BLD=[
 const TROUGH={x:12*TS,y:53*TS,w:48,h:10};
 const MAILBOX={x:12*TS+4,y:46*TS+4};
 let GC=null,TREES=[],BUSH=[];
-function carve(t,x0,y0,x1,y1){for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if(x>=0&&y>=0&&x<MW&&y<MH)G[ti(x,y)]=t}
+function carve(t,x0,y0,x1,y1){for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if(x>=XMIN&&y>=YMIN&&x<MW&&y<MH)G[ti(x,y)]=t}
 const FARMZ=(x,y)=>x<60&&y>=71&&y<=130;
 const TOWNZ=(x,y)=>x>=98&&x<=147&&y>=38&&y<=76;
 const MATAZ=(x,y)=>x>=59&&x<98&&y>=35&&y<=75;
 const bioAt=(x,y)=>TOWNZ(x,y)?0:x>=100?(y<=40?5:6):(y<35||MATAZ(x,y)?1:(y<71||FARMZ(x,y)?0:4));
 function genWorld(){
- for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)G[ti(x,y)]=bioAt(x,y);
+ for(let y=YMIN;y<MH;y++)for(let x=XMIN;x<MW;x++)G[ti(x,y)]=bioAt(x,y);
  // lake and pond
- for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){
+ for(let y=YMIN;y<MH;y++)for(let x=XMIN;x<MW;x++){
   if(((x-72)/9)**2+((y-12)/5)**2<1)G[ti(x,y)]=2;
   if(x>=14&&x<=17&&y>=60&&y<=62)G[ti(x,y)]=2;
   if(x>=100&&y>40&&y<MH-2&&x<MW-2&&!TOWNZ(x,y)&&Math.sin(x*.21)+Math.sin(y*.27+2)+Math.sin((x+y)*.13)>1.55)G[ti(x,y)]=2;
   if(x>=100&&y<=40&&((x-132)/7)**2+((y-20)/4)**2<1)G[ti(x,y)]=2;
   if(((x-30)/4)**2+((y-85)/3)**2<1)G[ti(x,y)]=2;
+  if(((x+16)/8)**2+((y-62)/5)**2<1||((x-38)/7)**2+((y-182)/4)**2<1||((x-(-14))/5)**2+((y-150)/3.5)**2<1)G[ti(x,y)]=2;// lagos das terras novas
  }
  // paths
  carve(3,8,47,92,48);carve(3,47,8,48,48);carve(3,48,25,66,26);carve(3,65,15,66,26);carve(3,44,11,56,12);carve(3,6,46,26,50);
@@ -45,10 +46,12 @@ function genWorld(){
  carve(3,9,47,9,58);
  // estradas da região ampliada
  carve(3,150,47,236,48);carve(3,150,85,236,86);carve(3,59,98,60,162);carve(3,2,133,236,134);carve(3,160,48,161,133);carve(3,196,14,197,47);carve(3,144,13,197,13);carve(3,2,106,57,106);carve(3,44,87,44,132);
+ // estradas até as bordas novas (oeste, leste, norte e sul)
+ carve(3,XMIN+1,47,7,48);carve(3,237,47,MW-2,48);carve(3,237,85,MW-2,86);carve(3,XMIN+1,133,1,134);carve(3,237,133,MW-2,134);carve(3,59,163,60,RZ-3);carve(3,196,YMIN+1,197,13);
  const cl=(x,y)=>Math.sin(x*.31)+Math.sin(y*.37+1)+Math.sin((x*.7+y*.9)*.19)>1.5;
  TREES=[];BUSH=[];
  const prot=(x,y)=>(x>=42&&x<=58&&y>=2&&y<=14)||G[ti(x,y)]===3||(x>=26&&x<=46&&y>=34&&y<=46)||(x>=47&&x<=58&&y>=49&&y<=60)||TOWNZ(x,y)||(x>=4&&x<=27&&y>=39&&y<=51)||(x>=108&&x<=118&&y>=32&&y<=42)||(x>=108&&x<=118&&y>=48&&y<=58)||(x>=28&&x<=33&&y>=82&&y<=89);
- for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++){
+ for(let y=YMIN+1;y<MH-1;y++)for(let x=XMIN+1;x<MW-1;x++){
   const t=G[ti(x,y)],h=hs(x,y);
   if(t===2||prot(x,y))continue;
   let ok=false;
@@ -59,15 +62,15 @@ function genWorld(){
   else if(y>=71)ok=h<.03;
   else if(y<35)ok=!cl(x,y)&&h<.36&&!(G[ti(x,y+1)]===3&&h<.2);
   else ok=h<.05&&(x<5||y<38||y>66||(x>30&&x<58&&y>52));
-  if(x<3||x>MW-4||y<2||y>MH-4||(y>RZ-6&&y<RZ))ok=h<.9;
+  if(x<XMIN+3||x>MW-4||y<YMIN+2||y>MH-4||(y>RZ-6&&y<RZ))ok=h<.9;
   if(ok){const k=(x>=100&&y<=40)?2:(y>=71&&!FARMZ(x,y)&&!MATAZ(x,y))?3:(hs(y,x)<.55?0:1);TREES.push({x:x*TS+8+(hs(x+3,y)-.5)*6,y:y*TS+15,k,s:.8+hs(x,y+9)*.4});SOL[ti(x,y)]=1}
   else if((y<35&&x<100||MATAZ(x,y))&&h>.88)BUSH.push({x:x*TS+8,y:y*TS+12,k:hs(x,y+4)<.5?0:1});
  }
  TREES.sort((a,b)=>a.y-b.y);
  BLD.forEach(b=>{for(let y=b.y;y<b.y+b.h;y++)for(let x=b.x;x<b.x+b.w;x++)SOL[ti(x,y)]=1;
   for(let y=b.y;y<=b.y+b.h+1;y++)for(let x=b.x-1;x<=b.x+b.w;x++){const i=ti(x,y);if(!SOL[i]&&G[i]!==2&&G[i]!==3&&G[i]!==1)G[i]=3}});
- for(let x=0;x<MW;x++){SOL[ti(x,0)]=1;SOL[ti(x,MH-1)]=1}
- for(let y=0;y<MH;y++){SOL[ti(0,y)]=1;SOL[ti(MW-1,y)]=1}
+ for(let x=XMIN;x<MW;x++){SOL[ti(x,YMIN)]=1;SOL[ti(x,MH-1)]=1}
+ for(let y=YMIN;y<MH;y++){SOL[ti(XMIN,y)]=1;SOL[ti(MW-1,y)]=1}
  [[74,48],[75,48],[74,49],[75,49],[51,52],[52,52],[53,52],[51,53],[52,53],[53,53],[12,42],[13,44]].forEach(p=>SOL[ti(p[0],p[1])]=1);
  rebuildFence();prerender();
 }
@@ -102,7 +105,7 @@ function prerender(){
 // ---- player
 const P={x:13*TS,y:47*TS+8,vx:0,vy:0,ph:0,dust:0,dir:0,moving:0,sneak:0,run:0,aim:0,hp:100,hold:0,breath:3,noise:0,carry:0};
 const cam={x:0,y:0},VW0=240,VH0=360;let VW=VW0,VH=VH0,SC=2;
-const solidAt=(px,py)=>{const x=Math.floor(px/TS),y=Math.floor(py/TS);if(x<0||y<0||x>=MW||y>=MH)return true;const i=ti(x,y);return SOL[i]||FEN[i]||G[i]===2};
+const solidAt=(px,py)=>{const x=Math.floor(px/TS),y=Math.floor(py/TS);if(x<XMIN||y<YMIN||x>=MW||y>=MH)return true;const i=ti(x,y);return SOL[i]||FEN[i]||G[i]===2};
 const freeAt=(x,y)=>!(solidAt(x-4,y)||solidAt(x+4,y)||solidAt(x-4,y-5)||solidAt(x+4,y-5));
 function movePlayer(dx,dy){
  if(dx&&freeAt(P.x+dx,P.y))P.x+=dx;
@@ -212,7 +215,7 @@ function drawPart(g){for(const p of PART){const a=1-p.t/p.l;Rr(g,'rgba('+p.c+','
 function drawScene(){
  const g=X;CX=Math.round(cam.x*PS)/PS;CY=Math.round(cam.y*PS)/PS;const ox=CX,oy=CY;
  g.setTransform(1,0,0,1,0,0);g.fillStyle='#1e3a1e';g.fillRect(0,0,CV.width,CV.height);
- g.setTransform(PS,0,0,PS,0,0);g.drawImage(GC,ox,oy,VW,VH,0,0,VW,VH);
+ g.setTransform(PS,0,0,PS,0,0);g.drawImage(GC,ox-XMIN*TS,oy-YMIN*TS,VW,VH,0,0,VW,VH);if(oy+VH>(RZ-1)*TS){g.fillStyle='rgb(11,8,6)';g.fillRect(0,Math.max(0,(RZ-1)*TS-oy),VW,VH)}
  g.setTransform(PS,0,0,PS,-Math.round(ox*PS),-Math.round(oy*PS));
  const dry=!isWet(),dl=daylight();
  // pasture tint

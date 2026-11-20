@@ -18,6 +18,7 @@ O dono não programa: fala em português, quer as mudanças prontas e publicadas
 5. Commit e push na `main`.
 
 ## Padrões do código
+- Mapa: x vai de `XMIN` (-32) até `MW` (272), y de `YMIN` (-32) até `MH`; a área de fora termina em `RZ` (200) e as salas ficam de `RZ` para baixo (posicione salas novas como `y:RZ+n`). Índice de tile sempre por `ti(x,y)` (e `tix(i)`/`tiy(i)` para voltar); nunca `y*MW+x` para `G/SOL/FEN`. Loops pelo mapa todo começam em `XMIN`/`YMIN`.
 - Tudo global, num único `<script>`. Mudanças são feitas por **embrulho**: `const _x=fn;fn=function(){...;return _x(...)}` (funciona com update, hookDay, drawFurn, roomAct, interactList, evoItems, rfCarve, stepTraffic, drawPlayerBase, lookToH, huntLegal…).
 - `paused()` é FUNÇÃO. Itens em `evoItems` usam a camada 10: `L.push([y,10,{draw:g=>...}])`.
 - Salas: `ROOMS[id]={id,x,y,w,h,floor,wall,trim,win,items:[{k,x,y,w,h,act}],wallx:[{k,x}]}` na zona interna (y≥168). `goSub(id,volta)` entra em sub-sala; `exitRoom` sai.

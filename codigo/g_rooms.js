@@ -1,5 +1,5 @@
 // ===== Interiores: cômodos personalizados para cada prédio =====
-const RZ=168; // linha onde começa a zona de interiores
+const RZ=168+EX; // linha onde começa a zona de interiores
 const inRoomY=y=>y>=RZ*TS;
 const inRoom=()=>P.y>=RZ*TS;
 const CLERK={
@@ -46,10 +46,10 @@ const ROOMDEF={
  matadouro:{w:12,h:9,floor:'white',wall:'#eef2f4',trim:'#5a6a7a',win:[2],items:[{k:'steeltable',x:3,y:4,w:3,h:1,act:'slaughter'},{k:'clerk',x:4,y:3},{k:'rail',x:1,y:2,w:4,h:1},{k:'coldroom',x:8,y:2,w:3,h:1,act:'camara'},{k:'sink',x:7,y:5},{k:'scale',x:9,y:6}],wallx:[{k:'cutsign',x:6}]}
 };
 const ROOMS={};
-(function layout(){let cx=2,cy=RZ+2,rowH=0;for(const id in ROOMDEF){const r=ROOMDEF[id];if(cx+r.w>MW-2){cx=2;cy+=rowH+2;rowH=0}ROOMS[id]=Object.assign({id,x:cx,y:cy},r);cx+=r.w+3;rowH=Math.max(rowH,r.h)}})();
+(function layout(){let cx=2,cy=RZ+2,rowH=0;for(const id in ROOMDEF){const r=ROOMDEF[id];if(cx+r.w>238){cx=2;cy+=rowH+2;rowH=0}ROOMS[id]=Object.assign({id,x:cx,y:cy},r);cx+=r.w+3;rowH=Math.max(rowH,r.h)}})();
 const roomAt=(px,py)=>{const tx=Math.floor(px/TS),ty=Math.floor(py/TS);for(const id in ROOMS){const r=ROOMS[id];if(tx>=r.x&&tx<r.x+r.w&&ty>=r.y&&ty<r.y+r.h)return r}return null};
 function carveRooms(){
- for(let y=RZ-1;y<MH;y++)for(let x=0;x<MW;x++){G[ti(x,y)]=7;SOL[ti(x,y)]=1;FEN[ti(x,y)]=0}
+ for(let y=RZ-1;y<MH;y++)for(let x=XMIN;x<MW;x++){G[ti(x,y)]=7;SOL[ti(x,y)]=1;FEN[ti(x,y)]=0}
  for(const id in ROOMS){const r=ROOMS[id];
   for(let y=r.y;y<r.y+r.h;y++)for(let x=r.x;x<r.x+r.w;x++){const wall=y<r.y+2||x===r.x||x===r.x+r.w-1||y===r.y+r.h-1;G[ti(x,y)]=8;SOL[ti(x,y)]=wall?1:0}
   r.door=r.x+Math.floor(r.w/2);SOL[ti(r.door,r.y+r.h-1)]=0;

@@ -1,7 +1,7 @@
 // ===== Polícia abate bicho na vila, carros fazem curva/retorno em vez de sumir, legítima defesa
 // ---------- TRÂNSITO: no fim da estrada o carro entra na estrada que cruza ou faz o retorno; só some fora do mapa ou longe da tela
 const trfEndS=v=>{const r=TRT[v.r];return v.dir>0?r.b:r.a};
-const trfEdge=(x,y)=>x<=5||x>=MW-6||y<=5||y>=RZ-8;
+const trfEdge=(x,y)=>x<=XMIN+5||x>=MW-6||y<=YMIN+5||y>=RZ-8;
 function trfPlan(v){const r=TRT[v.r],e=trfEndS(v),P0=trfPos({r:v.r,dir:v.dir,s:e}),ex=r.h?e:r.c,ey=r.h?r.c:e,opts=[];
  for(let j=0;j<TRT.length;j++){const q=TRT[j];if(j===v.r||q.h===r.h)continue;if(v.k==='car'&&!q.h)continue;// carro de passeio só anda nas estradas de leste-oeste
   const near=q.h?Math.abs(q.c-ey)<5*TS&&ex>q.a-3*TS&&ex<q.b+3*TS:Math.abs(q.c-ex)<3*TS&&ey>q.a-5*TS&&ey<q.b+5*TS;if(!near)continue;
@@ -31,7 +31,7 @@ stepTraffic=function(dt){
   const cs=v.cs===undefined?tgt:v.cs;v.cs=tgt<cs?Math.max(tgt,cs-150*dt):Math.min(tgt,cs+38*dt);
   v.s+=v.dir*v.cs*dt;v.mv=v.cs>1;
   if(!v.edge&&(v.dir>0?v.s>=r.b:v.s<=r.a)){const pl=trfPlan(v);if(pl){v.s=trfEndS(v);v.turn=pl}else v.edge=1}
-  const q=trfPos(v);if(q.x<-80||q.x>WW+80||q.y<-80||q.y>RZ*TS+80||Math.hypot(q.x-P.x,q.y-P.y)>900)TRF.splice(i,1)}};
+  const q=trfPos(v);if(q.x<XMIN*TS-80||q.x>WW+80||q.y<YMIN*TS-80||q.y>RZ*TS+80||Math.hypot(q.x-P.x,q.y-P.y)>900)TRF.splice(i,1)}};
 // ---------- POLÍCIA: bicho que entra na vila é abatido pela PM
 const COPS=[];let copScan=0;const COPN=['Soldado Silva','Cabo Nogueira','Sargento Lima','Soldado Rocha','Cabo Andrade','Soldado Pires'];
 const wildTown=a=>TOWNZ(Math.floor(a.x/TS),Math.floor(a.y/TS));
@@ -72,7 +72,7 @@ const _hlF3=huntLegal;huntLegal=function(){if(S.h.lic&&S.h.lic>S.day&&WILD.some(
 function junctionCarve(){const bad=new Set();
  for(const q of TRT)if(!q.h)for(const r of TRT)if(r.h){const qc=Math.floor(q.c/TS),rc=Math.floor(r.c/TS);if(qc<Math.floor(r.a/TS)-3||qc>Math.floor(r.b/TS)+3)continue;
   for(const end of[q.a,q.b]){const ey=Math.floor(end/TS);if(Math.abs(ey-rc)>6||(ey>=rc-1&&ey<=rc))continue;const y0=Math.min(ey,rc-1),y1=Math.max(ey,rc);
-   for(let y=y0;y<=y1;y++)for(let x=qc-2;x<=qc+1;x++){if(x<1||y<1||x>=MW-1||y>=RZ-2)continue;bad.add(x+','+y);const i=ti(x,y);if(G[i]===2||BLD.some(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h))continue;if(x>=qc-1)G[i]=3;SOL[i]=0}}}
+   for(let y=y0;y<=y1;y++)for(let x=qc-2;x<=qc+1;x++){if(x<XMIN+1||y<YMIN+1||x>=MW-1||y>=RZ-2)continue;bad.add(x+','+y);const i=ti(x,y);if(G[i]===2||BLD.some(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h))continue;if(x>=qc-1)G[i]=3;SOL[i]=0}}}
  const hit=t=>bad.has(Math.floor(t.x/TS)+','+Math.floor(t.y/TS))||bad.has(Math.floor(t.x/TS)+','+Math.floor((t.y-1)/TS));
  for(let i=TREES.length-1;i>=0;i--)if(hit(TREES[i])){const t=TREES[i];SOL[ti(Math.floor(t.x/TS),Math.floor((t.y-1)/TS))]=0;TREES.splice(i,1)}
  for(let i=BUSH.length-1;i>=0;i--)if(hit(BUSH[i]))BUSH.splice(i,1);

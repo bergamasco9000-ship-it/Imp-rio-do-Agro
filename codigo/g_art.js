@@ -24,20 +24,21 @@ const ptw=s=>pclean(s).length*4-1;
 function ptext(g,s,x,y,c,sh){s=pclean(s);for(let i=0;i<s.length;i++){const gl=PF[s[i]]||PF[' '];for(let k=0;k<15;k++)if(gl[k]==='1'){const px=x+i*4+k%3,py=y+((k/3)|0);if(sh)Rr(g,sh,px+.5,py+.5,1,1);Rr(g,c,px,py,1,1)}}}
 // ---------- CHÃO (ImageData por pixel)
 prerender=function(){
- GC=document.createElement('canvas');GC.width=WW;GC.height=WH;const g=GC.getContext('2d'),img=g.createImageData(WW,WH),D=img.data;
+ const GW=AW*TS,GH=(RZ-YMIN)*TS;GC=document.createElement('canvas');GC.width=GW;GC.height=GH;const g=GC.getContext('2d');// só a parte de fora (as salas têm desenho próprio)
  // profundidade da água (BFS por tile)
- const dep=new Float32Array(MW*MH).fill(-1),q=[];
- for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){const i=ti(x,y);if(G[i]!==2)continue;let land=false;for(const[a,b]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+a,ny=y+b;if(nx>=0&&ny>=0&&nx<MW&&ny<MH&&G[ti(nx,ny)]!==2)land=true}if(land){dep[i]=0;q.push(i)}}
- for(let h=0;h<q.length;h++){const i=q[h],x=i%MW,y=(i/MW)|0;for(const[a,b]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+a,ny=y+b;if(nx<0||ny<0||nx>=MW||ny>=MH)continue;const j=ti(nx,ny);if(G[j]===2&&dep[j]<0){dep[j]=Math.min(4,dep[i]+1);q.push(j)}}}
- const depAt=(px,py)=>{const fx=px/16-.5,fy=py/16-.5,x0=Math.floor(fx),y0=Math.floor(fy),ax=fx-x0,ay=fy-y0;const s=(x,y)=>{if(x<0||y<0||x>=MW||y>=MH)return 0;const v=dep[ti(x,y)];return v<0?-.6:v};
+ const dep=new Float32Array(NT).fill(-1),q=[];
+ for(let y=YMIN;y<RZ;y++)for(let x=XMIN;x<MW;x++){const i=ti(x,y);if(G[i]!==2)continue;let land=false;for(const[a,b]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+a,ny=y+b;if(nx>=XMIN&&ny>=YMIN&&nx<MW&&ny<MH&&G[ti(nx,ny)]!==2)land=true}if(land){dep[i]=0;q.push(i)}}
+ for(let h=0;h<q.length;h++){const i=q[h],x=tix(i),y=tiy(i);for(const[a,b]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+a,ny=y+b;if(nx<XMIN||ny<YMIN||nx>=MW||ny>=MH)continue;const j=ti(nx,ny);if(G[j]===2&&dep[j]<0){dep[j]=Math.min(4,dep[i]+1);q.push(j)}}}
+ const depAt=(px,py)=>{const fx=px/16-.5,fy=py/16-.5,x0=Math.floor(fx),y0=Math.floor(fy),ax=fx-x0,ay=fy-y0;const s=(x,y)=>{if(x<XMIN||y<YMIN||x>=MW||y>=MH)return 0;const v=dep[ti(x,y)];return v<0?-.6:v};
   return (s(x0,y0)*(1-ax)+s(x0+1,y0)*ax)*(1-ay)+(s(x0,y0+1)*(1-ax)+s(x0+1,y0+1)*ax)*ay};
  const land=t=>t!==2,grassy=t=>t===0||t===1||t===4||t===5||t===6;
- const gt=(x,y)=>(x<0||y<0||x>=MW||y>=MH)?-1:G[ti(x,y)];
- let o=0;
- for(let py=0;py<WH;py++){const ty=py>>4,ly=py&15;
-  if(ty>=RZ-1){for(let px=0;px<WW;px++,o+=4){D[o]=11;D[o+1]=8;D[o+2]=6;D[o+3]=255}continue}
-  for(let px=0;px<WW;px++,o+=4){
-   const tx=px>>4,lx=px&15;let t=G[ty*MW+tx],m=t;const jn=ih(px,py,7),en=vn(px/3.3,py/3.3,11);
+ const gt=(x,y)=>(x<XMIN||y<YMIN||x>=MW||y>=MH)?-1:G[ti(x,y)];
+ const SH=256;// desenha em faixas para gastar menos memória no celular
+ for(let sy=0;sy<GH;sy+=SH){const hh=Math.min(SH,GH-sy),img=g.createImageData(GW,hh),D=img.data;let o=0;
+ for(let py=sy+YMIN*TS;py<sy+hh+YMIN*TS;py++){const ty=py>>4,ly=py&15;
+  if(ty>=RZ-1){for(let px0=0;px0<GW;px0++,o+=4){D[o]=11;D[o+1]=8;D[o+2]=6;D[o+3]=255}continue}
+  for(let px=XMIN*TS;px<MW*TS;px++,o+=4){
+   const tx=px>>4,lx=px&15;let t=G[ti(tx,ty)],m=t;const jn=ih(px,py,7),en=vn(px/3.3,py/3.3,11);
    // transições
    if(t===3||t===2||t===0||t===1||t===4||t===6||t===5){
     const nb=[[lx,gt(tx-1,ty)],[15-lx,gt(tx+1,ty)],[ly,gt(tx,ty-1)],[15-ly,gt(tx,ty+1)]];
@@ -73,9 +74,10 @@ prerender=function(){
    D[o]=r;D[o+1]=gg;D[o+2]=bb;D[o+3]=255;
   }
  }
- g.putImageData(img,0,0);
+ g.putImageData(img,0,sy)}
+ g.setTransform(1,0,0,1,-XMIN*TS,-YMIN*TS);// daqui em diante desenha em coordenadas do mundo
  const ps0=PS;PS=1;
- for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++){
+ for(let y=YMIN+1;y<RZ-1;y++)for(let x=XMIN+1;x<MW-1;x++){
   const t=G[ti(x,y)],bx=x*TS,by=y*TS,h=hs(x*13+5,y*7+3);
   if(t===0&&h<.06){const c=['#f0e060','#fff','#e87ab0','#a88ae0'][(h*70|0)%4];for(let i=0;i<3;i++){const fx=bx+3+((hs(x+i,y)*10)|0),fy=by+3+((hs(y+i,x)*10)|0);Rr(g,'#2f6a28',fx,fy+1,1,2);Rr(g,c,fx,fy,1,1);Rr(g,c,fx+1,fy+.5,.6,.6)}}
   if(t===2&&!(x>=100&&y<=40)&&(x>=100||x<30)&&adjW(x,y)&&h<.25){const lx=bx+3+((h*20)|0)%8,ly=by+4+((h*40)|0)%7;Rr(g,'#2f7a32',lx,ly,5,3);Rr(g,'#3e9a3e',lx+1,ly,3,1);Rr(g,'#1f5a24',lx+2,ly+1,2,1);if(h<.1){Rr(g,'#f08ab0',lx+1,ly-1,2,2);Rr(g,'#ffd0e0',lx+1,ly-1,1,1)}}

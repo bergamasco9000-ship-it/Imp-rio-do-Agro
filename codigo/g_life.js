@@ -49,7 +49,7 @@ const FS={st:'ready',zone:'pond',t:0,wt:0,need:0,miss:0,fish:null,m:0,dir:1,zc:.
 const fishEnsure=()=>{if(!S.fish)S.fish={rod:0,own:[1],rec:{},cnt:0}};
 function nearWater(){
  if(LV()<2)return null;const cx=Math.floor(P.x/TS),cy=Math.floor((P.y-4)/TS);let best=null,bd=99;
- for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const x=cx+dx,y=cy+dy;if(x<1||y<1||x>=MW-1||y>=MH-1||G[ti(x,y)]!==2)continue;const d=Math.hypot(dx,dy);if(d<bd){bd=d;best={x:x*TS+8,y:y*TS+8,z:x>=100?'pant':y>=71?'oasis':(x<30&&y>55)?'pond':'lake'}}}
+ for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const x=cx+dx,y=cy+dy;if(x<XMIN+1||y<YMIN+1||x>=MW-1||y>=MH-1||G[ti(x,y)]!==2)continue;const d=Math.hypot(dx,dy);if(d<bd){bd=d;best={x:x*TS+8,y:y*TS+8,z:x>=100?'pant':y>=71?'oasis':(x<30&&y>55)?'pond':'lake'}}}
  return best;
 }
 const _il=interactList;
@@ -213,7 +213,7 @@ const AMB=[];
 function stepAmb(dt){
  const dl=daylight(),t=G[ti(Math.floor(P.x/TS),Math.floor(P.y/TS))];
  if(AMB.length<28&&Math.random()<dt*7){
-  const px=P.x+rnd(-VW/2,VW/2),py=P.y+rnd(-VH/2,VH/2),tt=G[ti(clamp(Math.floor(px/TS),0,MW-1),clamp(Math.floor(py/TS),0,MH-1))];
+  const px=P.x+rnd(-VW/2,VW/2),py=P.y+rnd(-VH/2,VH/2),tt=G[ti(clamp(Math.floor(px/TS),XMIN,MW-1),clamp(Math.floor(py/TS),YMIN,MH-1))];
   if(dl<.3&&(tt===0||tt===1||tt===6))AMB.push({k:'ff',x:px,y:py,t:0,l:rnd(4,9),s:rnd(0,6)});
   else if(dl>.55&&(tt===0||tt===1)&&S.weather!=='chuva')AMB.push({k:'bf',x:px,y:py,t:0,l:rnd(5,10),s:rnd(0,6),c:pick(['#f0e060','#f08ab0','#fff','#8ac0f0'])});
   else if(tt===5)AMB.push({k:'sn',x:px,y:P.y-VH/2-4,t:0,l:rnd(4,8),s:rnd(0,6)});

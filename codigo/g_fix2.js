@@ -5,7 +5,7 @@ TRT[0].a=Math.max(TRT[0].a,61*TS);TRT[1].a=Math.max(TRT[1].a,61*TS);
 const isFarmT=(x,y)=>x<59&&y>=35&&y<=131;
 function laneTiles(r){const c=Math.floor(r.c/TS),L=[];for(let k=Math.floor(r.a/TS);k<=Math.floor(r.b/TS);k++)for(const o of[c-1,c])L.push(r.h?[k,o]:[o,k]);return L}
 function roadCarve(){
- const bad=new Set();for(const r of TRT){for(const [x,y] of laneTiles(r)){if(x<1||y<1||x>=MW-1||y>=RZ-2)continue;const i=ti(x,y);
+ const bad=new Set();for(const r of TRT){for(const [x,y] of laneTiles(r)){if(x<XMIN+1||y<YMIN+1||x>=MW-1||y>=RZ-2)continue;const i=ti(x,y);
    if(SOL[i]&&!BLD.some(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h)&&G[i]!==1&&G[i]!==2){SOL[i]=0;if(G[i]!==3)G[i]=3}}
   const c=Math.floor(r.c/TS);for(let k=Math.floor(r.a/TS);k<=Math.floor(r.b/TS);k++)for(let o=c-2;o<=c+1;o++){const x=r.h?k:o,y=r.h?o:k;if(isFarmT(x,y)||TOWNZ(x,y))continue;bad.add(x+','+y)}}
  const hit=t=>bad.has(Math.floor(t.x/TS)+','+Math.floor(t.y/TS));
@@ -40,7 +40,7 @@ stepTraffic=function(dt){
   v.s+=v.dir*v.cs*dt;v.mv=v.cs>1;
   if(v.s<r.a-60||v.s>r.b+40||Math.hypot(p.x-P.x,p.y-P.y)>900)TRF.splice(i,1)}};
 // ---------- Bar do Tonhão por dentro
-ROOMS.bar={id:'bar',x:2,y:198,w:14,h:10,floor:'red',wall:'#e8c070',trim:'#2f7a4a',win:[],items:[
+ROOMS.bar={id:'bar',x:2,y:RZ+30,w:14,h:10,floor:'red',wall:'#e8c070',trim:'#2f7a4a',win:[],items:[
  {k:'clerk',x:3,y:2},{k:'balcao',x:1,y:3,w:6,h:1,act:'balcao'},{k:'freezerb',x:8,y:2,w:2,h:1,act:'freezer'},{k:'jukebox',x:12,y:2,w:1,h:1,act:'juke'},
  {k:'sinuca',x:9,y:5,w:3,h:2,act:'sinuca'},{k:'cueman',x:8,y:6},
  {k:'mesab',x:2,y:6,w:1,h:1,act:'papo'},{k:'patron',x:1,y:6,s:'#3a6ab0',h:'#2a1a10',d:3},{k:'patron',x:3,y:6,s:'#c83a2a',h:'#d8c080',d:2,hat:'#6a4a2a'},

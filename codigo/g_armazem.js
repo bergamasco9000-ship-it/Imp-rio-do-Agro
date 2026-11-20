@@ -63,7 +63,7 @@ if(typeof BART!=='undefined')BART.armazem=function(g,b,x,y,w,h,dx,v){const R=(c,
  const fill=S&&S.inv?Math.min(1,armCount()/armCap()):0,ns=Math.round(fill*9);for(let i=0;i<ns;i++){const sx=dx+(i%2?22:-30)+((i>>1)%3)*4.5,sy=h-6-Math.floor(i/6)*4;R('#e0cc90',sx,sy,6,4.4);R('#c8b070',sx,sy+3,6,1.4);R('#8a6a3a',sx+2,sy,2,1)}};
 // ---------- por dentro: pilhas que crescem com o estoque
 const ARMZ=[['milho',1,2],['trigo',4,2],['soja',11,2],['cafe',14,2],['mandioca',1,6],['cana',4,6],['tomate',11,6],['ovo',14,6]];
-ROOMS.armazem={id:'armazem',x:221,y:198,w:18,h:12,floor:'conc',wall:'#cfc6b2',trim:'#6a5a3a',win:[],items:[
+ROOMS.armazem={id:'armazem',x:221,y:RZ+30,w:18,h:12,floor:'conc',wall:'#cfc6b2',trim:'#6a5a3a',win:[],items:[
  ...ARMZ.map(z=>({k:'arm_pilha',c:z[0],x:z[1],y:z[2],w:3,h:2,act:'arm_pilha'})),
  {k:'arm_balcao',x:7,y:4,w:4,h:1,act:'arm_main'},{k:'clerk',x:8,y:3,who:{n:'Comprador Valdir',shirt:'#3a6a3a',hair:'#3a2a1a',pants:'#3a3a2a',hat:'#e8e0c8'},dy:3},
  {k:'arm_balanca',x:5,y:9,w:2,h:1,act:'arm_main'},{k:'arm_empilha',x:13,y:9},{k:'arm_fardo',x:1,y:9,w:2,h:1}],

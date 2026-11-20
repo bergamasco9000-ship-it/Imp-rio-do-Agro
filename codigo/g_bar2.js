@@ -9,11 +9,11 @@ ROOMS.bar=Object.assign(ROOMS.bar,{w:20,h:11,items:[
  {k:'mesab',x:17,y:8,w:1,h:1,act:'papo'},{k:'patron',x:16,y:8,s:'#5a8a3a',h:'#3a2a1a',d:3,hat:'#e8dcb0'},
  {k:'mesab',x:14,y:9,w:1,h:1,act:'papo'},{k:'patron',x:15,y:9,s:'#d86a8a',h:'#5a3a22',d:2,g:'f'}],
  wallx:[{k:'garrafas',x:1},{k:'placabar',x:4},{k:'flamula',x:11},{k:'tvfut',x:14},{k:'rodeio',x:18}]});
-ROOMS.tonho={id:'tonho',x:24,y:198,w:12,h:9,floor:'wood',wall:'#c8d8b8',trim:'#6a4a2a',win:[2,9],items:[
+ROOMS.tonho={id:'tonho',x:24,y:RZ+30,w:12,h:9,floor:'wood',wall:'#c8d8b8',trim:'#6a4a2a',win:[2,9],items:[
  {k:'bed',x:1,y:2,w:2,h:2},{k:'wardrobe',x:4,y:2,w:2,h:1,act:'armario'},{k:'table',x:8,y:5,w:2,h:1},{k:'chair',x:7,y:5},{k:'chair',x:10,y:5},
  {k:'stove',x:10,y:2,w:1,h:1},{k:'sink',x:9,y:2,w:1,h:1},{k:'sofa',x:2,y:6,w:3,h:1},{k:'rug',x:2,y:4,w:0,h:0,rw:4,rh:2},{k:'plant',x:1,y:6},{k:'tvvelha',x:7,y:2,w:1,h:1,act:'tvv'}],
  wallx:[{k:'frame',x:3},{k:'clock',x:6},{k:'frame',x:9}]};
-ROOMS.cabare={id:'cabare',x:38,y:198,w:18,h:11,floor:'check',wall:'#3a1230',trim:'#c8a040',win:[],items:[
+ROOMS.cabare={id:'cabare',x:38,y:RZ+30,w:18,h:11,floor:'check',wall:'#3a1230',trim:'#c8a040',win:[],items:[
  {k:'luzes',x:1,y:0,w:0,h:0},
  {k:'palco',x:6,y:2,w:6,h:2,act:'show'},
  {k:'clerk',x:2,y:4},{k:'balcao2',x:1,y:5,w:3,h:1,act:'drinkc'},

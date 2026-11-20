@@ -200,7 +200,7 @@ function drawRancho(g,x0,sign){const x=x0*TS,y=140*TS,w=6*TS,h=4*TS,by=y+h;DB(g,
 function drawVaral(g){const x=213*TS,y=142*TS+14;DB(g,'#4a3626',x,y-18,2,18);DB(g,'#4a3626',x+26,y-18,2,18);DB(g,'#3a2a1a',x,y-18,28,1);for(let i=0;i<4;i++){const fx=x+3+i*6;DB(g,'#9aa0a8',fx,y-17,3,8);DB(g,'#c8ccd0',fx,y-17,1,6);DB(g,'#6a7078',fx+1,y-9,1,2)}}
 function drawBoat(g,x,y,c){const b=Math.sin(frame/22+x)*.8;DB(g,'rgba(0,0,0,.18)',x-14,y+3+b,28,3);DB(g,c,x-14,y-4+b,28,6);DB(g,shade(c,-30),x-14,y+1+b,28,1.6);DB(g,shade(c,25),x-12,y-4+b,24,1);DB(g,'#5a3a22',x-8,y-3+b,16,2);DB(g,'#2a2a2a',x+12,y-6+b,3,4)}
 // ---------- tráfego
-const TRT=[{h:1,c:48*TS,a:2*TS,b:236*TS},{h:1,c:86*TS,a:8*TS,b:236*TS},{h:1,c:134*TS,a:2*TS,b:236*TS},{h:0,c:60*TS,a:52*TS,b:162*TS},{h:0,c:161*TS,a:48*TS,b:133*TS}];
+const TRT=[{h:1,c:48*TS,a:(XMIN+1)*TS,b:(MW-2)*TS},{h:1,c:86*TS,a:8*TS,b:(MW-2)*TS},{h:1,c:134*TS,a:(XMIN+1)*TS,b:(MW-2)*TS},{h:0,c:60*TS,a:52*TS,b:(RZ-3)*TS},{h:0,c:161*TS,a:48*TS,b:133*TS}];
 const TRF=[];let trfT=2;
 function trfSpawn(){
  const cand=TRT.map((r,i)=>({r,i,d:r.h?Math.abs(P.y-r.c):Math.abs(P.x-r.c)})).filter(o=>o.d<320&&(o.r.h?P.x>o.r.a-200&&P.x<o.r.b+200:P.y>o.r.a-200&&P.y<o.r.b+200));if(!cand.length)return;

@@ -54,7 +54,7 @@ Object.assign(ACT,{
 const FIRE=[],FSET=new Set(),SMK=[];let fireAcc=0,fireBurned=0,fireCd=0;
 const inVillage=(x,y)=>x>=57&&x<=98&&y>=37&&y<=67;
 function flammable(x,y){
- if(x<2||y<2||x>=MW-2||y>=RZ-2)return false;const i=ti(x,y),g=G[i];
+ if(x<XMIN+2||y<YMIN+2||x>=MW-2||y>=RZ-2)return false;const i=ti(x,y),g=G[i];
  if(!(g===0||g===1||g===4))return false;if(SOL[i]||inVillage(x,y)||inArn(x,y))return false;
  if(BLD.some(b=>x>=b.x-1&&x<=b.x+b.w&&y>=b.y-1&&y<=b.y+b.h))return false;
  if(FEN[i]&&Math.random()<.7)return false;return true;
@@ -125,7 +125,7 @@ function drawHay(g){
 }
 // ---------- CHEIA DO PANTANAL
 const FLOODLV=[2,3,3,2,1,0,0,0,0,0,0,1];
-const FLOOD=new Uint8Array(MW*MH),FLX=100,FLY=88,FLW=60,FLH=44;let FLC=null,FLB=-1;
+const FLOOD=new Uint8Array(NT),FLX=100,FLY=88,FLW=60,FLH=44;let FLC=null,FLB=-1;
 function buildFlood(){
  const lv=(S.sea&&S.sea.fl)||0;FLOOD.fill(0);FLB=lv;if(!lv){FLC=null;return}
  for(let y=FLY+1;y<FLY+FLH-1;y++)for(let x=FLX+1;x<FLX+FLW-2;x++){const i=ti(x,y);if(!(G[i]===6||G[i]===3)||SOL[i])continue;if(x>=105&&x<=121&&y>=42&&y<=61)continue;if(inHomeLot(x,y))continue;
@@ -166,7 +166,7 @@ pqTint=function(g){_pqtSea(g);if(inRoom())return;const sea=ensureSea(),x0=CX-16,
  if(FLC){const sx=Math.max(x0,FLX*TS),sy=Math.max(y0,FLY*TS),ex=Math.min(x1,(FLX+FLW)*TS),ey=Math.min(y1,(FLY+FLH)*TS);
   if(ex>sx&&ey>sy){g.drawImage(FLC,sx-FLX*TS,sy-FLY*TS,ex-sx,ey-sy,sx,sy,ex-sx,ey-sy);
    const tx0=Math.floor(sx/TS),tx1=Math.ceil(ex/TS),ty0=Math.floor(sy/TS),ty1=Math.ceil(ey/TS);for(let y=ty0;y<ty1;y++)for(let x=tx0;x<tx1;x++){if(!FLOOD[ti(x,y)])continue;const h=hs(x,y*3);if(h>.3)continue;const ph=(frame*.03+h*20)%6;if(ph<3)Rr(g,'rgba(220,240,250,'+(.35-ph*.1).toFixed(2)+')',x*TS+3+h*20%8,y*TS+5+h*40%7,4,.8)}}}
- for(const k in sea.burn){const i=+k,x=i%MW,y=(i/MW)|0,px=x*TS,py=y*TS;if(px<x0||px>x1||py<y0||py>y1)continue;const age=S.day-sea.burn[k],a=Math.max(0,.62-age*.08);if(a<=0)continue;
+ for(const k in sea.burn){const i=+k,x=tix(i),y=tiy(i),px=x*TS,py=y*TS;if(px<x0||px>x1||py<y0||py>y1)continue;const age=S.day-sea.burn[k],a=Math.max(0,.62-age*.08);if(a<=0)continue;
   Rr(g,'rgba(34,26,20,'+a.toFixed(2)+')',px,py,TS,TS);const h=hs(x,y);Rr(g,'rgba(70,60,52,'+a.toFixed(2)+')',px+h*10,py+3,4,2);if(age===0&&((frame+x*7)>>4)%5===0)Rr(g,'#ff8a2a',px+4+h*7,py+8,1,1)}
  if(sea.frostD===S.day){const hr=S.t*24,k=hr<7?1:hr<10?1-(hr-7)/3:0;if(k>0){g.fillStyle='rgba(226,240,255,'+(.4*k).toFixed(3)+')';g.fillRect(x0,y0,x1-x0,y1-y0);
    for(let y=Math.floor(y0/TS);y<y1/TS;y++)for(let x=Math.floor(x0/TS);x<x1/TS;x++){const h=hs(x*5,y*9);if(h<.5){const tw=((frame/8+h*40)|0)%9;Rr(g,'rgba(255,255,255,'+((tw<2?.9:.45)*k).toFixed(2)+')',x*TS+h*14,y*TS+(h*29)%14,1,1)}}}}

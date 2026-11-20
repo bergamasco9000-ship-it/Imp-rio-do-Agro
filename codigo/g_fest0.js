@@ -42,7 +42,7 @@ genWorld=function(){_gwHM();
  for(const h of HMD){const L=hmLot(h);
   for(let i=TREES.length-1;i>=0;i--){const t=TREES[i],tx=Math.floor(t.x/TS),ty=Math.floor(t.y/TS);if(tx>=L.x0-1&&tx<=L.x1+1&&ty>=L.y0-1&&ty<=L.y1+1){SOL[ti(tx,ty)]=0;TREES.splice(i,1)}}
   if(typeof DECO!=='undefined')for(let i=DECO.length-1;i>=0;i--){const d=DECO[i],tx=Math.floor(d.x/TS),ty=Math.floor(d.y/TS);if(tx>=L.x0-1&&tx<=L.x1+1&&ty>=L.y0-1&&ty<=L.y1+1){SOL[ti(tx,ty)]=0;DECO.splice(i,1)}}
-  for(let y=L.y0;y<=L.y1;y++)for(let x=L.x0;x<=L.x1;x++){const i=ti(x,y);if(x<1||y<1||x>=MW-1||y>=RZ-1)continue;SOL[i]=0;FEN[i]=0;if(G[i]!==3)G[i]=h.g}
+  for(let y=L.y0;y<=L.y1;y++)for(let x=L.x0;x<=L.x1;x++){const i=ti(x,y);if(x<XMIN+1||y<YMIN+1||x>=MW-1||y>=RZ-1)continue;SOL[i]=0;FEN[i]=0;if(G[i]!==3)G[i]=h.g}
   for(const p of h.path){for(let y=p[1];y<=p[3];y++)for(let x=p[0];x<=p[2];x++){const i=ti(x,y);G[i]=3;SOL[i]=0}
    for(let i=TREES.length-1;i>=0;i--){const t=TREES[i],tx=Math.floor(t.x/TS),ty=Math.floor(t.y/TS);if(tx>=p[0]&&tx<=p[2]&&ty>=p[1]-1&&ty<=p[3]+1){SOL[ti(tx,ty)]=0;TREES.splice(i,1)}}}
   for(let y=h.y;y<h.y+h.hh;y++)for(let x=h.x;x<h.x+h.hw;x++)SOL[ti(x,y)]=1;

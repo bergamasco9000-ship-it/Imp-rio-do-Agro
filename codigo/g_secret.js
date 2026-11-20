@@ -41,8 +41,8 @@ const SECP={},COINP=[];
 const secS=()=>{if(!S.sec)S.sec={clue:{},found:{},coins:{},pa:0,det:0};return S.sec};
 function spotIn(r,salt,needWater){
  for(let k=0;k<4000;k++){const x=r[0]+Math.floor(hs(k*7+salt,k*3+1)*(r[2]-r[0])),y=r[1]+Math.floor(hs(k*5+2,k*11+salt)*(r[3]-r[1]));
-  if(x<3||y<3||x>MW-4||y>MH-4)continue;const i=ti(x,y);if(G[i]!==r[4]||SOL[i]||FEN[i]||nearBld(x,y))continue;
-  let ok=true;const rr=salt<100?4:1;for(let dy=-rr;dy<=rr;dy++)for(let dx=-rr;dx<=rr;dx++)if(G[ti(clamp(x+dx,0,MW-1),clamp(y+dy,0,MH-1))]===3)ok=false;if(!ok)continue;
+  if(x<XMIN+3||y<YMIN+3||x>MW-4||y>RZ-4)continue;const i=ti(x,y);if(G[i]!==r[4]||SOL[i]||FEN[i]||nearBld(x,y))continue;
+  let ok=true;const rr=salt<100?4:1;for(let dy=-rr;dy<=rr;dy++)for(let dx=-rr;dx<=rr;dx++)if(G[ti(clamp(x+dx,XMIN,MW-1),clamp(y+dy,YMIN,MH-1))]===3)ok=false;if(!ok)continue;
   if(needWater&&!adjW(x,y))continue;return{x:x*TS+8,y:y*TS+12,tx:x,ty:y}}
  return{x:r[0]*TS+40,y:r[1]*TS+40,tx:r[0]+2,ty:r[1]+2};
 }

@@ -166,8 +166,8 @@ const _hdFish=hookDay;hookDay=function(){_hdFish();const V=ensureV();if(V.own.bo
 // ======================================================================= 10) ESTAÇÕES NO VISUAL
 const SEAT=['rgba(40,120,40,.04)','rgba(200,130,40,.08)','rgba(210,175,90,.17)','rgba(120,210,90,.05)'];
 const _dfsSea=drawFarmStatic;
-drawFarmStatic=function(g){if(!inRoom()){const s=season(),dr=S.drought>0;const c=dr?'rgba(220,170,60,.22)':SEAT[s];g.fillStyle=c;const x0=Math.max(0,Math.floor(CX/TS)),x1=Math.min(MW-1,Math.ceil((CX+VW)/TS)),y0=Math.max(0,Math.floor(CY/TS)),y1=Math.min(RZ-2,Math.ceil((CY+VH)/TS));
-  for(let y=y0;y<=y1;y++){let run=-1;for(let x=x0;x<=x1+1;x++){const t=x<=x1?G[y*MW+x]:-1,ok=t===0||t===1||t===4||t===6;if(ok&&run<0)run=x;else if(!ok&&run>=0){g.fillRect(run*TS,y*TS,(x-run)*TS,TS);run=-1}}}}
+drawFarmStatic=function(g){if(!inRoom()){const s=season(),dr=S.drought>0;const c=dr?'rgba(220,170,60,.22)':SEAT[s];g.fillStyle=c;const x0=Math.max(XMIN,Math.floor(CX/TS)),x1=Math.min(MW-1,Math.ceil((CX+VW)/TS)),y0=Math.max(0,Math.floor(CY/TS)),y1=Math.min(RZ-2,Math.ceil((CY+VH)/TS));
+  for(let y=y0;y<=y1;y++){let run=-1;for(let x=x0;x<=x1+1;x++){const t=x<=x1?G[ti(x,y)]:-1,ok=t===0||t===1||t===4||t===6;if(ok&&run<0)run=x;else if(!ok&&run>=0){g.fillRect(run*TS,y*TS,(x-run)*TS,TS);run=-1}}}}
  _dfsSea(g)};
 const SPART=[];
 function seasonParts(g){if(inRoom()||S.weather==='chuva')return;const s=season(),dr=S.drought>0;const kind=s===1?'leaf':s===3?'petal':(s===2||dr)?'dust':null;if(!kind)return;
