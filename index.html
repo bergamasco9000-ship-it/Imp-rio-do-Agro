@@ -12551,30 +12551,124 @@ const _dwPk=drawWild;drawWild=function(g,a){if(a._lift&&AIM.pick&&AIM.pick.a===a
 function pkProxy(sp,x,y,dir,src){return Object.assign({},src||{},{sp,x,y,dir,st:'dead',vis:1,wait:0,dt:0,bleed:0})}
 function drawShoulderCarcass(g,proxy,sx,sy,sc,rot){g.save();g.translate(sx,sy);g.rotate(rot||0);g.scale(sc,sc);g.translate(-sx,-sy);try{_dwPk(g,proxy)}catch(e){}g.restore()}
 const BIGSP=new Set(['elk','bear','moose','boar_big','anta','capivara','jacare']);
+// pequenos (coelho, peru) vão pendurados no cinto; o resto é arrastado numa corda que segue o caçador
+const hipSmall=b=>b&&b.kg<14&&!BIGSP.has(b.sp);
+let DRAG=null;
+function hipPos(){const side=P.dir===2?-1:P.dir===3?1:0;return{x:P.x+(side?-side*2.5:3.5),y:P.y-9,side}}
+function dragUpd(b){const side=P.dir===2?-1:P.dir===3?1:0;
+ if(!DRAG||DRAG.b!==b||Math.hypot(DRAG.x-P.x,DRAG.y-P.y)>90)DRAG={b,x:P.x-side*18,y:P.y+(side?2:P.dir===1?14:-12)};
+ const Lr=BIGSP.has(b.sp)||b.kg>90?20:16,dx=DRAG.x-P.x,dy=DRAG.y-(P.y+1),d=Math.hypot(dx,dy);if(d>Lr){DRAG.x=P.x+dx*Lr/d;DRAG.y=P.y+1+dy*Lr/d}
+ return DRAG}
+function drawRope(g,x0,y0,x1,y1){const n=Math.max(4,Math.round(Math.hypot(x1-x0,y1-y0)/1.5));for(let k=0;k<=n;k++){const t=k/n;Rr(g,'#7a5530',x0+(x1-x0)*t-.45,y0+(y1-y0)*t+Math.sin(t*Math.PI)*1.6-.45,.9,.9)}}
+const wsz=sp=>(typeof WSZ!=='undefined'&&WSZ[sp])||12;
+// pendurado de cabeça para baixo no cinto (pivô no meio do corpo)
+function drawHip(g,b,x,y,side,k){const f=side||1,W=wsz(b.sp),sc=.6,len=W*sc,cx=x,cy=y+1.5+len/2,h=W*.8;
+ Rr(g,'#5a3a22',x-.4,y-.5,.9,2.2);const pr=Object.assign(pkProxy(b.sp,cx,cy+h/2,f,b),{st:'idle',wait:9});
+ drawShoulderCarcass(g,pr,cx,cy,sc,f*Math.PI/2*(k===undefined?1:k))}
+// carcaça arrastada: deitada de patas para cima, centrada na ponta da corda
+function dragProxy(b,x,y,dir){const H=wsz(b.sp)*.8;return pkProxy(b.sp,x,y+2-H/2,dir,b)}
+function handPos(){const side=P.dir===2?-1:P.dir===3?1:0;return{x:P.x+(side?side*2.5:3),y:P.y-8}}
 const _dpbPk=drawPlayerBase;drawPlayerBase=function(g){const ph=pkPh();
+ const bag=S.h&&S.h.bag,b=!ph&&bag&&bag.length&&!P.drive&&!inRoom()&&RMODE!==4?bag[bag.length-1]:null;
+ if(b&&!hipSmall(b)){// arrastado: carcaça deitada atrás, corda até a mão
+  const D=dragUpd(b),h=handPos(),pr=dragProxy(b,D.x,D.y,D.x<P.x?1:-1),behind=D.y<P.y-1;
+  const body=()=>{_dpbPk(g)};if(behind){try{_dwPk(g,pr)}catch(e){}drawRope(g,h.x,h.y,D.x,D.y-2);body()}else{body();drawRope(g,h.x,h.y,D.x,D.y-2);try{_dwPk(g,pr)}catch(e){}}
+  Rr(g,'#c89a72',h.x-.8,h.y-.8,1.6,1.6);return}
+ if(b&&hipSmall(b)){const hp=hipPos();if(P.dir===1){drawHip(g,b,hp.x,hp.y,hp.side);_dpbPk(g)}else{_dpbPk(g);drawHip(g,b,hp.x,hp.y,hp.side)}return}
  if(ph&&ph.crouch>0){g.save();g.translate(P.x,P.y);g.scale(1+.08*ph.crouch,1-.36*ph.crouch);g.translate(-P.x,-P.y);_dpbPk(g);g.restore()}else _dpbPk(g);
  if(ph){const a=AIM.pick.a,side=P.dir>=2?(P.dir===3?1:-1):0;
   if(ph.crouch>.5&&ph.lift===0){// braços até o animal e a faca trabalhando
    const hx=a.x-(side||0)*4,hy=a.y-2,sx0=P.x+(side||0)*2,sy0=P.y-10;let slc='#8a3a2a';try{slc=S.h.outfit==='casual'?(lookToH(S.look).slv||lookToH(S.look).sc):OUTFITS[S.h.outfit].c[0]}catch(e){}for(const o of[-1.2,1.2]){const ex=hx+o,ey=hy+(o>0?1:0);for(let k=0;k<=8;k++){const t=k/8;Rr(g,k<4?slc:'#c89a72',sx0+o*.6+(ex-sx0-o*.6)*t-.8,sy0+(ey-sy0)*t-.8,1.7,1.7)}}Rr(g,'#c89a72',hx-1.5,hy-1,3,2);
    if(ph.work&&((frame>>3)&1)){Rr(g,'#c8ccd2',hx+2,hy-3,.8,3);Rr(g,'#ffffff',hx+2,hy-3,.8,.8)}
    if(ph.work&&((frame>>4)&1))a._jig=1;else a._jig=0}
-  if(ph.lift>0){a._lift=1;const k=Math.sin(ph.lift*Math.PI/2),big=BIGSP.has(a.sp)||a.kg>120,sx=a.x+(P.x-a.x)*k,sy=a.y+((P.y-(big?2:21))-a.y)*k;
-   drawShoulderCarcass(g,pkProxy(a.sp,sx,sy,a.dir,a),sx,sy,big?1:1-.3*k,big?0:(side||1)*-.35*k);Rr(g,'#c89a72',P.x+3,P.y-17+4*(1-k),1.6,4)}}
- else if(S.h&&S.h.bag&&S.h.bag.length&&!P.drive&&!inRoom()&&RMODE!==4){// leva o último animal coletado
-  const b=S.h.bag[S.h.bag.length-1],side=P.dir===2?-1:1,big=BIGSP.has(b.sp)||b.kg>90;
-  if(big){const bx=P.x-side*20,by=P.y+2;Rr(g,'#5a3a22',Math.min(bx,P.x-side*3),P.y-6,Math.abs(P.x-side*3-bx),.8);drawShoulderCarcass(g,pkProxy(b.sp,bx,by,side,b),bx,by,.9,0)}
-  else{/* desenhado antes do corpo (atrás dos ombros): ver abaixo */}}};
-// animal pequeno/médio atravessado nos ombros: vai ATRÁS do caçador (de frente) ou na frente (de costas), com as patas penduradas
-const _dpbPk0=drawPlayerBase;drawPlayerBase=function(g){const b=!AIM.pick&&S.h&&S.h.bag&&S.h.bag.length&&!P.drive&&!inRoom()&&RMODE!==4&&S.h.bag[S.h.bag.length-1];
- const small=b&&!(BIGSP.has(b.sp)||b.kg>90);if(!small)return _dpbPk0(g);const side=P.dir===2?-1:P.dir===3?1:0,bob=P.moving?Math.abs(Math.cos(P.ph))*.8:0,sx=P.x-side*1.5,sy=P.y-25+bob;
- const pr=Object.assign(pkProxy(b.sp,sx,sy,side||1,b),{st:'idle',wait:9});const draw=()=>drawShoulderCarcass(g,pr,sx,sy,.6,side?-side*.15:0);
- if(P.dir===1){_dpbPk0(g);draw()}else{draw();_dpbPk0(g);Rr(g,'#c89a72',P.x+(side||1)*3.4,P.y-18.5,1.6,2.5)}};
+  if(ph.lift>0){const k=Math.sin(ph.lift*Math.PI/2),small=a.kg*.72<14&&!BIGSP.has(a.sp);if(small)a._lift=1;
+   if(small){// levanta e prende no cinto
+    const hp=hipPos(),W=wsz(a.sp),tx=hp.x,ty=hp.y+1.5+W*.3,sx=a.x+(tx-a.x)*k,sy=a.y-W*.4+(ty-(a.y-W*.4))*k-Math.sin(k*Math.PI)*5;
+    if(k>.95)drawHip(g,{sp:a.sp,kg:a.kg},hp.x,hp.y,hp.side);else drawShoulderCarcass(g,Object.assign(pkProxy(a.sp,sx,sy+W*.4,a.dir,a),{st:'idle',wait:9}),sx,sy,1-.4*k,(hp.side||1)*Math.PI/2*k)}
+   else{// amarra a corda: o bicho fica no chão e a corda estica até a mão
+    const h=handPos(),cy=a.y-4+wsz(a.sp)*.4,ex=a.x+(h.x-a.x)*k,ey=cy+(h.y-cy)*k;drawRope(g,a.x,cy,ex,ey);Rr(g,'#c89a72',ex-.8,ey-.8,1.6,1.6)}}}};
 // tremidinha da carcaça enquanto é preparada
 const _dwPk2=drawWild;drawWild=function(g,a){if(a._jig&&AIM.pick&&AIM.pick.a===a){g.save();g.translate(Math.sin(frame*.9)*.6,0);try{_dwPk2(g,a)}finally{g.restore()}return}return _dwPk2(g,a)};
-const _fpPk=finishPick;finishPick=function(){const a=AIM.pick&&AIM.pick.a;if(a){a._lift=0;a._jig=0}try{ifx('step','grass',10)}catch(e){}return _fpPk()};
+const _fpPk=finishPick;finishPick=function(){const a=AIM.pick&&AIM.pick.a;if(a){a._lift=0;a._jig=0}try{ifx('step','grass',10)}catch(e){}const r=_fpPk();try{const bg=S.h.bag,b=bg[bg.length-1];if(a&&b&&!hipSmall(b))DRAG={b,x:a.x,y:a.y-2+wsz(a.sp)*.4}}catch(e){}return r};
 
 // a barra de progresso desce para não cobrir a animação
 const progEl=document.getElementById('prog');const _updPk=update;update=function(dt){_updPk(dt);if(progEl)progEl.style.top=AIM.pick?'68%':'40%'};
+// ===== Ajustes: lojas/banco/melhorias só no lugar certo, botão do mapa no topo, botões de tiro mais altos
+// ===== (fora do selo do app), revólver/pistola como arma secundária (botão SACAR / tecla Q)
+// ---------- ☰ só com o que é seu; mercado, melhorias, obras, leilão, banco e império só no lugar certo
+const MLOC={market:'agro',up:'agro',obras:'agro',auc:'leilao',fin:'banco',bolsa:'banco',emp:'house'};
+const MGRP={agro:['market','up','obras'],leilao:['auc'],banco:['fin','bolsa'],house:['emp','bolsa']};
+const MLOCN={agro:'Casa Agro',leilao:'Casa de Leilões',banco:'Banco',house:'escritório da sua casa'};
+const MWHAT={market:'O mercado fica',up:'As melhorias ficam',obras:'As obras ficam',auc:'O leilão fica',fin:'As finanças ficam',bolsa:'Os investimentos ficam',emp:'O Império do Agro fica'};
+const MNA={agro:'na Casa Agro, na vila',leilao:'na Casa de Leilões, na vila',banco:'no Banco, na vila',house:'no escritório da sua casa'};
+let MLOCX=null;// lugar liberado por um balcão de fora (ex.: loja do Bairro Novo)
+function locNow(){if(!S||typeof P==='undefined')return null;if(MLOCX)return MLOCX;
+ if(inRoom()){const r=roomAt(P.x,P.y);return r&&MGRP[r.id]?r.id:null}
+ if(typeof HANG!=='undefined'&&Math.hypot(P.x-HANG.x,P.y-HANG.y)<60&&S.emp)return 'house';return null}
+const tabOk=t=>!MLOC[t]||(MGRP[locNow()]||[]).includes(t);
+const tabDef=()=>{const l=locNow();return l?MGRP[l][0]:'herd'};
+function placeArrow(loc){const b=bDoor(loc);if(!b)return false;TIPT={f:()=>inRoom()?null:Object.assign({},b,{h:MLOCN[loc]}),until:Date.now()+600000};return true}
+function tabBlocked(t){const loc=MLOC[t],ar=placeArrow(loc);
+ toast('📍 '+(MWHAT[t]||'Isso fica')+' '+MNA[loc]+(t==='bolsa'?' (ou no escritório da sua casa)':'')+'. Vá até lá'+(ar?' e siga a seta':'')+'.','bad')}
+const _omF4=openMenu;openMenu=function(t){
+ if(t&&!tabOk(t)){tabBlocked(t);return}
+ const l=locNow();if(!t&&l&&!MGRP[l].includes(tab))tab=MGRP[l][0];if(!tabOk(t||tab))tab=tabDef();return _omF4(t)};
+const _closeF4=closeMenu;closeMenu=function(){MLOCX=null;return _closeF4.apply(this,arguments)};
+const _tabF4=ACT.tab;ACT.tab=function(e){if(e&&!tabOk(e.v)){tabBlocked(e.v);return}return _tabF4(e)};
+const _raF4=renderAll;renderAll=function(){if(menuOpen&&!tabOk(tab))tab=tabDef();_raF4.apply(this,arguments);const el=$('tabs');if(!el||!menuOpen)return;const loc=locNow();
+ const L=TABS.filter(t=>tabOk(t[0])).sort((a,b)=>(MLOC[a[0]]?0:1)-(MLOC[b[0]]?0:1));
+ const h=(loc?'<span class="locn">📍 '+MLOCN[loc]+'</span>':'')+L.map(t=>'<button data-act="tab" data-v="'+t[0]+'" class="'+(tab===t[0]?'on':'')+(MLOC[t[0]]?' loc':'')+'">'+t[1]+'</button>').join('');
+ if(el._h4!==h){el._h4=h;el.innerHTML=h}};
+{const st=document.createElement('style');st.textContent='#tabs button.loc{border-color:#e0a431!important}#tabs .locn{font:11px sans-serif;color:#f0d060;padding:0 6px;align-self:center;white-space:nowrap}';document.head.appendChild(st)}
+// loja do Bairro Novo continua vendendo sementes e ração com desconto
+if(ACT.vloja){const _vlF4=ACT.vloja;ACT.vloja=function(){MLOCX='agro';return _vlF4.apply(this,arguments)}}
+// ---------- escritório na casa: Império, investimentos e equipe
+if(ROOMS.house&&!ROOMS.house.items.some(i=>i.act==='office'))ROOMS.house.items.push({k:'desk',x:8,y:2,w:2,h:1,act:'office'});
+function officeModal(){const imp=myNW()>=1e6||(S.emp&&Object.keys(S.emp.farms||{}).length);
+ showModal('<h3>💼 Escritório</h3><div class="card">Sua escrivaninha: daqui você cuida dos negócios grandes.'+(imp?'':'<br><span class="dim">O <b>Império do Agro</b> libera quando o patrimônio passar de R$ 1 milhão.</span>')+'</div><div class="btns">'
+  +(imp?'<button class="b gold" data-act="offgo" data-v="emp">🏰 Império do Agro</button>':'')+'<button class="b" data-act="offgo" data-v="bolsa">📈 Investimentos</button>'+(typeof crewModal==='function'?'<button class="b" data-act="crew">👷 Equipe da fazenda</button>':'')+'<button class="b gray" data-act="close">Fechar</button></div>')}
+ACT.offgo=function(e){hideModal();openMenu(e.v)};
+const _raOff=roomAct;roomAct=function(it,r){if(it.act==='office')return officeModal();return _raOff(it,r)};
+const _ilOff=interactList;interactList=function(){const L=_ilOff();if(!inRoom())return L;const r=roomAt(P.x,P.y);if(!r||r.id!=='house')return L;const it=r.items.find(i=>i.act==='office');if(!it)return L;
+ const x=(r.x+it.x+(it.w||1)/2)*TS,y=(r.y+it.y+(it.h||1))*TS+4;for(const l of L)if(l.label==='Usar'&&Math.abs(l.x-x)<1&&Math.abs(l.y-y)<1)l.label='💼 Escritório';return L};
+// ---------- textos que mandavam abrir pelo ☰
+{const s=TUT.find(x=>x.t&&x.t.includes('Guia das raças'));if(s){s.t='Cada raça é boa para uma coisa. Abra ☰ › <b>📖 Guia</b> › <b>Guia das raças</b> e veja qual combina com você.';s.ui=()=>menuOpen?(document.querySelector('[data-act="brguide"]')?'[data-act="brguide"]':'#tabs [data-v="guia"]'):'[data-act="menu"]'}}
+const _pgF4=pGuia;pGuia=function(){return '<div class="btns" style="margin-bottom:6px"><button class="b gold" data-act="brguide">🐄 Guia das raças</button><button class="b" data-act="wmap">🗺️ Mapa da região</button></div>'+_pgF4()};
+ACT.tipmarket=function(){hideModal();placeArrow('agro');toast('🏪 Siga a seta até a Casa Agro, na vila.','good')};
+const _warnF4=warn;warn=function(id,h,o){return _warnF4(id,String(h).split('amplie o pasto em ☰ › Melhorias').join('amplie o pasto na <b>Casa Agro</b> (Melhorias), na vila'),o)};
+const _tipF4=tip;tip=function(id,h,o){if(id==='emp'){h='🏰 <b>Você passou de R$ 1 milhão!</b> Liberou o <b>Império do Agro</b>: comprar fazendas pelo Brasil, indústrias e muito mais. Fica na <b>escrivaninha do escritório</b>, dentro da sua casa.';o=Object.assign({},o||{},{ui:null,go:()=>inRoom()?null:Object.assign({},bDoor('house'),{h:'sua casa'})})}return _tipF4(id,h,o)};
+// ---------- botão do mapa no topo, ao lado do celular
+const _rhF4=renderHUD;renderHUD=function(){_rhF4.apply(this,arguments);const r=document.getElementById('hudR');if(!r||r.querySelector('[data-act="wmap"]'))return;const b=document.createElement('button');b.dataset.act='wmap';b.textContent='🗺️';const c=r.querySelector('[data-act="cel"]')||r.querySelector('[data-act="somtg"]')||r.querySelector('[data-act="menu"]');r.insertBefore(b,c)};
+// ---------- botões de tiro mais altos: o selo do app no canto de baixo não fica mais em cima da mira
+{const st=document.createElement('style');st.textContent='#bAim{right:96px!important;bottom:142px!important}#bFire{right:92px!important;bottom:68px!important}#bBin{right:100px!important;bottom:206px!important}#bSec{right:168px;bottom:206px;width:50px;height:50px;font-size:20px}#bSec.on{background:rgba(200,140,40,.9)}';document.head.appendChild(st)}
+// ---------- arma secundária: revólver/pistola no coldre, saca com um toque
+const isPist=k=>!!(k&&WEAPONS[k]&&WEAPONS[k].pist);
+const wPrice=k=>(WEAPONS[k]&&(WEAPONS[k].p||WEAPONS[k].price))||0;
+function ensureSec(){const H=S&&S.h;if(!H)return null;if(H.eq2&&(!H.own[H.eq2]||!WEAPONS[H.eq2]||H.eq2===H.eq))H.eq2=null;
+ if(!H.eq2&&H.eq&&WEAPONS[H.eq]){const own=Object.keys(H.own).filter(k=>H.own[k]&&WEAPONS[k]&&k!==H.eq),want=(isPist(H.eq)?own.filter(k=>!isPist(k)):own.filter(isPist)).sort((a,b)=>wPrice(b)-wPrice(a));if(want[0])H.eq2=want[0]}
+ return H.eq2}
+let SWAPPING=0;const _heqF4=ACT.hequip;
+ACT.hequip=function(e){const k=e&&e.v,H=S.h;if(SWAPPING||!k)return _heqF4(e);
+ if(isPist(k)&&H.eq&&WEAPONS[H.eq]&&!isPist(H.eq)){if(H.eq2===k)return swapArm();H.eq2=k;renderHUD();secBtn();toast('🔫 '+WEAPONS[k].n+' no coldre. Toque em 🔫 SACAR para usar.','good');return}
+ if(H.eq&&H.eq!==k&&isPist(H.eq)!==isPist(k))H.eq2=H.eq;return _heqF4(e)};
+ACT.cmdeq=function(e){ACT.hequip({v:e.v});hideModal();if(S.h.eq!==e.v)return;toast('🔫 '+WEAPONS[e.v].n+' na mão.','good')};
+function swapArm(){const H=S.h;if(!H)return;ensureSec();if(!H.eq2||!H.own[H.eq2])return toast('Você não tem arma secundária. Compre um revólver ou pistola com o Comendador.','bad');
+ if(P.drive||inRoom())return;const a=H.eq,b=H.eq2;AIM.relT=0;const wasAim=P.aim;SWAPPING=1;try{ACT.hequip({v:b})}finally{SWAPPING=0}H.eq2=a&&WEAPONS[a]?a:null;
+ if(wasAim)P.aim=1;// troca rápida: continua mirando
+ try{ifx('click',0,10)}catch(err){}toast((isPist(b)?'🔫 Sacou: ':'🎯 Pegou: ')+WEAPONS[b].n+' ('+(H.mag[b]||0)+'/'+WEAPONS[b].cap+')');renderHUD();secBtn()}
+ACT.swaparm=swapArm;
+addEventListener('keydown',e=>{if(e.repeat||!S||!S.h)return;if((e.key==='q'||e.key==='Q')&&e.shiftKey){e.preventDefault();if(!paused())swapArm()}});
+const secEl=document.createElement('div');secEl.id='bSec';secEl.className='cb';secEl.style.display='none';document.body.appendChild(secEl);
+secEl.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!paused())swapArm()});
+let secLast='';function secBtn(){let h='';if(S&&S.h){ensureSec();const H=S.h,ok=!!(H.eq2&&H.own[H.eq2])&&!inRoom()&&!P.drive&&!(typeof LIVE!=='undefined'&&LIVE)&&!(typeof EXPO!=='undefined'&&EXPO);
+ if(ok)h=isPist(H.eq)?'🎯<small>RIFLE</small>':'🔫<small>SACAR</small>'}
+ if(h!==secLast){secLast=h;secEl.style.display=h?'':'none';if(h)secEl.innerHTML=h;secEl.classList.toggle('on',h.includes('RIFLE'))}}
+let secT=0;const _updSec=update;update=function(dt){_updSec(dt);secT-=dt;if(secT<=0){secT=.35;secBtn()}};
+// a secundária aparece no coldre enquanto a principal está na mão
+const _dpbSec=drawPlayerBase;drawPlayerBase=function(g){_dpbSec(g);const H=S.h;if(!H||!H.eq2||!isPist(H.eq2)||H.eq2===H.eq||!H.own[H.eq2]||P.drive||RMODE===4||inRoom())return;
+ const mv=P.moving&&!P.aim,bob=mv?Math.abs(Math.cos(P.ph))*(P.run?1.4:.8):0,aim=P.aim;P.aim=0;try{drawGun(g,P.x,P.y-bob+(P.sneak?2.5:0)-3.2,H.eq2)}catch(err){}finally{P.aim=aim}};
+// guia de controles
+if(typeof GUIDE!=='undefined'){const c=GUIDE.find(x=>x.t==='Controles');if(c&&!c.h.includes('SACAR'))c.h+='<br><b>Arma secundária:</b> com revólver ou pistola no coldre, toque em 🔫 SACAR (Shift+Q no computador) para trocar com o rifle.'}
 // ===== Comportamento de app no celular: botão voltar do Android fecha janelas em vez de sair; sem "puxar para atualizar" =====
 (function(){
  const st=document.createElement('style');st.textContent='html,body{overscroll-behavior:none}';document.head.appendChild(st);
