@@ -11672,6 +11672,17 @@ function junctionCarve(){const bad=new Set();
  if(typeof DECO!=='undefined')for(let i=DECO.length-1;i>=0;i--)if(hit(DECO[i]))DECO.splice(i,1);
  if(typeof BOULD!=='undefined')for(let i=BOULD.length-1;i>=0;i--){const b=BOULD[i];if(bad.has(b.x+','+b.y)||bad.has((b.x+1)+','+b.y)){SOL[ti(b.x,b.y)]=0;if(b.big)SOL[ti(b.x+1,b.y)]=0;BOULD.splice(i,1)}}}
 const _rfcF3=rfCarve;rfCarve=function(){_rfcF3();junctionCarve()};
+// ---------- proteção de iniciante: sem onça, ladrão, praga na lavoura nem sabotagem durante o tutorial e 5 dias depois
+const tutOn=()=>S&&typeof TUT!=='undefined'&&S.tut<TUT.length;
+const newbieSafe=()=>{if(!S)return false;if(tutOn())return true;if(S.tutEnd==null)S.tutEnd=S.day;return S.day<S.tutEnd+5};
+const _stNb=spawnThief;spawnThief=function(){if(newbieSafe())return;return _stNb.apply(this,arguments)};
+const _phNb=pestHourly;pestHourly=function(){if(newbieSafe())return;return _phNb.apply(this,arguments)};
+const _soNb=spawnOnca;spawnOnca=function(){if(newbieSafe())return;return _soNb.apply(this,arguments)};
+const _ocNb=oncaChance;oncaChance=function(){return newbieSafe()?0:_ocNb()};
+const _hdNb=hookDay;hookDay=function(){if(!newbieSafe()||typeof ensureSab!=='function')return _hdNb();const B=ensureSab(),old=B.last;B.last={i:0,t:'-',d:S.day,rep:1};try{_hdNb()}finally{if(B.last&&B.last.t==='-')B.last=old}};
+let nbT=0;const _updNb=update;update=function(dt){_updNb(dt);if(!S)return;nbT-=dt;if(nbT>0)return;nbT=2;
+ if(!tutOn()&&S.tutEnd==null){S.tutEnd=S.day;toast('🛡️ Proteção de iniciante: por mais 5 dias nada de onça, ladrão ou praga na lavoura. Use esse tempo para comprar cachorro, arrumar a cerca e pegar licença de caça.','good')}
+ if(S.tutEnd!=null&&!S.nbWarn&&S.day>=S.tutEnd+4){S.nbWarn=1;toast('⚠️ Amanhã acaba a proteção de iniciante: onça, ladrões e javalis podem aparecer. Cachorros, cerca boa e luz no curral ajudam muito.','bad')}};
 // ===== Tela inicial, mundos (saves) e dificuldade =====
 let SLOT=0;
 const SK=n=>'fbo_w'+n;
