@@ -1,0 +1,17 @@
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
+    ctx=b.new_context(viewport={'width':844,'height':390},accept_downloads=True);pg=ctx.new_page()
+    errs=[];pg.on('pageerror',lambda e:errs.append('PE:'+str(e.stack)[:400]))
+    pg.goto('file:///home/claude/build/world.html');pg.wait_for_timeout(900);pg.evaluate("()=>{try{localStorage.clear()}catch(e){}}");pg.reload();pg.wait_for_timeout(1500)
+    pg.click('[data-t="newpick"]');pg.click('[data-t="create"]');pg.wait_for_timeout(2500)
+    E=lambda js:pg.evaluate("()=>{"+js+"}")
+    E("hideModal();S.money=777777;S.farmName='Fazenda Teste';save()")
+    with pg.expect_download() as d: E("ACT.bkfile()")
+    dl=d.value;path='/tmp/'+dl.suggested_filename;dl.save_as(path);print('arquivo',dl.suggested_filename)
+    E("S.money=1;save()")
+    E("ACT.bkrest()");pg.set_input_files('#bkfi',path);pg.wait_for_timeout(500)
+    E("ACT.bkdo()");pg.wait_for_timeout(300);print(E("return document.getElementById('mbox').innerText.slice(0,120)"))
+    E("ACT.bkok()");pg.wait_for_timeout(2500)
+    print('apos reload',pg.evaluate("()=>{const o=JSON.parse(localStorage.getItem(SK(1)));return [o.money,o.farmName,!!o.bkAt]}"))
+    print(errs[:3]);b.close()
