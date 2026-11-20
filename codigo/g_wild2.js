@@ -1,7 +1,11 @@
 // ===== Biomas, novos animais, contratos de caça, recordes =====
 const bioRect=b=>b==='m'?[101,YMIN+2,MW-4,39,5]:b==='p'?[101,42,MW-4,RZ-4,6]:b==='c'?pick([[XMIN+3,72,-1,RZ-4,4],[61,72,98,RZ-4,4],[0,166,98,RZ-4,4]]):[XMIN+3,YMIN+3,97,75,1];
-// mais bicho para a terra nova
-for(const k in SPECIES)SPECIES[k].cnt=Math.round(SPECIES[k].cnt*1.5);
+// mais bicho para a terra nova: cada bioma cresce na mesma proporção da área onde o bicho pode aparecer
+// (mesma densidade de antes em todo lugar). Medido: serra ×2,84, pantanal ×2,2, cerrado ×3,67, mata ×2,27
+// bicho longe de você (fora da tela) é atualizado em turnos (1/4 por quadro) para o celular aguentar
+let WLOD=0;const _swLod=stepWild;stepWild=function(dt){if(WILD.length<110||!P)return _swLod(dt);WLOD=(WLOD+1)&3;const far=[],keep=[];
+ for(let i=0;i<WILD.length;i++){const a=WILD[i];if(Math.abs(a.x-P.x)+Math.abs(a.y-P.y)>1500&&((a.id||i)&3)!==WLOD)far.push(a);else keep.push(a)}
+ if(!far.length)return _swLod(dt);WILD.length=0;for(const a of keep)WILD.push(a);try{_swLod(dt)}finally{for(const a of far)WILD.push(a)}};
 const BIONAME={f:'Floresta',m:'Montanha nevada',p:'Pantanal',c:'Cerrado'};
 const inTown=()=>{const tx=Math.floor(P.x/TS),ty=Math.floor(P.y/TS);return TOWNZ(tx,ty)||(tx<59&&ty>=35&&ty<=70)};
 const WSZ={duck:9,capy:13,croc:24,wolf:14,bear:20,goat:14,coyote:12,pronghorn:15,whitedeer:16};

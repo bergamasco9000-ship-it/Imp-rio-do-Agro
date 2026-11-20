@@ -1970,8 +1970,12 @@ function helpModal(){
 }
 // ===== Biomas, novos animais, contratos de caça, recordes =====
 const bioRect=b=>b==='m'?[101,YMIN+2,MW-4,39,5]:b==='p'?[101,42,MW-4,RZ-4,6]:b==='c'?pick([[XMIN+3,72,-1,RZ-4,4],[61,72,98,RZ-4,4],[0,166,98,RZ-4,4]]):[XMIN+3,YMIN+3,97,75,1];
-// mais bicho para a terra nova
-for(const k in SPECIES)SPECIES[k].cnt=Math.round(SPECIES[k].cnt*1.5);
+// mais bicho para a terra nova: cada bioma cresce na mesma proporção da área onde o bicho pode aparecer
+// (mesma densidade de antes em todo lugar). Medido: serra ×2,84, pantanal ×2,2, cerrado ×3,67, mata ×2,27
+// bicho longe de você (fora da tela) é atualizado em turnos (1/4 por quadro) para o celular aguentar
+let WLOD=0;const _swLod=stepWild;stepWild=function(dt){if(WILD.length<110||!P)return _swLod(dt);WLOD=(WLOD+1)&3;const far=[],keep=[];
+ for(let i=0;i<WILD.length;i++){const a=WILD[i];if(Math.abs(a.x-P.x)+Math.abs(a.y-P.y)>1500&&((a.id||i)&3)!==WLOD)far.push(a);else keep.push(a)}
+ if(!far.length)return _swLod(dt);WILD.length=0;for(const a of keep)WILD.push(a);try{_swLod(dt)}finally{for(const a of far)WILD.push(a)}};
 const BIONAME={f:'Floresta',m:'Montanha nevada',p:'Pantanal',c:'Cerrado'};
 const inTown=()=>{const tx=Math.floor(P.x/TS),ty=Math.floor(P.y/TS);return TOWNZ(tx,ty)||(tx<59&&ty>=35&&ty<=70)};
 const WSZ={duck:9,capy:13,croc:24,wolf:14,bear:20,goat:14,coyote:12,pronghorn:15,whitedeer:16};
@@ -13276,6 +13280,10 @@ const _dmEq=drawMate;drawMate=function(g){if(!S.mate||!MATE.vis)return _dmEq(g);
  else if(pist){Rr(g,'#3a2414',x+3*side,y-11,2.4,4);Rr(g,'#2a2a2a',x+3.4*side,y-12,1.6,2)}
  else if(!back){for(let i=0;i<14;i++)Rr(g,i<5?'#5a3a22':'#2a2a2a',x-6*side+i*.8*side,y-20+i*.85,1.3,1.3)}
  else for(let i=0;i<14;i++)Rr(g,i<5?'#5a3a22':'#2a2a2a',x-6+i*.85,y-21+i*.9,1.5,1.5)};
+// ===== Equilíbrio do mapa maior: cada bicho cresce na mesma proporção da área onde ele pode aparecer
+// (mesma densidade de antes em todo lugar). Medido nos biomas: serra ×2,84, pantanal ×2,2, cerrado ×3,67, mata ×2,27.
+// Fica no fim do build para pegar todas as espécies (algumas são criadas em arquivos depois do g_wild2).
+const BIOMUL={m:2.84,p:2.2,c:3.67,f:2.27};for(const k in SPECIES){const s=SPECIES[k];if(s.cnt0===undefined)s.cnt0=s.cnt;s.cnt=Math.round(s.cnt0*(BIOMUL[s.bio]||2.3))}
 // ===== Comportamento de app no celular: botão voltar do Android fecha janelas em vez de sair; sem "puxar para atualizar" =====
 (function(){
  const st=document.createElement('style');st.textContent='html,body{overscroll-behavior:none}';document.head.appendChild(st);
