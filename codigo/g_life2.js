@@ -58,8 +58,8 @@ const _drawNPCL=drawNPC;drawNPC=function(g,n){if(n.hid)return;_drawNPCL(g,n);if(
  if(n.task==='plots'&&n.work){const s=Math.sin(frame/5)*2;Rr(g,'#6a4428',n.x+4,n.y-14+s,1,10);Rr(g,'#888',n.x+3,n.y-4+s,4,1.4)}
  if(n.chat>0&&((frame>>4)&3)!==0){Rr(g,'#1e140c',n.x+3,n.y-31,9,6);Rr(g,'#fff',n.x+3.5,n.y-30.5,8,5);for(let i=0;i<3;i++)Rr(g,'#888',n.x+5+i*2,n.y-28.5,1,1);Rr(g,'#fff',n.x+5,n.y-25.6,2,1.4)}
  if(n.task==='mass'||n.task==='school')return};
-function npcGo(n,tx,ty,dt,spd){if(!n.path||n.ptx!==tx||n.pty!==ty){n.path=(Math.hypot(tx-n.x,ty-n.y)>40&&n.y<RZ*TS)?findPath(n.x,n.y,tx,ty):null;if(!n.path)n.path=[[tx,ty]];n.pi=0;n.ptx=tx;n.pty=ty}
- let p=n.path[n.pi];if(p&&Math.hypot(p[0]-n.x,p[1]-n.y)<3&&n.pi<n.path.length-1){n.pi++;p=n.path[n.pi]}if(!p||(n.pi>=n.path.length-1&&Math.hypot(p[0]-n.x,p[1]-n.y)<3))p=[tx,ty];
+function npcGo(n,tx,ty,dt,spd){if(!n.path||n.ptx!==tx||n.pty!==ty){n.path=(Math.hypot(tx-n.x,ty-n.y)>40&&n.y<RZ*TS)?findPath(n.x,n.y,tx,ty):null;if(!n.path)n.path=[[tx,ty]];n.pi=0;n.ptx=tx;n.pty=ty;n.pfin=0}
+ let p=n.path[n.pi];if(p&&Math.hypot(p[0]-n.x,p[1]-n.y)<3&&n.pi<n.path.length-1){n.pi++;p=n.path[n.pi]}if(!p||n.pfin||(n.pi>=n.path.length-1&&Math.hypot(p[0]-n.x,p[1]-n.y)<3)){p=[tx,ty];n.pfin=1}// depois do último ponto vai direto ao destino (antes ficava indo e voltando)
  const dx=p[0]-n.x,dy=p[1]-n.y,d=Math.hypot(dx,dy);if(d<1.5){n.mv=0;return true}const s=Math.min(d,spd*dt);n.x+=dx/d*s;n.y+=dy/d*s;n.mv=1;n.dir=dx>0?1:-1;n.stk=0;return false}
 stepNPC=function(dt){
  for(const n of NPCS){n.chat=Math.max(0,(n.chat||0)-dt);

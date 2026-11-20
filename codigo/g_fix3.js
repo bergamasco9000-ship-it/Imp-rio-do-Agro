@@ -46,6 +46,7 @@ function stepCops(dt){if(inRoom())return;
    if(sp.aggr||a.st==='charge'||a.hurt||Math.hypot(a.x-P.x,a.y-P.y)<300){a.cop=1;copSpawn(a);if(sp.aggr&&Math.random()<.6){a.cop=2;copSpawn(a)}}}}
  for(let i=COPS.length-1;i>=0;i--){const c=COPS[i],a=c.tgt;c.flash=Math.max(0,c.flash-dt);if(c.tr)c.tr.t-=dt;
   if(c.st!=='back'&&(!a||a.st==='dead'||WILD.indexOf(a)<0))c.st='back';
+  if(c.st!=='back'&&a&&!wildTown(a)&&Math.hypot(a.x-c.x,a.y-c.y)>220){c.st='back';a.cop=0}// bicho fugiu da vila: PM desiste
   if(c.st==='run'){const dx=a.x-c.x,dy=a.y-c.y,d=Math.hypot(dx,dy)||1;c.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1);
    if(d>78){const s=118*dt;c.x+=dx/d*s;c.y+=dy/d*s;c.ph+=dt*14;c.mv=1}else{c.st='aim';c.cd=.45;c.mv=0}}
   else if(c.st==='aim'){const dx=a.x-c.x,dy=a.y-6-c.y,d=Math.hypot(dx,dy)||1;c.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1);c.mv=0;c.ang=Math.atan2(dy,dx);
@@ -89,3 +90,5 @@ const _hdNb=hookDay;hookDay=function(){if(!newbieSafe()||typeof ensureSab!=='fun
 let nbT=0;const _updNb=update;update=function(dt){_updNb(dt);if(!S)return;nbT-=dt;if(nbT>0)return;nbT=2;
  if(!tutOn()&&S.tutEnd==null){S.tutEnd=S.day;toast('🛡️ Proteção de iniciante: por mais 5 dias nada de onça, ladrão ou praga na lavoura. Use esse tempo para comprar cachorro, arrumar a cerca e pegar licença de caça.','good')}
  if(S.tutEnd!=null&&!S.nbWarn&&S.day>=S.tutEnd+4){S.nbWarn=1;toast('⚠️ Amanhã acaba a proteção de iniciante: onça, ladrões e javalis podem aparecer. Cachorros, cerca boa e luz no curral ajudam muito.','bad')}};
+// ---------- nada de tiro dentro de salas (bar, cabaré, lojas, shopping...)
+const _hlRoom=huntLegal;huntLegal=function(){if(inRoom()){tt('noshot','🚫 Aqui dentro não! Guarde a arma.','bad',4);return false}return _hlRoom()};

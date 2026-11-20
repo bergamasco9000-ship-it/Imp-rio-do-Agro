@@ -48,10 +48,15 @@ stepCows=function(dt){
   if(a.labor){s.go=0;s.lie=1;continue}
   if(Math.hypot(s.x+8-P.x,s.y+5-P.y)<24){s.go=0;s.lie=0;continue}
   if(cur!==S.pq.a){
-   const nx=cur+(S.pq.a>cur?1:-1),gx=dcols[Math.max(cur,nx)-1]*TS-1,gy=56*TS+4;
-   let tx,ty;if(Math.abs(s.x+8-gx-8)<5&&Math.abs(s.y-gy)<6){tx=s.x+(nx>cur?24:-24);ty=gy}else{tx=gx;ty=gy}
-   const dx=tx-s.x,dy=ty-s.y,d=Math.hypot(dx,dy)||1,sp=18*dt;s.x+=dx/d*sp;s.y+=dy/d*sp;s.dir=dx>0?1:-1;s.f=(frame>>4)&1;s.lie=0;continue;
+   // atravessa a porteira da divisória: chega na porteira e só para depois de passar para o outro lado (antes ficava indo e voltando)
+   const nx=cur+(S.pq.a>cur?1:-1),gx=dcols[Math.max(cur,nx)-1]*TS,gy=56*TS+4;
+   if(s.pass==null&&Math.abs(s.x-gx)<6&&Math.abs(s.y-gy)<6)s.pass=gx+(nx>cur?28:-28);
+   const tx=s.pass!=null?s.pass:gx,ty=gy,dx=tx-s.x,dy=ty-s.y,d=Math.hypot(dx,dy)||1,sp=Math.min(d,18*dt);
+   s.x+=dx/d*sp;s.y+=dy/d*sp;if(Math.abs(dx)>.5)s.dir=dx>0?1:-1;s.f=(frame>>4)&1;s.lie=0;s.go=0;
+   if(s.pass!=null&&Math.abs(s.x-s.pass)<1.5){s.pass=null;s.wait=rnd(.3,1.5)}
+   continue;
   }
+  s.pass=null;
   s.x=clamp(s.x,b.x0-2,b.x1+2);s.y=clamp(s.y,b.y0,b.y1);
   if(s.wait>0){s.wait-=dt;s.f=0;if(!s.lie&&s.wait>4&&(night||(hot&&Math.random()<.5))&&Math.random()<dt*.6)s.lie=1;continue}
   if(s.lie&&!night&&!hot&&Math.random()<dt*.3)s.lie=0;

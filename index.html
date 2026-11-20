@@ -4083,10 +4083,15 @@ stepCows=function(dt){
   if(a.labor){s.go=0;s.lie=1;continue}
   if(Math.hypot(s.x+8-P.x,s.y+5-P.y)<24){s.go=0;s.lie=0;continue}
   if(cur!==S.pq.a){
-   const nx=cur+(S.pq.a>cur?1:-1),gx=dcols[Math.max(cur,nx)-1]*TS-1,gy=56*TS+4;
-   let tx,ty;if(Math.abs(s.x+8-gx-8)<5&&Math.abs(s.y-gy)<6){tx=s.x+(nx>cur?24:-24);ty=gy}else{tx=gx;ty=gy}
-   const dx=tx-s.x,dy=ty-s.y,d=Math.hypot(dx,dy)||1,sp=18*dt;s.x+=dx/d*sp;s.y+=dy/d*sp;s.dir=dx>0?1:-1;s.f=(frame>>4)&1;s.lie=0;continue;
+   // atravessa a porteira da divisória: chega na porteira e só para depois de passar para o outro lado (antes ficava indo e voltando)
+   const nx=cur+(S.pq.a>cur?1:-1),gx=dcols[Math.max(cur,nx)-1]*TS,gy=56*TS+4;
+   if(s.pass==null&&Math.abs(s.x-gx)<6&&Math.abs(s.y-gy)<6)s.pass=gx+(nx>cur?28:-28);
+   const tx=s.pass!=null?s.pass:gx,ty=gy,dx=tx-s.x,dy=ty-s.y,d=Math.hypot(dx,dy)||1,sp=Math.min(d,18*dt);
+   s.x+=dx/d*sp;s.y+=dy/d*sp;if(Math.abs(dx)>.5)s.dir=dx>0?1:-1;s.f=(frame>>4)&1;s.lie=0;s.go=0;
+   if(s.pass!=null&&Math.abs(s.x-s.pass)<1.5){s.pass=null;s.wait=rnd(.3,1.5)}
+   continue;
   }
+  s.pass=null;
   s.x=clamp(s.x,b.x0-2,b.x1+2);s.y=clamp(s.y,b.y0,b.y1);
   if(s.wait>0){s.wait-=dt;s.f=0;if(!s.lie&&s.wait>4&&(night||(hot&&Math.random()<.5))&&Math.random()<dt*.6)s.lie=1;continue}
   if(s.lie&&!night&&!hot&&Math.random()<dt*.3)s.lie=0;
@@ -6721,8 +6726,8 @@ const _drawNPCL=drawNPC;drawNPC=function(g,n){if(n.hid)return;_drawNPCL(g,n);if(
  if(n.task==='plots'&&n.work){const s=Math.sin(frame/5)*2;Rr(g,'#6a4428',n.x+4,n.y-14+s,1,10);Rr(g,'#888',n.x+3,n.y-4+s,4,1.4)}
  if(n.chat>0&&((frame>>4)&3)!==0){Rr(g,'#1e140c',n.x+3,n.y-31,9,6);Rr(g,'#fff',n.x+3.5,n.y-30.5,8,5);for(let i=0;i<3;i++)Rr(g,'#888',n.x+5+i*2,n.y-28.5,1,1);Rr(g,'#fff',n.x+5,n.y-25.6,2,1.4)}
  if(n.task==='mass'||n.task==='school')return};
-function npcGo(n,tx,ty,dt,spd){if(!n.path||n.ptx!==tx||n.pty!==ty){n.path=(Math.hypot(tx-n.x,ty-n.y)>40&&n.y<RZ*TS)?findPath(n.x,n.y,tx,ty):null;if(!n.path)n.path=[[tx,ty]];n.pi=0;n.ptx=tx;n.pty=ty}
- let p=n.path[n.pi];if(p&&Math.hypot(p[0]-n.x,p[1]-n.y)<3&&n.pi<n.path.length-1){n.pi++;p=n.path[n.pi]}if(!p||(n.pi>=n.path.length-1&&Math.hypot(p[0]-n.x,p[1]-n.y)<3))p=[tx,ty];
+function npcGo(n,tx,ty,dt,spd){if(!n.path||n.ptx!==tx||n.pty!==ty){n.path=(Math.hypot(tx-n.x,ty-n.y)>40&&n.y<RZ*TS)?findPath(n.x,n.y,tx,ty):null;if(!n.path)n.path=[[tx,ty]];n.pi=0;n.ptx=tx;n.pty=ty;n.pfin=0}
+ let p=n.path[n.pi];if(p&&Math.hypot(p[0]-n.x,p[1]-n.y)<3&&n.pi<n.path.length-1){n.pi++;p=n.path[n.pi]}if(!p||n.pfin||(n.pi>=n.path.length-1&&Math.hypot(p[0]-n.x,p[1]-n.y)<3)){p=[tx,ty];n.pfin=1}// depois do último ponto vai direto ao destino (antes ficava indo e voltando)
  const dx=p[0]-n.x,dy=p[1]-n.y,d=Math.hypot(dx,dy);if(d<1.5){n.mv=0;return true}const s=Math.min(d,spd*dt);n.x+=dx/d*s;n.y+=dy/d*s;n.mv=1;n.dir=dx>0?1:-1;n.stk=0;return false}
 stepNPC=function(dt){
  for(const n of NPCS){n.chat=Math.max(0,(n.chat||0)-dt);
@@ -10247,7 +10252,7 @@ const _ilMore=interactList;interactList=function(){const L=_ilMore();if(inRoom()
 // atalhos de menu: equipe em Melhorias e touro mecânico no bar
 const _pUpMore=pUp;pUp=function(){const C=ensureCrew();return '<div class="card"><div class="row"><b>👷 Equipe da fazenda</b><span class="gold">'+C.list.length+'/6</span></div><div class="dim">Contrate vaqueiro, tratador, cerqueiro, tratorista e ordenhador. Eles trabalham na sua frente.</div><div class="btns"><button class="b gold" data-act="crew">Abrir equipe</button></div></div>'+_pUpMore()};
 ACT.crew=()=>crewModal();
-if(typeof barModal==='function'){const _bmMore=barModal;barModal=function(){_bmMore();const box=document.getElementById('mbox');if(!box)return;const btns=box.querySelector('.btns:last-child');const div=document.createElement('div');div.className='card';div.innerHTML=barNight()?'<div class="row"><b>🐂 Touro mecânico</b><span class="gold">'+R$(10)+'</span></div><div class="dim">Treine para o rodeio, sem prêmio e sem se machucar.</div><div class="btns"><button class="b gold" data-act="rdmec">Montar</button></div>':'<div class="dim">🐂 O touro mecânico e a viola começam às 19h.</div>';if(btns)box.insertBefore(div,btns);else box.appendChild(div)}}
+if(typeof barModal==='function'){const _bmMore=barModal;barModal=function(){_bmMore();const box=document.getElementById('mbox');if(!box)return;const btns=[...box.children].reverse().find(e=>e.classList&&e.classList.contains('btns'));const div=document.createElement('div');div.className='card';div.innerHTML=barNight()?'<div class="row"><b>🐂 Touro mecânico</b><span class="gold">'+R$(10)+'</span></div><div class="dim">Treine para o rodeio, sem prêmio e sem se machucar.</div><div class="btns"><button class="b gold" data-act="rdmec">Montar</button></div>':'<div class="dim">🐂 O touro mecânico e a viola começam às 19h.</div>';if(btns)box.insertBefore(div,btns);else box.appendChild(div)}}
 if(typeof MAPPOI==='function'){}
 if(typeof GUIDE!=='undefined'){GUIDE.push({lv:2,ic:'👷',t:'Equipe da fazenda',h:'Em Melhorias › 👷 Equipe, contrate até 6 peões (vaqueiro, tratador, cerqueiro, tratorista e ordenhador). Cada um tem salário e humor: dê bônus e folga para mantê-los felizes.'});
  GUIDE.push({lv:3,ic:'🤠',t:'Rodeio e circuito',h:'Tem rodeio todo domingo à tarde e todo dia 25 na Arena. Escolha o touro (Mansinho, Bandido, Tornado ou Pesadelo). Seis rodeios fecham o Circuito do ano, com R$ 50.000 para o campeão. Treine no touro mecânico do Bar do Tonhão à noite.'});
@@ -10984,6 +10989,12 @@ ACT.rvoffer=function(e){const [fi,id,m]=String(e.v).split('|'),f=RF.find(z=>z.i=
  const na=mk(a.breed,a.sex,a.age,a.gen);na.gen=a.gen;na.w=Math.round(a.w);na.name=a.name;na.breeder=a.breeder&&a.sex==='M';addA(na);S.stats.bought=(S.stats.bought||0)+1;
  rvLog(f.i,'Vendeu '+(a.sex==='F'?'uma':'um')+' '+BREEDS[a.breed].n+' para você por '+R$(price)+'.');hideModal();toast('🤝 Negócio fechado! '+rvName(f.i)+' manda o peão levar '+na.name+' até a sua fazenda. ('+R$(price)+')','good');gainXP(15,'negócio')};
 if(typeof GUIDE!=='undefined')GUIDE.push({lv:2,ic:'🐂',t:'Touros e ofertas',h:'Touros ficam na baia própria ao lado do recinto do leilão. A ficha mostra quanto ele melhora seus bezerros, e ao comprar ele já vira Reprodutor. Nas fazendas rivais, chegue perto de um animal para fazer uma oferta.'});
+// ---------- na placa da fazenda rival: lista todo o gado (os animais do meio do pasto não dava para alcançar por causa da cerca)
+const _riBull=rfInfo;rfInfo=function(fi){_riBull(fi);try{const box=document.getElementById('mbox');if(!box)return;const n=RFC.filter(c=>c.f===fi&&c.a&&!c.horse).length;if(!n)return;
+ const b=document.createElement('div');b.className='btns';b.innerHTML='<button class="b gold" data-act="rvherd" data-v="'+fi+'">🐄 Ver o gado ('+n+') e fazer oferta</button>';const last=[...box.children].reverse().find(e=>e.classList&&e.classList.contains('btns'));if(last)box.insertBefore(b,last);else box.appendChild(b)}catch(e){console.error(e)}};
+ACT.rvherd=function(e){const fi=+e.v,f=RF[fi];if(!f)return;const L=RFC.map((c,k)=>[c,k]).filter(([c])=>c.f===fi&&c.a&&!c.horse).map(([c,k])=>{const a=rvAnimal(c);return [c,k,a]}).sort((x,y)=>y[2].gen-x[2].gen);
+ showModal('<h3>🐄 Gado de '+rvName(f.i)+'</h3><div class="dim">Escolha um animal para fazer a oferta.</div>'+L.map(([c,k,a])=>'<div class="card"><div class="row"><b>'+a.name+' · '+BREEDS[a.breed].n+' '+(a.sex==='M'?(a.breeder?'♂ touro':'♂'):'♀')+'</b><span>'+stars(a.gen)+'</span></div><div class="row"><span class="dim">'+ageTxt(a)+' · '+Math.round(a.w)+' kg</span><button class="b gold" data-act="rvof1" data-v="'+fi+'|'+k+'">Fazer oferta</button></div></div>').join('')+'<div class="btns"><button class="b gray" data-act="close">Fechar</button></div>')};
+ACT.rvof1=function(e){const [fi,k]=String(e.v).split('|').map(Number),f=RF[fi],c=RFC[k];if(f&&c&&c.a)rvOfferModal(f,c)};
 // ===== Tutorial com setas: seta grande no mundo (também dentro dos prédios), seta na borda com distância e seta nos botões da tela =====
 const bDoor=id=>{const b=BLD.find(q=>q.id===id);return b?{x:b.door*TS+8,y:(b.y+b.h)*TS+6}:null};
 const rItem=(rid,act)=>{const r=ROOMS[rid];if(!r)return null;const it=r.items.find(i=>i.act===act);return it?{x:(r.x+it.x+(it.w||1)/2)*TS,y:(r.y+it.y)*TS+4}:null};
@@ -11640,6 +11651,7 @@ function stepCops(dt){if(inRoom())return;
    if(sp.aggr||a.st==='charge'||a.hurt||Math.hypot(a.x-P.x,a.y-P.y)<300){a.cop=1;copSpawn(a);if(sp.aggr&&Math.random()<.6){a.cop=2;copSpawn(a)}}}}
  for(let i=COPS.length-1;i>=0;i--){const c=COPS[i],a=c.tgt;c.flash=Math.max(0,c.flash-dt);if(c.tr)c.tr.t-=dt;
   if(c.st!=='back'&&(!a||a.st==='dead'||WILD.indexOf(a)<0))c.st='back';
+  if(c.st!=='back'&&a&&!wildTown(a)&&Math.hypot(a.x-c.x,a.y-c.y)>220){c.st='back';a.cop=0}// bicho fugiu da vila: PM desiste
   if(c.st==='run'){const dx=a.x-c.x,dy=a.y-c.y,d=Math.hypot(dx,dy)||1;c.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1);
    if(d>78){const s=118*dt;c.x+=dx/d*s;c.y+=dy/d*s;c.ph+=dt*14;c.mv=1}else{c.st='aim';c.cd=.45;c.mv=0}}
   else if(c.st==='aim'){const dx=a.x-c.x,dy=a.y-6-c.y,d=Math.hypot(dx,dy)||1;c.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1);c.mv=0;c.ang=Math.atan2(dy,dx);
@@ -11683,6 +11695,8 @@ const _hdNb=hookDay;hookDay=function(){if(!newbieSafe()||typeof ensureSab!=='fun
 let nbT=0;const _updNb=update;update=function(dt){_updNb(dt);if(!S)return;nbT-=dt;if(nbT>0)return;nbT=2;
  if(!tutOn()&&S.tutEnd==null){S.tutEnd=S.day;toast('🛡️ Proteção de iniciante: por mais 5 dias nada de onça, ladrão ou praga na lavoura. Use esse tempo para comprar cachorro, arrumar a cerca e pegar licença de caça.','good')}
  if(S.tutEnd!=null&&!S.nbWarn&&S.day>=S.tutEnd+4){S.nbWarn=1;toast('⚠️ Amanhã acaba a proteção de iniciante: onça, ladrões e javalis podem aparecer. Cachorros, cerca boa e luz no curral ajudam muito.','bad')}};
+// ---------- nada de tiro dentro de salas (bar, cabaré, lojas, shopping...)
+const _hlRoom=huntLegal;huntLegal=function(){if(inRoom()){tt('noshot','🚫 Aqui dentro não! Guarde a arma.','bad',4);return false}return _hlRoom()};
 // ===== Tela inicial, mundos (saves) e dificuldade =====
 let SLOT=0;
 const SK=n=>'fbo_w'+n;
