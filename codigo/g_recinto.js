@@ -26,7 +26,7 @@ function rvVisitStep(dt){const h=dayHour();
  if(!RVIS){if(h>=8&&h<16&&S.listings&&S.listings.length&&Math.random()<dt/90){const i=ri(0,Math.min(8,RIV.length-1)),p=RVP[i];if(!p)return;
    RVIS={i,x:(RCT.x1+1.5)*TS,y:33.9*TS,st:'in',tx:0,t:0,look:p.lk,dir:2,ph:0,mv:1,lx:pick(S.listings)}}return}
  const V=RVIS;
- if(V.st==='in'||V.st==='out'){const p=penX(V.lx)||RPEN[0],tx=V.st==='in'?p.cx:(RCT.x1+2)*TS,dx=tx-V.x;V.mv=1;V.dir=dx>0?3:2;V.ph+=dt*6;if(Math.abs(dx)<2){if(V.st==='in'){V.st='look';V.t=rnd(8,18);V.mv=0;V.dir=p.row?0:1}else RVIS=null}else V.x+=Math.sign(dx)*30*dt}
+ if(V.st==='in'||V.st==='out'){const p=penX(V.lx)||RPEN[0],tx=V.st==='in'?p.cx:(RCT.x1+2)*TS,dx=tx-V.x;V.mv=1;V.dir=dx>0?3:2;V.ph+=dt*6;if(Math.abs(dx)<2){if(V.st==='in'){V.st='look';V.t=rnd(8,18);V.mv=0;V.dir=p.row?0:1}else RVIS=null}else V.x+=Math.sign(dx)*Math.min(Math.abs(dx),30*dt)}
  else if(V.st==='look'){V.t-=dt;if(V.t<=0){const x=V.lx,li=S.listings.indexOf(x);
    if(li>=0&&Math.random()<.3&&!(typeof RAUC!=='undefined'&&RAUC&&RAUC.li===li)){const pn=x.pen;S.listings.splice(li,1);RCOW.delete(x.a.id);if(S.rk&&S.rk.v)S.rk.v[V.i]+=x.price*.1;const f=typeof RF!=='undefined'&&RF.find(z=>z.i===V.i);if(f&&f.n<22)f.n++;
     rvLog(V.i,'Comprou '+BREEDS[x.a.breed].n+' '+(x.a.sex==='F'?'♀':'♂')+' no recinto do leilão por '+R$(x.price));

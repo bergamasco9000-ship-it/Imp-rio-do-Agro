@@ -89,8 +89,8 @@ with sync_playwright() as p:
         pg,errs=newpage(b)
         pg.evaluate(LATE)
         roots=pg.evaluate("""()=>{const R=[];TABS.forEach(t=>R.push('openMenu("'+t[0]+'")'));NPCS.forEach(n=>R.push('npcModal("'+n.id+'")'));BLD.forEach(b=>R.push('enterBld("'+b.id+'")'));
-  if(typeof LUXS!=='undefined')LUXS.forEach(s=>R.push('luxStore("'+s.id+'")'));['muralModal()','fishShop()','kennelModal()','coopModal()','sleepModal()','helpModal()','useModal()','lodgeModal("arms")','lodgeModal("sell")','cmdMain(1)','cmdArms()','breedGuide()','impModal&&impModal()'].forEach(f=>R.push(f));return R}""")
-        bl=['close','totitle','bkok','bkdo','bkrest','delok','reset2','tutskip','menuclose','help','reload','newgame','tdel','tdelok']
+  if(typeof LUXS!=='undefined')LUXS.forEach(s=>R.push('luxStore("'+s.id+'")'));['muralModal()','celOpen("home")','celOpen("chats")','celOpen("cot")','celOpen("agenda")','celOpen("leiloes")','celOpen("expo")','celOpen("faz")','gerHire("sede")','judgeModal()','arenaModal()','fishShop()','kennelModal()','coopModal()','sleepModal()','helpModal()','useModal()','lodgeModal("arms")','lodgeModal("sell")','cmdMain(1)','cmdArms()','breedGuide()','impModal&&impModal()'].forEach(f=>R.push(f));return R}""")
+        bl=['close','totitle','bkok','bkdo','bkrest','delok','reset2','tutskip','menuclose','help','reload','newgame','tdel','tdelok','gerfire','gerdo']
         done=0
         for root in roots:
             try:pg.evaluate("()=>{hideModal();closeMenu();if(inRoom())exitRoom();"+root+"}")

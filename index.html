@@ -10788,7 +10788,7 @@ function rvVisitStep(dt){const h=dayHour();
  if(!RVIS){if(h>=8&&h<16&&S.listings&&S.listings.length&&Math.random()<dt/90){const i=ri(0,Math.min(8,RIV.length-1)),p=RVP[i];if(!p)return;
    RVIS={i,x:(RCT.x1+1.5)*TS,y:33.9*TS,st:'in',tx:0,t:0,look:p.lk,dir:2,ph:0,mv:1,lx:pick(S.listings)}}return}
  const V=RVIS;
- if(V.st==='in'||V.st==='out'){const p=penX(V.lx)||RPEN[0],tx=V.st==='in'?p.cx:(RCT.x1+2)*TS,dx=tx-V.x;V.mv=1;V.dir=dx>0?3:2;V.ph+=dt*6;if(Math.abs(dx)<2){if(V.st==='in'){V.st='look';V.t=rnd(8,18);V.mv=0;V.dir=p.row?0:1}else RVIS=null}else V.x+=Math.sign(dx)*30*dt}
+ if(V.st==='in'||V.st==='out'){const p=penX(V.lx)||RPEN[0],tx=V.st==='in'?p.cx:(RCT.x1+2)*TS,dx=tx-V.x;V.mv=1;V.dir=dx>0?3:2;V.ph+=dt*6;if(Math.abs(dx)<2){if(V.st==='in'){V.st='look';V.t=rnd(8,18);V.mv=0;V.dir=p.row?0:1}else RVIS=null}else V.x+=Math.sign(dx)*Math.min(Math.abs(dx),30*dt)}
  else if(V.st==='look'){V.t-=dt;if(V.t<=0){const x=V.lx,li=S.listings.indexOf(x);
    if(li>=0&&Math.random()<.3&&!(typeof RAUC!=='undefined'&&RAUC&&RAUC.li===li)){const pn=x.pen;S.listings.splice(li,1);RCOW.delete(x.a.id);if(S.rk&&S.rk.v)S.rk.v[V.i]+=x.price*.1;const f=typeof RF!=='undefined'&&RF.find(z=>z.i===V.i);if(f&&f.n<22)f.n++;
     rvLog(V.i,'Comprou '+BREEDS[x.a.breed].n+' '+(x.a.sex==='F'?'♀':'♂')+' no recinto do leilão por '+R$(x.price));
@@ -11206,14 +11206,14 @@ const spotFree=sp=>!BARF.some(b=>b.spot===sp&&b.st!=='off');
 function stepBarF(dt){const want=barWant(),act=BARF.filter(b=>b.st!=='off').length;
  if(act<want){const b=BARF.find(q=>q.st==='off'&&q.t<=0);if(b){const free=BSEAT.concat(BSTAND).filter(spotFree);if(free.length){b.spot=pick(free);b.x=(Math.random()<.5?133:153)*TS;b.y=46.5*TS;b.st='go';b.vis=1;b.cup=0}}}
  for(const b of BARF){b.t-=dt;if(b.st==='off')continue;
-  if(b.st==='go'||b.st==='leave'||b.st==='door'){const tx=b.st==='leave'?(b.x<139*TS?128:154)*TS:b.st==='door'?(VBAR.door+.5)*TS:b.spot[0]*TS,ty=b.st==='door'?46.4*TS:b.spot[1]*TS;
+  if(b.st==='go'||b.st==='leave'||b.st==='door'){if(b.st==='go'&&!b.spot){b.st='leave'}const tx=b.st==='leave'?(b.x<139*TS?128:154)*TS:b.st==='door'?(VBAR.door+.5)*TS:b.spot[0]*TS,ty=b.st==='door'||b.st==='leave'?46.4*TS:b.spot[1]*TS;
    const dx=tx-b.x,dy=ty-b.y,d=Math.hypot(dx,dy);if(d<1.5){if(b.st==='leave'){b.st='off';b.vis=0;b.spot=null;b.t=rnd(20,80);continue}if(b.st==='door'){b.st='inside';b.vis=0;b.t=rnd(8,25);continue}b.st='stay';b.t=rnd(25,70);b.mv=0;b.dir=b.spot[2];continue}
    const s=Math.min(d,(b.drunk?11:15)*dt);b.x+=dx/d*s;b.y+=dy/d*s+(b.drunk?Math.sin(frame/9+b.i)*.15:0);b.mv=1;b.ph+=dt*2.2;b.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1)}
-  else if(b.st==='inside'){if(b.t<=0){b.st='go';b.vis=1;b.cup=1;b.x=(VBAR.door+.5)*TS;b.y=46.4*TS}}
+  else if(b.st==='inside'){if(b.t<=0){b.vis=1;b.cup=1;b.x=(VBAR.door+.5)*TS;b.y=46.4*TS;if(!b.spot){const free=BSEAT.concat(BSTAND).filter(spotFree);b.spot=free.length?pick(free):null}b.st=b.spot?'go':'leave'}}
   else if(b.st==='stay'){b.mv=0;b.raise=Math.max(0,b.raise-dt);if(Math.random()<dt/14&&b.cup)b.raise=1.2;
    const nb=BARF.filter(q=>q!==b&&q.st==='stay'&&Math.abs(q.x-b.x)<40);if(nb.length&&Math.random()<dt/6){const q=pick(nb);b.dir=q.x>b.x?3:2}
    b.drunk=dayHour()>=23||dayHour()<2;
-   if(b.t<=0){const r=Math.random(),over=BARF.filter(q=>q.st!=='off').length>barWant();if(over||r<.3){b.st='leave';b.spot=null}else if(r<.75){b.st='door'}else{const free=BSEAT.concat(BSTAND).filter(spotFree);if(free.length)b.spot=pick(free);b.st='go'}}}}}
+   if(b.t<=0){const r=Math.random(),over=BARF.filter(q=>q.st!=='off').length>barWant();if(over||r<.3){b.st='leave';b.spot=null}else if(r<.75){b.st='door'}else{const free=BSEAT.concat(BSTAND).filter(spotFree);if(free.length){b.spot=pick(free);b.st='go'}else{b.st='leave';b.spot=null}}}}}}
 const _updBarF=update;update=function(dt){_updBarF(dt);if(paused()||inRoom())return;if(Math.abs(P.x-140*TS)>VW+300||Math.abs(P.y-46*TS)>VH+300)return;try{stepBarF(Math.min(dt,.1)*Math.max(1,Math.min(speed||1,6)))}catch(e){console.error(e)}};
 // substitui a "turma parada" antiga por essa
 drawBarCrowd=function(L,add){const x0=CX-40,x1=CX+VW+40;
@@ -12095,6 +12095,486 @@ let bkWarned=0,bkT=30;const _updBk=update;update=function(dt){_updBk(dt);if(!S||
 // tela inicial: restaurar de arquivo também
 const _trBk=tRender;tRender=function(){_trBk.apply(this,arguments);try{if(TMODE==='imp'){const ta=document.getElementById('tcode');if(ta&&!document.getElementById('tfile')){const i=document.createElement('input');i.type='file';i.id='tfile';i.accept='.json,application/json,text/plain';i.style.cssText='margin:6px 0;width:100%';
    i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const o=bkParse(r.result);ta.value=o?btoa(unescape(encodeURIComponent(JSON.stringify(o)))):r.result};r.readAsText(f)};ta.parentNode.insertBefore(i,ta)}}}catch(e){}};
+// ===== 📱 CELULAR DO FAZENDEIRO: mensagens (zap), cotações, agenda, leilões, fazendas/gerentes — o mundo conversa com você
+const CELC={com:{n:'Comendador',ic:'🎩',c:'#3a1230'},vet:{n:'Dra. Lúcia · veterinária',ic:'🩺',c:'#2a6a5a'},ademar:{n:'Ademar · Leilão da Vila',ic:'🔨',c:'#7a1f1f'},
+ elite:{n:'Leilões Estrelas do Agro',ic:'⭐',c:'#8a6a1a'},expo:{n:'Parque de Exposições',ic:'🏆',c:'#2f6a3a'},news:{n:'Agro Notícias',ic:'📰',c:'#2a3a6a'},
+ banco:{n:'Banco da Vila',ic:'🏦',c:'#2f4a7a'},mae:{n:'Mãe',ic:'👩',c:'#a84a6a'},tonhao:{n:'Tonhão do Bar',ic:'🍺',c:'#8a5a1a'},rival:{n:'Rivais',ic:'🤠',c:'#5a3a22'}};
+function ensureCel(){if(!S.cel)S.cel={m:[],nid:1,sick:0,usd:5.2,soja:128,hist:{arr:[],usd:[],soja:[]},seen:{}};return S.cel}
+function celContact(k){if(CELC[k])return CELC[k];if(k.startsWith('g_')&&typeof gerContact==='function')return gerContact(k);if(k.startsWith('rv')){const i=+k.slice(2);return{n:(RIV[i]||['',''])[1]+' · '+(RIV[i]||[''])[0],ic:'🤠',c:'#5a3a22'}}return{n:k,ic:'💬',c:'#444'}}
+function celMsg(c,t,act,quiet){if(!S)return;const C=ensureCel();C.m.push({id:C.nid++,c,t,d:S.day,h:Math.floor(S.t*24*60),r:0,act:act||null});if(C.m.length>220)C.m.splice(0,C.m.length-220);
+ celBadge();if(!quiet){toast('📱 '+celContact(c).ic+' '+celContact(c).n+': '+t.slice(0,70)+(t.length>70?'…':''));try{ifx('ping',0,600)}catch(e){}try{navigator.vibrate&&navigator.vibrate(40)}catch(e){}}}
+if(typeof FX!=='undefined')FX.ping=()=>{const t=AC.currentTime;sfxTone(1568,t,.12,.06);sfxTone(2093,t+.09,.18,.05)};
+const celUnread=()=>S&&S.cel?S.cel.m.filter(m=>!m.r).length:0;
+function celBadge(){const b=document.querySelector('[data-act="cel"]');if(!b)return;const n=celUnread();b.innerHTML='📱'+(n?'<span style="position:absolute;top:-4px;right:-4px;background:#d83a3a;color:#fff;border-radius:9px;font-size:8px;padding:2px 4px;font-family:sans-serif">'+(n>99?'99+':n)+'</span>':'');b.style.position='relative'}
+const _rhCel=renderHUD;renderHUD=function(){_rhCel.apply(this,arguments);const r=document.getElementById('hudR');if(!r)return;if(!r.querySelector('[data-act="cel"]')){const b=document.createElement('button');b.dataset.act='cel';const m=r.querySelector('[data-act="somtg"]')||r.querySelector('[data-act="menu"]');r.insertBefore(b,m)}celBadge()};
+// ---------- tela do celular
+const hhmm=m=>String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const dTxt=d=>d===S.day?'hoje':d===S.day-1?'ontem':(d%30+1)+'/'+MONTHS[Math.floor((d%360)/30)];
+let CELAPP='home',CELCHAT=null;
+function celFrame(title,body,back){const now=hhmm(Math.floor(S.t*24*60));
+ return '<div style="background:#0c0c10;border-radius:22px;padding:8px 8px 10px;border:3px solid #2a2a30;box-shadow:0 0 0 2px #000,inset 0 0 0 1px #3a3a44;max-width:520px;margin:-6px auto">'
+ +'<div style="display:flex;justify-content:space-between;color:#ddd;font:11px sans-serif;padding:0 10px 4px"><b>'+now+'</b><span style="width:60px;height:10px;background:#000;border-radius:6px"></span><span>📶 🔋'+(70+S.day%30)+'%</span></div>'
+ +'<div class="celbody" style="background:linear-gradient(#f4efe4,#e8e0cf);border-radius:14px;min-height:240px;max-height:62vh;overflow:auto;padding:8px;color:#2a1a10">'
+ +(back?'<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><button class="b gray" data-act="celapp" data-v="'+back+'" style="padding:4px 8px">◀</button><b style="font:bold 15px sans-serif">'+title+'</b></div>':'')+body+'</div>'
+ +'<div style="display:flex;justify-content:center;gap:40px;padding-top:7px"><button class="b gray" data-act="celapp" data-v="home" style="padding:3px 14px;border-radius:10px">⬤</button><button class="b gray" data-act="close" style="padding:3px 10px;border-radius:10px">Guardar</button></div></div>'}
+function celHome(){const n=celUnread(),apps=[['chats','💬','Mensagens',n],['cot','📈','Cotações'],['agenda','📅','Agenda'],['leiloes','🔨','Leilões'],['expo','🏆','Exposição'],['faz','🏢','Fazendas']];
+ return celFrame('', '<div style="text-align:center;font:bold 13px sans-serif;color:#5a4a3a;margin:4px 0 10px">'+(S.farmName||'Fazenda Boi de Ouro')+'</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">'
+ +apps.map(([k,ic,nm,b])=>'<div data-act="celapp" data-v="'+k+'" style="text-align:center;cursor:pointer;position:relative"><div style="font-size:30px;background:#fff;border-radius:14px;padding:8px 0;box-shadow:0 2px 4px rgba(0,0,0,.2)">'+ic+'</div><div style="font:12px sans-serif;margin-top:3px">'+nm+'</div>'+(b?'<span style="position:absolute;top:-4px;right:12px;background:#d83a3a;color:#fff;border-radius:9px;font:bold 11px sans-serif;padding:1px 6px">'+b+'</span>':'')+'</div>').join('')+'</div>'
+ +'<div style="margin-top:12px;font:12px sans-serif;color:#6a5a4a;text-align:center">Toque num app. As mensagens chegam sozinhas durante o jogo.</div>')}
+function celChats(){const C=ensureCel(),by={};for(const m of C.m){by[m.c]=m}const L=Object.values(by).sort((a,b)=>b.id-a.id);
+ return celFrame('Mensagens',L.length?L.map(m=>{const k=celContact(m.c),un=C.m.filter(x=>x.c===m.c&&!x.r).length;return '<div data-act="celchat" data-v="'+m.c+'" style="display:flex;gap:8px;align-items:center;padding:7px 4px;border-bottom:1px solid #d8ccb8;cursor:pointer"><div style="width:38px;height:38px;border-radius:50%;background:'+k.c+';display:flex;align-items:center;justify-content:center;font-size:20px;flex:none">'+k.ic+'</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><b style="font:bold 13px sans-serif">'+k.n+'</b><span style="font:11px sans-serif;color:'+(un?'#1a9a4a':'#8a7a6a')+'">'+dTxt(m.d)+'</span></div><div style="font:12px sans-serif;color:#5a4a3a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+m.t+'</div></div>'+(un?'<span style="background:#1a9a4a;color:#fff;border-radius:9px;font:bold 11px sans-serif;padding:1px 6px">'+un+'</span>':'')+'</div>'}).join(''):'<div class="dim">Nenhuma mensagem ainda.</div>','home')}
+function celChat(c){const C=ensureCel(),k=celContact(c),L=C.m.filter(m=>m.c===c);L.forEach(m=>m.r=1);celBadge();let lastD=-1;
+ return celFrame(k.ic+' '+k.n,'<div style="background:#e6ddc8;border-radius:10px;padding:6px">'+L.slice(-40).map(m=>{let s='';if(m.d!==lastD){lastD=m.d;s+='<div style="text-align:center;font:11px sans-serif;color:#7a6a5a;margin:6px 0">'+dTxt(m.d)+'</div>'}
+  return s+'<div style="background:#fff;border-radius:2px 12px 12px 12px;padding:6px 9px;margin:4px 40px 4px 0;box-shadow:0 1px 1px rgba(0,0,0,.15);font:14px sans-serif;line-height:1.3">'+m.t+(m.act?'<div style="margin-top:5px"><button class="b gold" data-act="'+m.act.a+'" data-v="'+(m.act.v||'')+'" style="padding:4px 8px">'+m.act.l+'</button></div>':'')+'<div style="text-align:right;font:10px sans-serif;color:#9a8a7a">'+hhmm(m.h)+' ✓✓</div></div>'}).join('')+'</div>','chats')}
+function celCot(){const C=ensureCel(),a=Math.round(arroba('nelore')),H=C.hist;const sp=(arr)=>{if(arr.length<2)return '';const mn=Math.min(...arr),mx=Math.max(...arr),w=120,h=28;return '<svg width="'+w+'" height="'+h+'" style="vertical-align:middle"><polyline fill="none" stroke="'+(arr[arr.length-1]>=arr[0]?'#1a9a4a':'#c83a2a')+'" stroke-width="2" points="'+arr.map((v,i)=>(i/(arr.length-1)*w).toFixed(1)+','+(h-2-(mx>mn?(v-mn)/(mx-mn):.5)*(h-4)).toFixed(1)).join(' ')+'"/></svg>'};
+ const row=(n,v,arr,u)=>{const ch=arr.length>1?(arr[arr.length-1]/arr[0]-1)*100:0;return '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 2px;border-bottom:1px solid #d8ccb8"><div><b style="font:bold 13px sans-serif">'+n+'</b><div style="font:12px sans-serif;color:#6a5a4a">'+u+'</div></div>'+sp(arr)+'<div style="text-align:right"><b style="font:bold 14px sans-serif">'+v+'</b><div style="font:12px sans-serif;color:'+(ch>=0?'#1a9a4a':'#c83a2a')+'">'+(ch>=0?'▲':'▼')+' '+Math.abs(ch).toFixed(1).replace('.',',')+'%</div></div></div>'};
+ let h=row('🐂 Boi gordo','R$ '+a,H.arr,'arroba (15 kg) · Nelore')+row('🐮 Bezerro desmamado',R$(Math.round(a*7.8)),H.arr.map(x=>x*7.8),'cabeça · 210 kg')+row('🌱 Soja','R$ '+C.soja.toFixed(2).replace('.',','),H.soja,'saca de 60 kg')+row('💵 Dólar','R$ '+C.usd.toFixed(2).replace('.',','),H.usd,'comercial');
+ if(typeof STK!=='undefined'&&S.bk&&S.bk.p)h+='<div style="font:bold 12px sans-serif;margin:8px 0 2px">📊 Bolsa</div>'+STK.slice(0,6).map(s=>'<div style="display:flex;justify-content:space-between;font:13px sans-serif;padding:3px 2px"><span>'+s.id+'</span><b>R$ '+(S.bk.p[s.id]||0).toFixed(2).replace('.',',')+'</b></div>').join('');
+ return celFrame('Cotações',h+'<div style="font:11px sans-serif;color:#8a7a6a;margin-top:6px">Atualiza todo dia de manhã.</div>','home')}
+function celAgenda(){const L=[];for(let d=S.day;d<S.day+35;d++){const dm=d%30+1,mo=Math.floor((d%360)/30),tag=dm+'/'+MONTHS[mo];
+  if(d%7===0)L.push([d,tag,'🔨 Leilão semanal abre (3 dias) · Leilão da Vila']);if(dm===15)L.push([d,tag,'⭐ Leilão Estrelas do Agro · 20h · Salão de Gala']);if(d%90===45)L.push([d,tag,'🏆 Exposição Agropecuária (5 dias) · Arena']);
+  if(dm===25)L.push([d,tag,'🐂 Rodeio e laço · Arena']);if(typeof FESTAS!=='undefined')for(const k in FESTAS){const f=FESTAS[k];if(mo===f.m&&f.d[0]===dm)L.push([d,tag,f.ic+' '+f.n])}
+  if(S.com&&S.com.loan&&d%30===1)L.push([d,tag,'💰 Parcela do Comendador ('+R$(S.com.loan.parc)+')']);if(S.com&&S.com.ct&&d===S.com.ct.due)L.push([d,tag,'🐂 Prazo do contrato do Comendador ('+S.com.ct.n+' bois)'])}
+ return celFrame('Agenda',L.map(([d,t,x])=>'<div style="display:flex;gap:8px;padding:6px 2px;border-bottom:1px solid #d8ccb8;font:13px sans-serif"><b style="min-width:56px;color:'+(d===S.day?'#c83a2a':'#5a4a3a')+'">'+(d===S.day?'HOJE':t)+'</b><span>'+x+'</span></div>').join(''),'home')}
+function celLeiloes(){const A=S.aucOpen,dm=S.day%30+1,nx=(15-dm+30)%30,inv=typeof eliteInvited==='function'&&eliteInvited();
+ let h='<div class="card"><b>🔨 Leilão da Vila (semanal)</b><div class="dim">'+(A?(A.type==='elite'?'👑 ELITE ':'')+'Aberto! Fecha em '+(A.until-S.day)+' dia(s). Vá ao prédio do leilão, no centro, e sente na arquibancada.':'Abre todo 7º dia, por 3 dias.')+'</div>'+(A?'<button class="b gold" data-act="celgo" data-v="leilao">📍 Me mostre o caminho</button>':'')+'</div>';
+ h+='<div class="card"><b>⭐ Leilão Estrelas do Agro</b><div class="dim">As melhores genéticas do país, no Salão de Gala ao lado da Arena. Todo dia 15, às 20h, traje de gala. '+(nx===0?'<b class="gold">É HOJE!</b>':'Faltam '+nx+' dia(s).')+'</div><div>'+(inv?'<span class="grn">✅ Você está na lista de convidados.</span>':'<span class="red">🔒 Só convidados: reputação 50+ ou patrimônio de R$ 5 milhões.</span>')+'</div>'+(nx===0?'<button class="b gold" data-act="celgo" data-v="elite">📍 Me mostre o caminho</button>':'')+'</div>';
+ return celFrame('Leilões',h,'home')}
+function celExpo(){let h='';const ex=!!S.expo,next=(()=>{for(let d=S.day;d<S.day+100;d++)if(d%90===45)return d;return S.day})();
+ h+='<div class="card"><b>🏆 Exposição Agropecuária</b><div class="dim">'+(ex?'<b class="gold">ABERTA</b> por mais '+(S.expo.until-S.day)+' dia(s). O julgamento ao vivo é na Arena, ao sul da vila.':'Próxima em '+(next-S.day)+' dia(s) (dia '+(next%30+1)+'/'+MONTHS[Math.floor((next%360)/30)]+').')+'</div>'+(ex?'<button class="b gold" data-act="celgo" data-v="arena">📍 Me mostre o caminho</button>':'')+'</div>';
+ const T=typeof ensureF==='function'?ensureF().trof:[];h+='<div class="card"><b>Seus troféus ('+T.length+')</b>'+(T.length?T.slice(0,8).map(t=>'<div style="font:13px sans-serif">'+t.ic+' '+t.n+'</div>').join(''):'<div class="dim">Nenhum ainda.</div>')+'</div>';
+ const champs=S.herd.filter(a=>a.title);if(champs.length)h+='<div class="card"><b>🎗️ Seus campeões</b>'+champs.slice(0,8).map(a=>'<div style="font:13px sans-serif">'+a.name+' · '+BREEDS[a.breed].n+' · gen '+a.gen+(a.titles?' · '+a.titles+'×':'')+'</div>').join('')+'</div>';
+ return celFrame('Exposição',h,'home')}
+function celFaz(){return celFrame('Fazendas',typeof gerFazHTML==='function'?gerFazHTML():'<div class="dim">Em breve.</div>','home')}
+function celOpen(app,v){if(!S)return;CELAPP=app||'home';reModal=null;let h;
+ if(CELAPP==='chats')h=celChats();else if(CELAPP==='chat')h=celChat(v||CELCHAT);else if(CELAPP==='cot')h=celCot();else if(CELAPP==='agenda')h=celAgenda();else if(CELAPP==='leiloes')h=celLeiloes();else if(CELAPP==='expo')h=celExpo();else if(CELAPP==='faz')h=celFaz();else h=celHome();
+ showModal(h);reModal=()=>celOpen(CELAPP,CELCHAT)}
+Object.assign(ACT,{cel(){celOpen('home')},celapp(e){celOpen(e.v)},celchat(e){CELCHAT=e.v;celOpen('chat',e.v)},
+ celgo(e){const T={leilao:()=>bDoor('leilao'),elite:()=>bDoor('elite'),arena:()=>({x:106*TS+16,y:69*TS+4}),com:()=>bDoor('bar'),vet:()=>bDoor('vet')}[e.v];const p=T&&T();if(!p)return;CELWP={x:p.x,y:p.y,n:{leilao:'Leilão da Vila',elite:'Salão de Gala',arena:'Arena',com:'Bar do Tonhão',vet:'Veterinária'}[e.v]||''};hideModal();toast('📍 Siga a seta até '+CELWP.n)},
+ celherd(){hideModal();openMenu('herd')}});
+// ---------- seta de destino (GPS)
+let CELWP=null;const celArrow=document.createElement('div');celArrow.id='celarrow';celArrow.style.cssText='position:fixed;z-index:7;pointer-events:none;display:none;font:bold 11px sans-serif;color:#fff;text-shadow:0 1px 2px #000';document.body.appendChild(celArrow);
+function celArrowStep(){if(!CELWP||!S||inRoom()){celArrow.style.display='none';return}const d=Math.hypot(CELWP.x-P.x,CELWP.y-P.y);if(d<40){CELWP=null;celArrow.style.display='none';return}
+ const r=CV.getBoundingClientRect(),s=r.width/CV.width*PS,sx=r.left+(CELWP.x-CX)*s,sy=r.top+(CELWP.y-CY)*s,cx=r.left+r.width/2,cy=r.top+r.height/2,on=sx>r.left+30&&sx<r.right-30&&sy>r.top+60&&sy<r.bottom-60;
+ const ang=Math.atan2(sy-cy,sx-cx),R2=Math.min(r.width,r.height)/2-50,ax=on?sx:cx+Math.cos(ang)*Math.min(R2*1.6,r.width/2-40),ay=on?sy-40-Math.abs(Math.sin(frame/8))*6:cy+Math.sin(ang)*Math.min(R2,r.height/2-50);
+ celArrow.style.display='block';celArrow.style.left=(ax-30)+'px';celArrow.style.top=(ay-20)+'px';celArrow.innerHTML='<div style="width:60px;text-align:center"><div style="font-size:26px;transform:rotate('+(on?90:ang*180/Math.PI)+'deg);color:#ffd84a">➤</div>'+CELWP.n+'<br>'+Math.round(d/TS)+' m</div>'}
+// ---------- mensagens automáticas do mundo
+const NEWS_UP=['Exportação de carne bate recorde e anima o mercado do boi.','Frigoríficos disputam boiada e arroba sobe.','Oferta curta de boi gordo no Centro-Oeste puxa o preço.','China amplia compra de carne brasileira.'];
+const NEWS_DN=['Escalas cheias nos frigoríficos derrubam a arroba.','Chuvas aumentam a oferta de boi e o preço recua.','Exportação desacelera e mercado do boi fica pressionado.'];
+const NEWS_GEN=['Safra de soja deve ser recorde, diz associação.','Leilões de genética movimentam milhões no interior.','Pesquisa: pasto bem manejado dobra a lotação por hectare.','Tecnologia de rastreamento de gado chega às pequenas propriedades.','Preço do milho sobe e encarece o confinamento.'];
+const MAE=['Filho, tá se alimentando direito? Não vai ficar só no churrasco, hein.','Vi na TV que tá frio aí. Leva um casaco!','Tô orgulhosa de você, viu? Seu pai ia gostar de ver essa fazenda.','Quando vem me visitar? Faço aquele bolo de fubá.','Não esquece de rezar antes de dormir. Beijo!'];
+const TONH=['Hoje tem sinuca valendo cerveja. Aparece aí, patrão!','Chegou cachaça nova de alambique. Tá uma beleza.','Teve briga no bar ontem, mas já tá tudo calmo. Hehe.'];
+let celLastMkt=null;
+const _hdCel=hookDay;hookDay=function(){_hdCel.apply(this,arguments);try{celDay()}catch(e){console.error(e)}};
+function celDay(){const C=ensureCel(),dm=S.day%30+1;
+ // cotações
+ C.usd=clamp(C.usd*(1+rnd(-.012,.012)),4.2,6.6);C.soja=clamp(C.soja*(1+rnd(-.018,.018)),95,170);
+ C.hist.arr.push(Math.round(arroba('nelore')));C.hist.usd.push(+C.usd.toFixed(2));C.hist.soja.push(+C.soja.toFixed(2));for(const k in C.hist)if(C.hist[k].length>14)C.hist[k].shift();
+ const ar=C.hist.arr,ch=ar.length>1?ar[ar.length-1]/ar[ar.length-2]-1:0;
+ if(Math.abs(ch)>.012||Math.random()<.18)celMsg('news',(ch>.012?pick(NEWS_UP):ch<-.012?pick(NEWS_DN):pick(NEWS_GEN))+' Arroba hoje: R$ '+ar[ar.length-1]+(ch?' ('+(ch>0?'+':'')+(ch*100).toFixed(1).replace('.',',')+'%)':'')+'.',{l:'📈 Ver cotações',a:'celapp',v:'cot'},true);
+ // leilão semanal
+ if(S.aucOpen&&S.aucOpen.until===S.day+3)celMsg('ademar',(S.aucOpen.type==='elite'?'👑 Leilão ELITE aberto!':'Bom dia! O leilão da semana abriu')+' Fica 3 dias. Venha para o pregão ao vivo: sente na arquibancada e levante a plaquinha. Se quiser vender, marque os animais em Rebanho › Pôr no leilão.',{l:'📍 Ir ao leilão',a:'celgo',v:'leilao'});
+ // gala
+ if(dm===13){if(typeof eliteInvited==='function'&&eliteInvited())celMsg('elite','Prezado(a) '+(S.farmName||'pecuarista')+', é uma honra convidá-lo(a) para o Leilão Estrelas do Agro, dia 15 às 20h, no Salão de Gala. Traje: terno. As melhores genéticas do Brasil estarão na pista.',{l:'⭐ Ver leilões',a:'celapp',v:'leiloes'});
+  else if(!C.seen.galaLock){C.seen.galaLock=1;celMsg('elite','O Leilão Estrelas do Agro acontece todo dia 15, só para convidados (reputação 50+ ou patrimônio de R$ 5 milhões). Continue crescendo e o convite chega!',null,true)}}
+ if(dm===15&&typeof eliteInvited==='function'&&eliteInvited())celMsg('elite','É hoje! 20h no Salão de Gala, ao lado da Arena. Sua mesa está reservada. 🥂',{l:'📍 Me leve lá',a:'celgo',v:'elite'});
+ // exposição
+ if((S.day+5)%90===45)celMsg('expo','Faltam 5 dias para a Exposição Agropecuária! Prepare seus melhores animais: genética, peso e saúde contam pontos.',null);
+ if(S.expo&&S.expo.until===S.day+5)celMsg('expo','A Exposição abriu! Inscrições na Arena. O julgamento é ao vivo: você mesmo entra na pista com seu animal.',{l:'📍 Ir à Arena',a:'celgo',v:'arena'});
+ // doentes
+ const sick=S.herd.filter(a=>a.sick).length;if(sick>C.sick&&sick>0)celMsg('vet',sick===1?'Um animal seu está doente. Quanto antes tratar, menor o risco de perder.':'Tem '+sick+' animais doentes no seu rebanho! Trate logo para não perder ninguém.',{l:'🐄 Ver rebanho',a:'celherd'});C.sick=sick;
+ // Comendador
+ if(S.com&&S.com.met&&S.day%7===1)celMsg('com',pick(['Tenho negócios novos na mesa essa semana. Passa no camarote.','Meus rapazes separaram umas oportunidades pra você. Não demora.','O uísque tá gelando. E as propostas também.']),{l:'📍 Ir ao bar',a:'celgo',v:'com'});
+ if(S.com&&S.com.loan&&S.day%30===0)celMsg('com','Amanhã é dia de parcela: '+R$(S.com.loan.parc)+'. Não me faça mandar os rapazes.');
+ if(S.com&&S.com.ct&&S.com.ct.due===S.day+3)celMsg('com','Faltam 3 dias pro nosso contrato de '+S.com.ct.n+' bois. Espero que esteja tudo certo...');
+ // vida
+ if(Math.random()<.035)celMsg('mae',pick(MAE),null,true);if(Math.random()<.03)celMsg('tonhao',pick(TONH),null,true);
+ if(Math.random()<.06&&typeof rankList==='function'){const L=rankList(),me=L.findIndex(x=>x.me),i=Math.floor(Math.random()*RIV.length),rv=L.findIndex(x=>x.n===RIV[i][0]);
+  celMsg('rv'+i,rv<me?pick(['Ainda tô na sua frente no ranking, hein! 😏','Vi seu gado na estrada. Bonito... mas o meu é melhor.','Quando crescer, me liga. 😂']):pick(['Tá crescendo rápido, hein? Qual é o segredo?','Parabéns pela fazenda. Um dia a gente faz negócio.','Vou te alcançar, pode esperar!']),null,true)}}
+// boas-vindas
+const _updCel=update;let celT=0;update=function(dt){_updCel(dt);if(!S)return;celT+=dt;if(celT>.15){celT=0;celArrowStep()}
+ if(!S.cel&&typeof TUT!=='undefined'&&S.tut>=TUT.length){ensureCel();celMsg('mae','Filho, comprei esse celular pra você não sumir! Aqui chegam mensagens do pessoal da região, cotação do boi e a agenda dos leilões. Te amo! ❤️',{l:'📱 Abrir celular',a:'cel'})}};
+if(typeof GUIDE!=='undefined')GUIDE.push({lv:1,ic:'📱',t:'Celular',h:'O botão 📱 no topo abre o celular: mensagens da veterinária, do leiloeiro, do Comendador e dos gerentes, cotação do boi, agenda de leilões e exposições, e suas fazendas. O número vermelho mostra mensagens novas.'});
+
+{const st=document.createElement('style');st.textContent='.celbody .card{background:#fffdf8;color:#2a1a10;border:1px solid #d8ccb8;box-shadow:0 1px 2px rgba(0,0,0,.1)}.celbody .dim{color:#6a5a4a}.celbody .gold{color:#a8781a}.celbody .grn{color:#1a8a3a}.celbody .red{color:#c83a2a}.celbody b{color:#2a1a10}';document.head.appendChild(st)}
+// ===== 🔨 LEILÃO AO VIVO: pregão semanal na arquibancada do Leilão da Vila + ⭐ Leilão Estrelas do Agro no Salão de Gala
+// (leiloeiro cantando o lance, rivais e convidados levantando a plaquinha em tempo real, o animal desfilando na pista, telão)
+// ---------- convidados da gala (personagens inventados que representam os "tipos" do agro)
+const GALA=[
+ {id:'braulio',n:'Dr. Bráulio Mattos',tag:'o Rei da Soja, de Sorriso (MT)',num:7,bud:1.25,agr:.55,pref:['nelorepo','angus','brangus'],p:{shirt:'#f4f4f0',hair:'#c8c8c8',pants:'#1e2a48',look:{hair:'calvo',jacket:'#1e2a48',jk:'terno',slv:'#1e2a48',cuff:'#ffffff',psq:'#c8a040',tie:'#2a4a8a',glasses:1,beard:'nenhuma',belly:1,crease:1}},
+  fala:['Soja paga o boi, e o boi paga a festa. Hahaha!','Comprei mais 5 mil hectares no Mato Grosso esse ano.','Genética boa é igual soja boa: tem que ter semente certa.']},
+ {id:'leo',n:'Léo Ventania',tag:'cantor sertanejo e criador',num:22,bud:.9,agr:.75,pref:['nelorepo','brahman','senepol'],p:{shirt:'#1a1a1a',hair:'#3a2a1a',pants:'#1a1a1a',hat:'#f4f0e4',look:{hat:'vaqueiro',hatc:'#f4f0e4',band:'#c8a040',concho:'#f0d060',jacket:'#2a2a3a',jk:'couro',slv:'#2a2a3a',glasses:1,glassesK:'avi',beltK:'gg',beard:'cavanhaque',bootP:'jacare',tallBoot:1}},
+  fala:['Ô trem bão! Esse touro aí dá até modão.','Vou botar esse boi no clipe novo, uai.','Já cantei pra 80 mil pessoas, mas lance alto me deixa nervoso.']},
+ {id:'vitoria',n:'Dona Vitória Albuquerque',tag:'herdeira do Nelore, de Goiás',num:3,bud:1.4,agr:.6,pref:['nelorepo','gir','nelore'],p:{g:'f',shirt:'#f4f0e4',hair:'#e8d070',pants:'#8a1a22',look:{g:'f',hair:'coque',hc:'#e8d070',jacket:'#b8242a',jk:'terno',slv:'#b8242a',cuff:'#f4f0e4',skirt:'#8a1a22',beard:null,pearls:1}},
+  fala:['Meu avô começou com 12 vacas. Hoje são 40 mil cabeças.','Nelore de pista é coisa séria, meu bem.','Gosto de gente que trabalha de verdade no campo.']},
+ {id:'joaquim',n:'Coronel Joaquim Cabral',tag:'o Barão do Pantanal (MS)',num:15,bud:1,agr:.45,pref:['nelore','nelorepo','brahman'],p:{shirt:'#f4f0e4',hair:'#e8e8e8',pants:'#d8ccb0',hat:'#e8dcb0',look:{hat:'pantaneiro',hatc:'#e8dcb0',band:'#1a1a1a',jacket:'#d8ccb0',jk:'terno',slv:'#d8ccb0',cuff:'#ffffff',beard:'bigode',hc:'#f0f0f0',old:1,psq:'#2a6a3a'}},
+  fala:['No meu tempo, a boiada atravessava o Pantanal a cavalo.','Cheia boa é cheia que a gente sabe a hora de sair.','Lance alto é que nem onça: tem que ter coragem.']},
+ {id:'ph',n:'PH Agro',tag:'influenciador do agro (2 milhões de seguidores)',num:41,bud:.55,agr:.85,pref:['angus','wagyu','senepol'],p:{shirt:'#ffffff',hair:'#1a1a1a',pants:'#5a5e66',look:{hair:'topete',jacket:'#5a5e66',jk:'terno',slv:'#5a5e66',cuff:'#ffffff',beard:'nenhuma',glasses:1,glassesK:'sq'}},phone:1,
+  fala:['Fala, galera! Tô aqui no maior leilão do Brasil! 📱','Se esse vídeo bater 1 milhão eu compro o touro.','O agro é tech, o agro é pop, o agro é tudo, mano.']},
+ {id:'ricardo',n:'Ricardo Nogueira',tag:'banqueiro da Faria Lima',num:9,bud:1.15,agr:.5,pref:['wagyu','angus','nelorepo'],p:{shirt:'#ffffff',hair:'#4a3a2a',pants:'#2a2c30',look:{jacket:'#2a2c30',jk:'terno',slv:'#2a2c30',cuff:'#ffffff',tie:'#6a1a2a',psq:'#ffffff',beard:'nenhuma',crease:1}},
+  fala:['Boi é o melhor ativo de 2026. Rende mais que a Selic.','Comprei cotas de touro como diversificação de portfólio.','Meu gerente de banco não entende de gado. Eu também não, mas confio no Excel.']},
+ {id:'kenji',n:'Kenji Takeda',tag:'criador de Wagyu (SP)',num:18,bud:.95,agr:.5,pref:['wagyu','angus'],p:{shirt:'#ffffff',hair:'#1a1a1a',pants:'#141418',look:{jacket:'#141418',jk:'terno',slv:'#141418',cuff:'#ffffff',tie:'#1a1a1a',glasses:1,beard:'nenhuma',skin:'#e8c8a0'}},
+  fala:['Marmoreio é arte. O Wagyu certo vale cada centavo.','Meu pai trouxe a primeira genética do Japão nos anos 90.','Paciência é o segredo da carne perfeita.']},
+ {id:'helena',n:'Dona Helena Prado',tag:'dona da Agropecuária Prado (SP)',num:5,bud:1.05,agr:.55,pref:['girolando','gir','nelorepo'],p:{g:'f',shirt:'#f4f0e4',hair:'#2a1a10',pants:'#1a4a3a',look:{g:'f',hair:'comprido',hc:'#2a1a10',jacket:'#1a5a3a',jk:'terno',slv:'#1a5a3a',cuff:'#f4f0e4',skirt:'#1a4a3a',beard:null,glasses:1,glassesK:'sq',pearls:1}},
+  fala:['Leite é o meu forte. Uma Gir campeã faz uma fazenda.','Já fui jurada em três exposições nacionais.','Aqui ninguém compra no impulso... exceto o PH.']},
+ {id:'bento',n:'Seu Bento Kuhn',tag:'pecuarista gaúcho (RS)',num:30,bud:.85,agr:.6,pref:['angus','hereford','brangus'],p:{shirt:'#f4f0e4',hair:'#8a6a4a',pants:'#3a2a1a',hat:'#1a1a1a',look:{hat:'gaucho',hatc:'#1a1a1a',jacket:'#3a2a1a',jk:'terno',slv:'#3a2a1a',cuff:'#f4f0e4',scarfN:'#c8302a',beard:'bigode'}},
+  fala:['Bah, tchê! Angus de pampa não tem igual.','Chimarrão de manhã e lance de noite.','Lá no Sul o frio deixa a carne mais macia, barbaridade!']},
+ {id:'com',n:'Comendador Aurélio Valadares',tag:'o dono da noite',num:1,bud:1.6,agr:.4,pref:['nelorepo','wagyu','angus','brahman'],p:{shirt:'#f4f0e4',hair:'#c8c8c8',pants:'#f4f0e4',hat:'#f0e8d0',look:{hat:'vaqueiro',hatc:'#f0e8d0',jacket:'#f4f0e4',jk:'terno',slv:'#f4f0e4',cuff:'#ffffff',psq:'#c8302a',tie:'#c8302a',beard:'bigode',hc:'#d0d0d0'}},cigar:1,
+  fala:['Ora, ora... você por aqui. Gosto de ver.','Não disputa comigo o lote 5. É um conselho.','Aqui todo mundo é amigo... até o martelo bater.']}];
+const GALAF=['#1a1a2a','#2a1a1a','#1a2a2a','#2a2a2a','#3a2a1a','#141418'];// ternos dos demais convidados
+const LBRD=k=>BREEDS[k]?k:'nelore';
+// ---------- prédio: Salão de Gala, ao lado da Arena
+if(!BLD.some(b=>b.id==='elite'))BLD.push({id:'elite',x:122,y:76,w:13,h:7,door:128,roof:'#2a1a12',wall:'#f4efe4',label:'Salão de Gala · Leilões Estrelas do Agro',sign:'GALA'});
+const _rfcElite=rfCarve;rfCarve=function(){_rfcElite();const b=BLD.find(q=>q.id==='elite');if(!b)return;
+ for(let y=b.y-1;y<=b.y+b.h+2;y++)for(let x=b.x-2;x<=b.x+b.w+1;x++){const i=ti(x,y);if(x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h){SOL[i]=1;continue}SOL[i]=0}
+ for(let y=b.y+b.h;y<=b.y+b.h+3;y++)for(let x=b.door-1;x<=b.door+1;x++)G[ti(x,y)]=3;
+ const inR=t=>t.x>=(b.x-2)*TS&&t.x<=(b.x+b.w+2)*TS&&t.y>=(b.y-1)*TS&&t.y<=(b.y+b.h+3)*TS;for(const A of[TREES,BUSH])for(let i=A.length-1;i>=0;i--)if(inR(A[i]))A.splice(i,1);
+ if(typeof DECO!=='undefined')for(let i=DECO.length-1;i>=0;i--)if(inR(DECO[i]))DECO.splice(i,1);if(typeof BOULD!=='undefined')for(let i=BOULD.length-1;i>=0;i--){const q=BOULD[i];if(q.x>=b.x-2&&q.x<=b.x+b.w+1&&q.y>=b.y-1&&q.y<=b.y+b.h+3)BOULD.splice(i,1)}};
+if(typeof BART!=='undefined')BART.elite=function(g,b,x,y,w,h,dx){const R=(c,a,bb,ww,hh)=>Rr(g,c,x+a,y+bb,ww,hh);
+ R('rgba(0,0,0,.3)',4,h-2,w,6);R('#e8e0d0',0,14,w,h-14);R('#d8ccb8',0,h-10,w,10);// paredes de mármore
+ for(let i=0;i<9;i++){const cx=10+i*((w-20)/8);R('#fbf8f0',cx-3,20,7,h-30);R('#d8d0c0',cx+2,20,2,h-30);R('#c8a040',cx-4,18,9,3);R('#c8a040',cx-4,h-11,9,3)}// colunas
+ g.fillStyle='#2a1a12';g.beginPath();g.moveTo(-4,16);g.lineTo(w/2,-6);g.lineTo(w+4,16);g.closePath();g.fill();g.fillStyle='#c8a040';g.fillRect(-4,14,w+8,3);// frontão
+ g.fillStyle='#fbf8f0';g.beginPath();g.moveTo(10,14);g.lineTo(w/2,0);g.lineTo(w-10,14);g.closePath();g.fill();R('#c8a040',w/2-10,4,20,8);ptext(g,'GALA',x+w/2-8,y+6,'#2a1a12');
+ R('#1a1a1a',8,24,w-16,12);R('#c8a040',8,24,w-16,1.5);R('#c8a040',8,35,w-16,1.5);ptext(g,'LEILOES ESTRELAS DO AGRO',x+w/2-48,y+28,'#f0d060');
+ R('#3a1a10',dx-10,h-24,36,24);R('#c8a040',dx-11,h-26,38,3);R('#5a2a18',dx-8,h-22,15,22);R('#5a2a18',dx+9,h-22,15,22);R('#f0d060',dx+5,h-12,2,4);R('#f0d060',dx+9,h-12,2,4);
+ for(const wx of[24,w-60])for(let k=0;k<2;k++){R('#2a1a12',wx+k*20,40,14,20);R('#f8d888',wx+k*20+2,42,10,16);R('#c8a040',wx+k*20-1,39,16,2)}};
+const _ebElite=enterRoom;enterRoom=function(id){if(id!=='elite')return _ebElite(id);const h=S.t*24,dm=S.day%30+1;
+ if(dm!==15||h<18)return toast('⭐ Salão de Gala fechado. O Leilão Estrelas do Agro é todo dia 15, a partir das 18h (leilão às 20h).');
+ if(!eliteInvited())return toast('🕴️ Recepcionista: “Boa noite. Seu nome não está na lista de convidados.” (reputação 50+ ou patrimônio de R$ 5 milhões)','bad');
+ return _ebElite(id)};
+function eliteInvited(){return S&&((S.rep||0)>=50||myNW()>=5e6||(S.cel&&S.cel.inv===Math.floor(S.day/30)))}
+// ---------- o salão por dentro (40 x 12)
+const GT=[[3,6],[7,6],[11,6],[15,6],[24,6],[28,6],[32,6],[36,6],[3,9],[7,9],[11,9],[15,9],[24,9],[28,9],[32,9],[36,9]];// mesas redondas
+const MYT=12;// a mesa do jogador (índice em GT)
+ROOMS.elite={id:'elite',x:90,y:198,w:41,h:12,door:110,floor:'marble',wall:'#2a1018',trim:'#c8a040',win:[],items:[
+ {k:'tapetegala',x:0,y:0,w:0,h:0},
+ {k:'palco',x:16,y:2,w:9,h:1},{k:'pistag',x:15,y:3,w:11,h:2},{k:'pisteiro',x:13,y:4},{k:'pisteiro',x:27,y:4},
+ {k:'barchamp',x:36,y:2,w:3,h:1,act:'champ'},{k:'recep',x:106-90,y:10,w:2,h:1},{k:'segur',x:113-90,y:10},{k:'segur',x:106-90-2,y:10},
+ ...GT.map((p,i)=>({k:'mesagala',x:p[0],y:p[1],w:2,h:1,t:i,act:i===MYT?'galasit':'galatalk'})),{k:'lustres',x:0,y:11,w:0,h:0}],
+ wallx:[{k:'bannergala',x:1},{k:'quadrog',x:6},{k:'quadrog',x:11},{k:'telao',x:26},{k:'bannergala',x:38}]};
+CLERK.elite={n:'Ademar Júnior (leiloeiro)',shirt:'#ffffff',hair:'#3a2a1a',pants:'#141418'};
+function galaSeats(){// quem senta em cada mesa (famosos espalhados + convidados genéricos)
+ const S0=[],fam=GALA.map(x=>x.id);const order=[0,4,8,1,5,9,13,2,6,10,14,3,7,11,15];let k=0;
+ for(let t=0;t<GT.length;t++){const a=[];if(t===MYT){a.push(null)}else{const f=order.indexOf(t);if(f>=0&&f<fam.length)a.push(fam[f]);a.push('g'+t)}S0.push(a)}return S0}
+const GSEAT=galaSeats();
+function galaGuestDraw(g,id,x,y,dir){if(!id)return;const G1=GALA.find(q=>q.id===id);let p;
+ if(G1)p=G1.p;else{const h=hsh(id),f=h%3===0;p={g:f?'f':'m',shirt:'#f4f0e4',hair:['#2a1a10','#5a3a22','#c8c8c8','#1a1a1a','#e8d070'][h%5],pants:GALAF[h%6],look:{g:f?'f':'m',jacket:f?['#6a1a3a','#1a3a6a','#3a1a5a'][h%3]:GALAF[h%6],jk:'terno',slv:f?['#6a1a3a','#1a3a6a','#3a1a5a'][h%3]:GALAF[h%6],cuff:'#ffffff',tie:!f&&h%2?['#6a1a2a','#1a2a5a','#c8a040'][h%3]:null,skirt:f?'#1a1a1a':null,beard:f?null:['nenhuma','bigode','barba'][h%3],pearls:f}}}
+ drawPerson(g,Object.assign({x,y,dir,ph:0,mv:0},p));const L=p.look||{};
+ if(L.pearls&&dir===0)for(let i=0;i<5;i++)Rr(g,'#fffaf0',x-2+i*1,y-17.6+(i===0||i===4?0:.5),.7,.7);
+ if(G1&&G1.cigar&&dir===0){Rr(g,'#5a3016',x+2,y-19.5,2.6,.8);Rr(g,((frame>>3)%8)<4?'#ff8a3a':'#c84a1a',x+4.6,y-19.5,.6,.8)}
+ if(G1&&G1.phone&&dir===0){Rr(g,'#1a1a1a',x+3.5,y-22,1.6,2.6);if((frame>>4)%2)Rr(g,'#ff3a3a',x+4,y-21.6,.5,.5)}
+ const B=LIVE&&LIVE.room==='elite'&&LIVE.bidders.find(b=>b.id===id);if(B&&B.paddle>0)drawPaddle(g,x+(dir===1?-1:1)*3,y-14,B.num,B.paddle)}
+function drawPaddle(g,x,y,num,t){const up=Math.min(1,t*4)*Math.min(1,(t)/.15),hy=y-6-8*Math.min(1,up);Rr(g,'#e8c8a0',x-.6,hy+6,1.4,y-hy-4);Rr(g,'#5a3a22',x-.3,hy+3,.7,4);
+ Rr(g,'#1a1a1a',x-3.4,hy-4.4,6.8,6.8);Rr(g,'#fbf8f0',x-3,hy-4,6,6);Rr(g,'#c8a040',x-3,hy-4,6,1);ptext(g,String(num),x-(String(num).length*2)+.5,hy-2,'#1a1a1a')}
+const _dfLei=drawFurn;drawFurn=function(g,it,x,y,r){const R=(c,a,b,w,h)=>Rr(g,c,x+a,y+b,w,h),F=frame,W=(it.w||1)*TS,H=(it.h||1)*TS;
+ switch(it.k){
+ case 'tapetegala':{const rm=ROOMS.elite,X=(rm.x+19)*TS,Y=(rm.y+5)*TS;Rr(g,'#5a0a14',X,Y,3*TS,(rm.h-5)*TS);Rr(g,'#8a1424',X+3,Y,3*TS-6,(rm.h-5)*TS);Rr(g,'#c8a040',X+2,Y,1,(rm.h-5)*TS);Rr(g,'#c8a040',X+3*TS-3,Y,1,(rm.h-5)*TS);
+  Rr(g,'rgba(255,220,150,.07)',rm.x*TS,(rm.y+2)*TS,rm.w*TS,(rm.h-2)*TS);return}
+ case 'lustres':{const rm=ROOMS.elite;for(const lx of[7,15,26,34]){const X=(rm.x+lx)*TS,Y=(rm.y+3.2)*TS;Rr(g,'#c8a040',X-.5,(rm.y+1.6)*TS,1,Y-(rm.y+1.6)*TS);
+   for(let k=0;k<7;k++){const a=k/7*Math.PI*2;Rr(g,'#e8f0ff',X+Math.cos(a)*9-1,Y+Math.sin(a)*3,2,4);Rr(g,'#ffffff',X+Math.cos(a)*9-.5,Y+Math.sin(a)*3,1,1)}Rr(g,'#f0d060',X-5,Y-2,10,3);if(((F+lx*9)%90)<6)Rr(g,'#ffffff',X+3,Y+2,1.5,1.5)}return}
+ case 'palco':{R('rgba(0,0,0,.35)',-2,H,W+4,4);R('#3a1a10',-2,-8,W+4,H+8);R('#c8a040',-2,-8,W+4,1.5);R('#5a2a18',0,-6,W,H+4);
+  const px=W/2;R('#2a1a12',px-9,-14,18,14);R('#c8a040',px-9,-14,18,2);R('#c8a040',px-3,-9,6,4);// púlpito
+  const ll=LIVE&&LIVE.room==='elite';OL(g,x+px,y-12,30,42,c=>drawPerson(c,{x:x+px,y:y-12,dir:0,ph:0,mv:0,shirt:'#ffffff',hair:'#3a2a1a',pants:'#141418',look:{jacket:'#141418',jk:'terno',slv:'#141418',cuff:'#ffffff',tie:'#1a1a1a',beard:'nenhuma'}}));
+  R('#1a1a1a',px+3,-30,1,6);R('#3a3a3a',px+2.4,-31,2,2);// microfone
+  if(ll){const s=LIVE.hammerT>0;if(s){R('#5a3016',px+5,-30,1.4,6);R('#3a2010',px+3,-33,6,3)}}
+  if(ll&&LIVE.bubble)bubble(g,x+px,y-44,LIVE.bubble);return}
+ case 'pistag':{R('#c8b088',0,0,W,H);for(let i=0;i<60;i++)R('#b89a70',(i*37)%W,(i*23)%H,2,1);R('#c8a040',0,-1,W,1.5);R('#c8a040',0,H-1,W,1.5);for(let k=0;k<=W;k+=24){R('#c8a040',k,-4,1.5,H+4)}
+  if(LIVE&&LIVE.room==='elite'&&LIVE.L)liveRingDraw(g,x+12,x+W-12,y+H-4);return}
+ case 'pisteiro':{const ll=LIVE&&LIVE.room==='elite',up=ll&&LIVE.lastBid<.7;OL(g,x+8,y+12,30,42,c=>{drawPerson(c,{x:x+8,y:y+12,dir:0,ph:0,mv:0,shirt:'#ffffff',hair:'#2a1a10',pants:'#141418',hat:'#1a1a1a',look:{hat:'vaqueiro',hatc:'#1a1a1a',jacket:'#141418',jk:'terno',slv:'#141418',cuff:'#ffffff',tie:'#c8a040'}});if(up){Rr(c,'#141418',x+12,y-6,2,7);Rr(c,'#e8c8a0',x+12,y-8,2,2)}});
+  if(up)bubble(g,x+8,y-22,'OPA!');return}
+ case 'barchamp':R('rgba(0,0,0,.3)',0,H-1,W+2,3);R('#2a1a12',0,-6,W,H+6);R('#c8a040',0,-6,W,1.5);for(let i=0;i<6;i++){R('#e8f0f8',4+i*7,-12,3,6);R('#f0d060',4.5+i*7,-10,2,3)}R('#1a3a1a',W-10,-16,4,10);R('#c8a040',W-10,-16,4,2);
+  OL(g,x+W/2,y-8,30,42,c=>drawPerson(c,{x:x+W/2,y:y-8,dir:0,ph:0,mv:0,shirt:'#ffffff',hair:'#1a1a1a',pants:'#141418',look:{vest:'#141418',tie:'#1a1a1a'}}));return;
+ case 'recep':R('#2a1a12',0,-4,W,H+2);R('#c8a040',0,-4,W,1.5);R('#f4f0e4',6,-8,8,4);OL(g,x+W/2,y-6,30,42,c=>drawPerson(c,{x:x+W/2,y:y-6,dir:0,ph:0,mv:0,g:'f',shirt:'#141418',hair:'#2a1a10',pants:'#141418',look:{g:'f',hair:'coque',skirt:'#141418',pearls:1}}));return;
+ case 'segur':OL(g,x+8,y+12,30,42,c=>{drawPerson(c,{x:x+8,y:y+12,dir:0,ph:0,mv:0,shirt:'#141416',hair:'#1a1a1a',pants:'#141416'});Rr(c,'#0a0a0c',x+5.8,y-5,4.4,1.2);Rr(c,'#c8c8d0',x+10.6,y-5.5,.4,2.4)});return;
+ case 'mesagala':{const seats=GSEAT[it.t]||[],cx=x+W/2,cy=y+8;
+  galaGuestDraw(g,seats[0],cx-6,cy-2,0);if(seats[1])galaGuestDraw(g,seats[1],cx+7,cy-3,0);
+  g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.ellipse(cx,cy+7,15,5,0,0,Math.PI*2);g.fill();g.fillStyle='#f8f4ec';g.beginPath();g.ellipse(cx,cy+2,14,6,0,0,Math.PI*2);g.fill();g.fillStyle='#e8e0d0';g.fillRect(cx-14,cy+2,28,5);
+  g.fillStyle='#c8a040';g.beginPath();g.ellipse(cx,cy+2,14,6,0,0,Math.PI*2);g.lineWidth=.6;g.strokeStyle='#c8a040';g.stroke();
+  R('#e8f0f8',W/2-6,4,2,4);R('#f0d060',W/2-5.5,5,1,2);R('#e8f0f8',W/2+5,3,2,4);R('#f0d060',W/2+5.5,4,1,2);R('#fbf8f0',W/2-1.5,2,3,4);R('#ff9a3a',W/2-.5,1,1,1.5);// taças e vela
+  R('#1a1a1a',W/2-4,7.5,8,3);ptext(g,String(it.t+1),cx-(String(it.t+1).length*2)+.5,cy+5.6,'#f0d060');return}
+ }
+ return _dfLei(g,it,x,y,r)};
+function bubble(g,x,y,t){t=String(t).normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase();const w=t.length*4+6;Rr(g,'#1a1a1a',x-w/2-1,y-1,w+2,9);Rr(g,'#fffef8',x-w/2,y,w,7);Rr(g,'#fffef8',x-2,y+7,3,2);ptext(g,t,x-w/2+3,y+1,'#1a1a1a')}
+const _dwLei=drawWallDeco;drawWallDeco=function(g,wd,x,y){const R=(c,a,b,w,h)=>Rr(g,c,x+a,y+b,w,h);
+ if(wd.k==='telao'){const W=11*TS;R('#0a0a0c',0,1,W,30);R('#1a1a2a',2,3,W-4,26);R('#c8a040',0,0,W,1.2);const L=LIVE&&LIVE.room==='elite'&&LIVE.L;
+  if(L){g.save();g.beginPath();g.rect(x+4,y+4,60,24);g.clip();Rr(g,'#5a8a3a',x+4,y+4,60,24);drawCow(g,L.a,x+22,y+12,1,0);g.restore();
+   ptext(g,'LOTE '+(LIVE.i+1)+'/'+LIVE.lots.length,x+68,y+5,'#f0d060');ptext(g,noAc(BREEDS[L.a.breed].n).slice(0,10)+(L.a.sex==='M'?' M':' F'),x+68,y+12,'#ffffff');ptext(g,'GEN '+L.a.gen,x+68,y+19,'#8ad0ff');
+   const pv=L.price>=L.start?L.price:L.start;ptext(g,chantShort(pv),x+122,y+5,'#7ad04a');ptext(g,L.leader===null?'ABERTO':L.leader==='p'?'VOCE!':noAc(liveBidderName2(L.leader)).slice(0,11),x+122,y+12,L.leader==='p'?'#7ad04a':'#ffffff');for(let k=0;k<5;k++)Rr(g,k<Math.round(L.a.gen/20)?'#f0d060':'#3a3a4a',x+122+k*6,y+19,4,4)}
+  else{ptext(g,'LEILOES ESTRELAS DO AGRO',x+40,y+10,'#f0d060');ptext(g,'AS MELHORES GENETICAS DO BRASIL',x+30,y+18,'#ffffff')}return}
+ if(wd.k==='bannergala'){R('#2a1018',2,2,44,26);R('#c8a040',2,2,44,1.5);R('#c8a040',2,26.5,44,1.5);for(let k=0;k<5;k++)Rr(g,'#f0d060',x+8+k*8,y+8,4,4);ptext(g,'ESTRELAS',x+8,y+16,'#f0d060');ptext(g,'DO AGRO',x+10,y+21,'#ffffff');return}
+ if(wd.k==='quadrog'){R('#c8a040',0,4,34,24);R('#3a5a2a',2,6,30,20);R('#c8b088',2,18,30,8);R('#f0ece0',8,10,16,8);R('#e8e0d0',20,9,6,4);R('#1a1a1a',24,11,1,1);R('#3a3a3a',9,17,2,5);R('#3a3a3a',21,17,2,5);return}
+ return _dwLei(g,wd,x,y)};
+const noAc=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase();
+// ---------- números falados pelo leiloeiro
+function chantTxt(v){v=Math.round(v);if(v>=1e6){const m=Math.floor(v/1e6),r=Math.round((v%1e6)/1000);return m+(m>1?' milhões':' milhão')+(r?' e '+r+' mil':'')}if(v>=1e4)return Math.round(v/1000)+' mil';return R$(v)}
+function chantShort(v){return v>=1e6?(v/1e6).toFixed(2).replace('.',',')+' MI':v>=1e4?Math.round(v/1000)+' MIL':Math.round(v).toLocaleString('pt-BR')}
+// ---------- motor do leilão ao vivo
+let LIVE=null;
+function liveBidderName2(id){const G1=GALA.find(q=>q.id===id);return G1?G1.n.split(' ').slice(-1)[0]:String(id)}
+function liveBidderName(i){const b=LIVE&&LIVE.bidders[i];return b?b.n:'?'}
+function eliteLots(){const pool=['nelorepo','nelorepo','angus','wagyu','brahman','senepol','gir','brangus','nelorepo'].map(LBRD),L=[],nm=['Imperador','Rainha do Cerrado','Jaguar','Majestade','Faraó','Estrela Guia','Diamante Negro','Soberana','Tufão','Princesa do Vale','Rei Leão','Dama de Ouro'];
+ for(let i=0;i<8;i++){const sex=i%3===1?'F':'M',a=mk(pool[i],sex,ri(620,1150),ri(96,100));a.gen=Math.max(a.gen,96+(i%5));a.w=Math.round(wmax(a)*rnd(.9,.98));a.name=nm[(i*5+S.day)%nm.length]+' '+['FIV','TE','da Estrela','PO','REM'][i%5];a.breeder=sex==='M'?1:0;if(i===0||i===4){a.title=1;a.titles=ri(2,6)}
+  const base=(sex==='M'?rnd(.6,1.4):rnd(.35,.8))*1e6*(1+(a.gen-96)*.18)*(a.title?1.35:1)*(a.breed==='wagyu'?1.15:1);const start=Math.round(base*.55/10000)*10000;
+  const bidders=GALA.map(G1=>{const pf=G1.pref.includes(a.breed)?1.25:.8;return{id:G1.id,n:G1.n,num:G1.num,max:base*rnd(.7,1.9)*G1.bud*pf,agr:G1.agr,paddle:0}});L.push({a,start,price:start,inc:0,leader:null,bidders,el:1,desc:a.title?'Grande Campeão '+a.titles+'× em exposições nacionais':sex==='F'?'Doadora de embriões, filha de campeões':'Reprodutor provado, filhos de pista'})}return L}
+function liveInc(v){const x=Math.max(50,v*.06),p=Math.pow(10,Math.floor(Math.log10(x))),m=x/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p}// incremento ~6%, arredondado bonito (1-2-5)
+function liveStart(room,lots,seat){if(LIVE)return;const isE=room==='elite';
+ const bidders=isE?GALA.map(G1=>({id:G1.id,n:G1.n,num:G1.num,paddle:0})):[];
+ if(!isE){const names=[...new Set(lots.flatMap(l=>l.bidders.map(b=>b.n)))];names.forEach((n,i)=>bidders.push({id:'b'+i,n,num:10+((hsh(n)%80)),paddle:0,seat:i}))}
+ LIVE={room,lots,i:-1,L:null,phase:'intro',t:0,idle:0,next:1.2,msg:'',bubble:'',hammerT:0,lastBid:9,bidders,seat,myNum:isE?77:ri(100,199),log:[],won:[],spent:0};
+ liveNext();liveUI()}
+function liveNext(){LIVE.i++;if(LIVE.i>=LIVE.lots.length)return liveEnd();const L=LIVE.L=LIVE.lots[LIVE.i];L.inc=liveInc(L.start);L.price=L.start-L.inc;L.leader=null;L.fin=0;
+ LIVE.phase='intro';LIVE.t=0;LIVE.idle=0;LIVE.next=2.2;const a=L.a;LIVE.bubble='LOTE '+(LIVE.i+1);
+ LIVE.msg='🎤 '+(LIVE.room==='elite'?'Senhoras e senhores, lote '+(LIVE.i+1)+': '+a.name+', '+BREEDS[a.breed].n+', genética '+a.gen+'! '+(L.desc||'')+'. Abrimos em '+chantTxt(L.start)+'!':'Lote '+(LIVE.i+1)+'! '+BREEDS[a.breed].n+' '+(a.sex==='F'?'fêmea':'macho')+', '+Math.round(a.w)+' quilos. Quem abre com '+chantTxt(L.start)+'?')}
+function liveBidAI(){const L=LIVE.L,nx=L.price<L.start?L.start:L.price+L.inc;const C=[];
+ if(LIVE.room==='elite'){for(const b of L.bidders){if(L.leader===b.id||b.max<nx)continue;C.push(b)}}
+ else L.bidders.forEach((b,i)=>{if(L.leader!==i&&b.max>=nx)C.push(Object.assign({idx:i},b))});
+ if(!C.length)return false;const b=pick(C);const pr=(L.price<L.start?.75:.5)*(b.agr?(.6+b.agr*.6):1);if(Math.random()>pr)return false;
+ const jump=Math.random()<.18&&b.max>=nx+L.inc*2?L.inc:0;L.price=nx+jump;L.leader=LIVE.room==='elite'?b.id:b.idx;LIVE.idle=0;LIVE.lastBid=0;L.inc=liveInc(nx);
+ const who=LIVE.room==='elite'?LIVE.bidders.find(x=>x.id===b.id):LIVE.bidders.find(x=>x.n===b.n);if(who)who.paddle=1.1;
+ LIVE.msg='🙋 '+(who?who.n:b.n)+(who&&LIVE.room==='elite'?' (plaquinha '+who.num+')':'')+': '+chantTxt(L.price)+'! '+(jump?'Pulou o lance! ':'')+pick(['Quem dá mais?','Tenho '+chantTxt(L.price)+'!','Vai deixar passar?','Olha a genética, gente!','É pouco pelo que vale!']);LIVE.bubble=chantShort(L.price);return true}
+function liveTick(dt){if(!LIVE)return;const L=LIVE.L;LIVE.t+=dt;LIVE.lastBid+=dt;if(LIVE.hammerT>0)LIVE.hammerT-=dt;for(const b of LIVE.bidders)if(b.paddle>0)b.paddle-=dt;if(P.paddle>0)P.paddle-=dt;
+ if(!L)return;if(LIVE.phase==='intro'){if(LIVE.t>2.4){LIVE.phase='open';LIVE.t=0}return}
+ if(LIVE.phase==='sold'){if(LIVE.t>2.8)liveNext();return}
+ LIVE.idle+=dt;LIVE.next-=dt;if(LIVE.next<=0){LIVE.next=rnd(.3,.75);if(!(L.leader==='p'&&LIVE.idle<.6))liveBidAI()}
+ if(L.leader===null&&LIVE.idle>7.5){LIVE.phase='sold';LIVE.t=0;L.fin=1;LIVE.msg='Sem lance. Lote retirado.';LIVE.bubble='RETIRADO';if(L.own){const ag=S.herd.find(x=>x.id===L.a.id);if(ag)ag.cons=0}liveDrop(L);return}
+ if(L.leader!==null){if(LIVE.idle>2.4&&LIVE.idle-dt<=2.4){LIVE.msg='🎤 Dou-lhe uma... '+chantTxt(L.price)+'!';LIVE.bubble='DOU-LHE UMA'}
+  if(LIVE.idle>4&&LIVE.idle-dt<=4){LIVE.msg='🎤 Dou-lhe duas... Última chance!';LIVE.bubble='DOU-LHE DUAS'}
+  if(LIVE.idle>5.6)liveHammer()}}
+function liveHammer(){const L=LIVE.L,a=L.a;LIVE.phase='sold';LIVE.t=0;L.fin=1;LIVE.hammerT=.6;LIVE.bubble='VENDIDO!';try{ifx('bad',0,10)}catch(e){}
+ if(L.leader==='p'){const pr=L.price,fee=LIVE.room==='elite'?0:0;if(buyAnimal(a,pr,LIVE.room==='elite'?'Leilão Estrelas do Agro':'Leilão')){if(LIVE.room==='elite'){a.breeder=a.sex==='M'?1:0;S.rep=Math.min(100,S.rep+2);gainXP(120,'leilão de elite')}else{S.stats.aucWins=(S.stats.aucWins||0)+1;gainXP(25);S.rep=Math.min(100,S.rep+.4)}LIVE.won.push(a.name);LIVE.spent+=pr;LIVE.msg='🔨 VENDIDO para a plaquinha '+LIVE.myNum+': VOCÊ! '+R$(pr)+'. Parabéns!';try{ifx('coin',0,10)}catch(e){}}else LIVE.msg='Compra não concluída (dinheiro ou espaço).';liveDrop(L)}
+ else if(L.own){if(L.price>=L.reserve){const net=Math.round(L.price*(1-comm()));cash(net,'Leilão: '+a.name);S.stats.sold++;S.herd=S.herd.filter(x=>x.id!==a.id);SP.delete(a.id);S.rep=Math.min(100,S.rep+(L.price>=valueOf(a,'mkt')?.8:.3));LIVE.msg='🔨 SEU LOTE VENDIDO para '+liveBidderName(LIVE.bidders.findIndex(b=>b.n===L.bidders[L.leader].n))+' por '+R$(L.price)+' (líquido '+R$(net)+')!'}
+  else{LIVE.msg='Não atingiu a reserva ('+R$(L.reserve)+'). Seu animal volta pra fazenda.';const ag=S.herd.find(x=>x.id===a.id);if(ag)ag.cons=0}liveDrop(L)}
+ else{const nm=LIVE.room==='elite'?(GALA.find(g=>g.id===L.leader)||{}).n:L.bidders[L.leader].n;LIVE.msg='🔨 Vendido para '+nm+' por '+R$(L.price)+'!';liveDrop(L)}renderHUD()}
+function liveDrop(L){if(LIVE.room==='leilao'&&S.aucOpen&&S.aucOpen.lots)S.aucOpen.lots=S.aucOpen.lots.filter(x=>x!==L);if(LIVE.room==='elite'&&S.gala&&S.gala.lots)S.gala.lots=S.gala.lots.filter(x=>x!==L)}
+function livePlayerBid(){const L=LIVE&&LIVE.L;if(!L||LIVE.phase!=='open'||L.own||L.leader==='p')return;const nx=L.price<L.start?L.start:L.price+L.inc;if(S.money<nx)return toast('Dinheiro insuficiente para '+R$(nx),'bad');
+ L.price=nx;L.leader='p';LIVE.idle=0;LIVE.lastBid=0;L.inc=liveInc(nx);P.paddle=1.2;LIVE.msg='🙋 Plaquinha '+LIVE.myNum+' (você): '+chantTxt(nx)+'! '+pick(['Opa, entrou no jogo!','Olha o fazendeiro forte!','Tenho '+chantTxt(nx)+'! Quem dá mais?']);LIVE.bubble=chantShort(nx);try{ifx('click',0,10)}catch(e){}}
+function liveEnd(){const W=LIVE.won,room=LIVE.room,sp=LIVE.spent;LIVE=null;liveUI();
+ if(room==='elite'){S.gala=S.gala||{};S.gala.done=Math.floor(S.day/30);showModal('<h3>⭐ Fim do Leilão Estrelas do Agro</h3><div class="card">'+(W.length?'Você arrematou <b class="gold">'+W.join(', ')+'</b> por '+R$(sp)+'. Os animais seguem amanhã para a sua fazenda em caminhão climatizado.':'Você não arrematou nenhum lote desta vez, mas foi visto entre os grandes.')+'</div><div class="dim">O próximo leilão de gala é dia 15 do mês que vem.</div><div class="btns"><button class="b gold" data-act="close">Fechar</button></div>')}
+ else{toast('🔨 Fim do pregão');save()}}
+function liveLeave(){if(!LIVE)return;const L=LIVE.L;if(L&&L.leader==='p'&&LIVE.phase==='open'){return toast('Você é o líder deste lote! Espere o martelo bater.','bad')}const room=LIVE.room;LIVE=null;liveUI();if(room==='elite'){S.gala=S.gala||{};S.gala.done=Math.floor(S.day/30)}toast('Você saiu do pregão.')}
+// ---------- desfile do animal na pista + condutor
+function liveRingDraw(g,x0,x1,y){const L=LIVE.L,t=LIVE.t+LIVE.i*3,u=.5+.5*Math.sin(t*.55),x=x0+(x1-x0)*u,dir=Math.cos(t*.55)>=0?1:-1,f=(frame>>3)&1;
+ drawCow(g,L.a,x-8,y-12,dir,f);const hx=x+dir*14;OL(g,hx,y+2,30,42,c=>drawPerson(c,{x:hx,y:y+2,dir:dir>0?3:2,ph:frame*.12,mv:1,shirt:'#ffffff',hair:'#2a1a10',pants:'#f4f4f0',hat:'#f4f0e4',look:{hat:'vaqueiro',hatc:'#f4f0e4'}}));Rr(g,'#5a3a22',Math.min(hx,x)-2,y-6,Math.abs(hx-x)+2,.8)}
+// ---------- plaquinha na mão do jogador
+const _dpbLei=drawPlayerBase;drawPlayerBase=function(g){_dpbLei(g);if(LIVE&&P.paddle>0&&!P.drive)drawPaddle(g,P.x+(P.dir===2?-4:4),P.y-15,LIVE.myNum,P.paddle)};
+// ---------- o pregão semanal agora é ao vivo na arquibancada
+const LSEAT=[[2,3],[3,3],[13,3],[14,3],[2,7],[13,7],[1.5,5],[14.5,5]];// lugares dos rivais na sala do leilão (relativo à sala)
+openAuction=function(){const A=S.aucOpen;if(!A)return toast('Nenhum leilão aberto agora.');if(!A.lots)A.lots=makeLots(A.type);
+ for(const a of S.herd)if(a.cons&&!A.lots.some(l=>l.own&&l.a.id===a.id))A.lots.push(mkLot(a,1,A.type==='elite'));A.lots=A.lots.filter(l=>!l.own||S.herd.some(a=>a.id===l.a.id&&a.cons));
+ if(!A.lots.length)return toast('Não há lotes neste leilão.');const r=ROOMS.leilao;hideModal();if(typeof closeMenu==='function')closeMenu();
+ const go=()=>{const seat={x:(r.x+3)*TS+8,y:(r.y+7)*TS+10};P.x=seat.x;P.y=seat.y;P.dir=1;liveStart('leilao',shuffle(A.lots.slice()),seat)};
+ if(!inRoom()||roomAt(P.x,P.y)!==r){enterRoom('leilao');setTimeout(go,700)}else go()};
+const _evoLei=evoItems;evoItems=function(L,x0,x1,y0,y1){_evoLei(L,x0,x1,y0,y1);if(!LIVE||LIVE.room!=='leilao'||!inRoom())return;const r=ROOMS.leilao;
+ LIVE.bidders.forEach((b,i)=>{const s=LSEAT[i%LSEAT.length],x=(r.x+s[0])*TS+8,y=(r.y+s[1])*TS+12;L.push([y+20,10,{draw:g=>{OL(g,x,y,30,42,c=>drawPerson(c,{x,y,dir:0,ph:0,mv:0,shirt:['#8a3a2a','#2a5a8a','#5a7a3a','#7a5a2a','#3a3a5a'][hsh(b.n)%5],hair:'#3a2a1a',pants:'#33384a',hat:hsh(b.n)%2?'#5a3a22':null}));if(b.paddle>0)drawPaddle(g,x+3,y-14,b.num,b.paddle)}}])});
+ const rx=(r.x+5)*TS,ry=(r.y+6.6)*TS;if(LIVE.L)L.push([(r.y+7.3)*TS,10,{draw:g=>liveRingDraw(g,rx+14,rx+6*TS-14,ry)}]);
+ if(LIVE.bubble){const C=CLERK.leilao;L.push([(r.y+9)*TS,10,{draw:g=>bubble(g,(r.x+8.5)*TS,(r.y+1)*TS-6,LIVE.bubble)}])}};
+// ---------- gala: sentar na mesa, conversar com os convidados, champanhe
+const _raLei=roomAct;roomAct=function(it,r){
+ if(r.id==='elite'&&it.act==='galasit'){if(LIVE)return;const M=Math.floor(S.day/30);if(S.gala&&S.gala.done===M)return toast('O leilão desta noite já terminou. Até o mês que vem!');
+  const h=S.t*24;if(h<20){return showModal('<h3>🍾 Coquetel</h3><div class="card">O leilão começa às <b>20h</b>. Aproveite para cumprimentar os convidados e tomar um champanhe.</div><div class="btns"><button class="b gold" data-act="galawait">⏩ Esperar até as 20h</button><button class="b gray" data-act="close">Ok</button></div>')}
+  const t=GT[MYT],seat={x:(r.x+t[0]+1)*TS,y:(r.y+t[1]+1)*TS+14};P.x=seat.x;P.y=seat.y;P.dir=1;S.gala=S.gala||{};if(!S.gala.lots||S.gala.m!==M){S.gala.lots=eliteLots();S.gala.m=M}
+  return liveStart('elite',S.gala.lots.slice(),seat)}
+ if(r.id==='elite'&&it.act==='galatalk'){const s=GSEAT[it.t]||[],G1=GALA.find(q=>q.id===s[0]);if(!G1)return toast(pick(['“Boa noite! Que festa, hein?”','“Já viu o touro do lote 1? Uma pintura.”','“Dizem que o Comendador vai abrir a carteira hoje.”']));
+  S.gala=S.gala||{};S.gala.rel=S.gala.rel||{};const k=G1.id+':'+Math.floor(S.day/30),first=!S.gala.rel[k];if(first){S.gala.rel[k]=1;S.rep=Math.min(100,S.rep+.5);gainXP(10,'contatos')}
+  return showModal('<h3>🤝 '+G1.n+'</h3><div class="dim">'+G1.tag+' · plaquinha '+G1.num+'</div><div class="card" style="font-size:18px"><i>“'+pick(G1.fala)+'”</i></div>'+(first?'<div class="grn">Novo contato importante: +reputação.</div>':'')+'<div class="btns"><button class="b gray" data-act="close">Com licença</button></div>')}
+ if(r.id==='elite'&&it.act==='champ'){if(S.money<600)return toast('Dinheiro insuficiente','bad');cash(-600,'Champanhe no Salão de Gala');P.hp=Math.min(100,P.hp+10);if(typeof bebeu==='function')bebeu();return toast('🥂 Uma taça de champanhe francês. Saúde!','good')}
+ return _raLei(it,r)};
+ACT.galawait=function(){S.t=Math.max(S.t,20/24);hideModal();toast('🕗 20h: o leiloeiro sobe ao palco!')};
+const _ilLei=interactList;interactList=function(){if(LIVE)return[];const L=_ilLei();if(!inRoom())return L;const r=roomAt(P.x,P.y);if(!r||r.id!=='elite')return L;
+ for(const l of L){const it=r.items.find(i=>i.act&&Math.abs((r.x+i.x+(i.w||1)/2)*TS-l.x)<1&&Math.abs((r.y+i.y+(i.h||1))*TS+4-l.y)<1);if(!it)continue;
+  if(it.act==='galasit')l.label='🪑 Sentar na sua mesa (nº '+(MYT+1)+')';else if(it.act==='champ')l.label='🥂 Champanhe (R$ 600)';else if(it.act==='galatalk'){const G1=GALA.find(q=>q.id===(GSEAT[it.t]||[])[0]);l.label=G1?'🤝 Cumprimentar '+G1.n:'💬 Conversar (mesa '+(it.t+1)+')'}else if(l.label==='🚪 Sair')l.label='🚪 Sair do salão'}
+ return L};
+// ---------- painel do pregão (embaixo da tela)
+const liveBox=document.createElement('div');liveBox.id='livebox';liveBox.style.cssText='position:fixed;left:50%;bottom:6px;transform:translateX(-50%);width:min(620px,96vw);z-index:8;display:none;background:rgba(18,10,6,.9);border:2px solid #c8a040;border-radius:10px;padding:6px 9px;color:#f3e6c8;font:13px sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.6)';document.body.appendChild(liveBox);
+liveBox.addEventListener('click',e=>{const b=e.target.closest('[data-lv]');if(!b)return;e.stopPropagation();const k=b.dataset.lv;if(k==='bid')livePlayerBid();else if(k==='leave')liveLeave();liveUI(1)});
+let liveUIT=0,liveUIK='';
+function liveUI(force){if(!LIVE){liveBox.style.display='none';return}liveBox.style.display='block';const L=LIVE.L;if(!L)return;const a=L.a,B=BREEDS[a.breed],nx=L.price<L.start?L.start:L.price+L.inc,cur=L.price>=L.start?L.price:null;
+ const lead=L.leader===null?'sem lances':L.leader==='p'?'<b style="color:#7ad04a">VOCÊ (plaquinha '+LIVE.myNum+')</b>':(LIVE.room==='elite'?(GALA.find(g=>g.id===L.leader)||{}).n:L.bidders[L.leader].n);
+ const can=LIVE.phase==='open'&&!L.own&&L.leader!=='p'&&S.money>=nx;
+ const k=[LIVE.i,L.price,L.leader,LIVE.phase,LIVE.msg,can,S.money>=nx].join('|');if(!force&&k===liveUIK)return;liveUIK=k;
+ liveBox.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span style="color:#f0d060;font-weight:bold">'+(LIVE.room==='elite'?'⭐ ESTRELAS DO AGRO':'🔨 PREGÃO AO VIVO')+' · LOTE '+(LIVE.i+1)+'/'+LIVE.lots.length+'</span><span>'+a.name+' · '+B.n+' '+(a.sex==='M'?'♂':'♀')+' · gen <b style="color:#f0d060">'+a.gen+'</b> '+stars(a.gen)+' · '+Math.round(a.w)+' kg'+(a.title?' · 🎗️':'')+(L.own?' · <b style="color:#ffb04a">SEU LOTE (reserva '+R$(L.reserve)+')</b>':'')+'</span></div>'
+ +'<div style="display:flex;align-items:center;gap:10px;margin:3px 0"><div style="font:bold 22px sans-serif;color:#7ad04a;min-width:150px">'+(cur?R$(cur):'abre em '+R$(L.start))+'</div><div style="flex:1">Líder: '+lead+'<div style="color:#d8c8a8;font-style:italic;font-size:12px;min-height:16px">'+LIVE.msg+'</div></div></div>'
+ +'<div style="display:flex;gap:6px">'+(L.own?'<span style="flex:1;color:#ffb04a">Torça pelos lances!</span>':'<button data-lv="bid" class="b gold" style="flex:1;font-size:13px" '+(can?'':'disabled')+'>🙋 Levantar a plaquinha · '+R$(nx)+'</button>')+'<button data-lv="leave" class="b gray" style="font-size:12px">🚪 Sair</button></div>'+(S.money<nx&&!L.own?'<div class="red" style="font-size:11px">Saldo: '+R$(S.money)+'</div>':'')}
+const _updLei=update;update=function(dt){_updLei(dt);if(!LIVE||!S)return;try{liveTick(Math.min(dt,.1));if(LIVE&&LIVE.seat){P.x=LIVE.seat.x;P.y=LIVE.seat.y;P.vx=P.vy=0;P.moving=0;P.dir=1}liveUIT+=dt;if(liveUIT>.12){liveUIT=0;liveUI()}}catch(e){console.error(e);LIVE=null;liveUI()}};
+const _fadeLei=fade;fade=function(fn){if(LIVE&&LIVE.seat)LIVE=null,liveUI();return _fadeLei(fn)};
+if(typeof GUIDE!=='undefined')GUIDE.push({lv:3,ic:'🔨',t:'Leilão ao vivo',h:'Quando o leilão semanal abrir, entre no prédio do Leilão da Vila e use “Entrar no pregão”: você senta na arquibancada e levanta a plaquinha a cada lance. Todo dia 15, às 20h, tem o Leilão Estrelas do Agro no Salão de Gala (ao lado da Arena), só para convidados.'});
+// ===== 🏆 EXPOSIÇÃO AO VIVO: você entra na pista da Arena puxando seu animal no cabresto, o jurado avalia um por um,
+// ===== ordena a fila, dá as faixas e anuncia o Grande Campeão. Campeões valem mais e trazem convite para a gala.
+let EXPO=null;
+const EXRB=['nelore','nelorepo','angus','brahman','hereford','senepol','brangus','gir','girolando'].filter(k=>BREEDS[k]);
+const exRing=()=>({x0:(ARN.rx0+1)*TS,x1:ARN.rx1*TS,y0:(ARN.ry0+1)*TS+4,y1:ARN.ry1*TS-2,cx:((ARN.rx0+ARN.rx1)/2+.5)*TS,cy:((ARN.ry0+ARN.ry1)/2+.5)*TS});
+function expoEntrants(c,a,pe){const R0=exRing(),riv=shuffle(RIV.map((r,i)=>i)).slice(0,4);const L=riv.map((i,k)=>{const s=42+i*3.2+rnd(-9,9)+(pe?3:0),ra=mk(pick(EXRB),c.k==='vaca'?'F':c.k==='touro'?'M':(Math.random()<.5?'F':'M'),c.k==='jovem'?ri(320,650):ri(750,1300),clamp(Math.round(s*1.15),40,99));ra.w=Math.round(wmax(ra)*rnd(.85,.97));
+  return{a:ra,n:RIV[i][1],f:RIV[i][0],s,me:0,hl:{shirt:['#f4f4f0','#e8d8b0','#c8dce8','#f0e0e0'][k%4],hat:['#f4f0e4','#5a3a22','#1a1a1a','#d8c8a0'][k%4]}}});
+ L.push({a,n:'Você',f:S.farmName||'Fazenda Boi de Ouro',s:jScore(a)+rnd(-5,5),me:1});const order=shuffle(L);order.forEach((e,i)=>{e.x=R0.x0+8;e.y=R0.y0;e.slot=i});return order}
+function expoStart(){const J=ensureJ();if(!J)return;const pe=J.ev[0]==='p',fee=pe?800:300,cats=JCAT.filter(c=>J.ent[c.k]&&find(J.ent[c.k]));if(!cats.length)return;
+ if(S.money<fee*cats.length)return toast('Dinheiro insuficiente','bad');cash(-fee*cats.length,'Inscrição no julgamento');hideModal();
+ EXPO={pe,cats,ci:-1,ph:'',t:0,html:'',best:9,firsts:0,J,msg:'',bonus:0,meter:0,tried:0};expoNextCat();expoUI(1)}
+function expoNextCat(){EXPO.ci++;if(EXPO.ci>=EXPO.cats.length)return expoFinish();const c=EXPO.cats[EXPO.ci],a=find(EXPO.J.ent[c.k]);
+ EXPO.cat=c;EXPO.ents=expoEntrants(c,a,EXPO.pe);EXPO.ph='enter';EXPO.t=0;EXPO.bonus=0;EXPO.tried=0;EXPO.insp=-1;EXPO.judge={x:exRing().cx,y:exRing().y0-10,dir:0};EXPO.msg='🎤 Atenção, Arena! Entram na pista os animais da categoria '+c.n.replace(/^\S+ /,'')+'!';
+ const R0=exRing();EXPO.ents.forEach((e,i)=>{e.x=(ARN.gx0+.5)*TS;e.y=ARN.ry0*TS+6;e.delay=i*.6})}
+function expoSlot(i,n){const R0=exRing();return{x:R0.x0+16+i*((R0.x1-R0.x0-32)/(Math.max(1,n-1))),y:R0.cy+4}}
+function moveTo(o,tx,ty,sp,dt){const dx=tx-o.x,dy=ty-o.y,d=Math.hypot(dx,dy);if(d<.6){o.mv=0;return true}const s=Math.min(d,sp*dt);o.x+=dx/d*s;o.y+=dy/d*s;o.mv=1;if(Math.abs(dx)>.3)o.dir=dx>0?1:-1;return false}
+function expoTick(dt){const E=EXPO;if(!E)return;E.t+=dt;const R0=exRing(),n=E.ents.length;
+ if(E.ph==='enter'){let ok=true;E.ents.forEach((e,i)=>{if(E.t<e.delay){ok=false;return}const s=expoSlot(i,n);if(!moveTo(e,s.x,s.y,26,dt))ok=false});if(ok&&E.t>2){E.ph='parade';E.t=0;E.msg='🎤 Os animais desfilam pela pista. Observem o andar, a musculatura e o aprumo!'}}
+ else if(E.ph==='parade'){E.ents.forEach((e,i)=>{const u=(E.t*.32+i/n)%1,a=u*Math.PI*2,tx=R0.cx+Math.cos(a)*(R0.x1-R0.x0)*.42,ty=R0.cy+Math.sin(a)*(R0.y1-R0.y0)*.42;moveTo(e,tx,ty,40,dt)});if(E.t>7){E.ph='line';E.t=0;E.msg='🎤 Alinhem os animais para o jurado!'}}
+ else if(E.ph==='line'){let ok=true;E.ents.forEach((e,i)=>{const s=expoSlot(i,n);if(!moveTo(e,s.x,s.y,34,dt))ok=false;});if(ok){E.ents.forEach(e=>e.dir=1);E.ph='insp';E.t=0;E.insp=0;E.msg='🧑‍⚖️ O jurado começa a avaliação.'}}
+ else if(E.ph==='insp'){const e=E.ents[E.insp];if(!e){E.ph='rank';E.t=0;expoRank();return}const tx=e.x+(E.t<1.4?-4:22),ty=e.y+10;moveTo(E.judge,tx,ty,46,dt);
+  if(e.me){E.meter=(Math.sin(E.t*4.2)+1)/2;if(E.t<.1)E.msg='🧑‍⚖️ O jurado chegou no SEU animal! Toque em “Aprumar” quando a barra estiver no verde.'}
+  if(E.t>(e.me?3.6:2.1)){E.insp++;E.t=0;if(e.me&&!E.tried)E.msg='O jurado anotou sem você ajeitar o animal.'}}
+ else if(E.ph==='rank'){let ok=true;E.ents.forEach((e,i)=>{const s=expoSlot(e.rank,n);if(!moveTo(e,s.x,s.y,30,dt))ok=false});moveTo(E.judge,R0.x0+4,R0.cy+16,40,dt);if(ok&&E.t>2.5){E.ph='ribbon';E.t=0;const w=E.ents.find(x=>x.rank===0);E.msg='🏆 '+(w.me?'É SEU! ':'')+E.cat.n.replace(/^\S+ /,'')+': '+w.a.name+', de '+w.f+'! A Arena aplaude!';try{ifx(w.me?'level':'good',0,10)}catch(e){}}}
+ else if(E.ph==='ribbon'){if(E.t>4.2){expoAward();E.ph='out';E.t=0}}
+ else if(E.ph==='out'){let ok=true;E.ents.forEach(e=>{if(!moveTo(e,(ARN.gx0+.5)*TS,ARN.ry0*TS+4,34,dt))ok=false});if(ok||E.t>4)expoNextCat()}}
+function expoRank(){const E=EXPO;const me=E.ents.find(x=>x.me);me.s+=E.bonus;const L=E.ents.slice().sort((x,y)=>y.s-x.s);L.forEach((e,i)=>e.rank=i);E.msg='🧑‍⚖️ O jurado reorganiza a fila: o melhor fica à esquerda...'}
+function expoAward(){const E=EXPO,c=E.cat,pe=E.pe,me=E.ents.find(x=>x.me),pos=me.rank+1,a=me.a,all=E.ents.slice().sort((x,y)=>x.rank-y.rank);E.best=Math.min(E.best,pos);
+ const pr=pos<=3?[pe?15000:6000,pe?7000:3000,pe?3000:1500][pos-1]:0;if(pr)cash(pr,'Prêmio do julgamento');S.rep=Math.min(100,S.rep+([pe?6:4,pe?3:2,1][pos-1]||0));
+ if(pos===1){a.title=1;a.titles=(a.titles||0)+1;E.firsts++;S.stats.expoWins=(S.stats.expoWins||0)+1;addTrof('🏆',c.n.replace(/^\S+ /,'')+(pe?' · Festa do Peão':' · Exposição')+' · ano '+yearN()+' ('+a.name+')');S.cel=S.cel||null;if(S.cel)S.cel.inv=Math.floor(S.day/30)+(S.day%30+1>15?1:0)}
+ E.html+='<div class="card"><b>'+c.n+'</b>'+all.slice(0,4).map((x,i)=>'<div class="'+(x.me?'gold':'dim')+'" style="font-size:15px">'+['🥇','🥈','🥉','4º'][i]+' '+x.n+' — '+x.a.name+' ('+x.s.toFixed(0)+' pts)</div>').join('')+(pos>4?'<div class="gold" style="font-size:15px">'+pos+'º Você — '+a.name+' ('+me.s.toFixed(0)+' pts)</div>':'')+(pr?'<div class="grn">Prêmio: '+R$(pr)+'</div>':'')+'</div>'}
+function expoFinish(){const E=EXPO;EXPO=null;expoUI();gainXP(20+E.firsts*30,'julgamento');E.J.done=1;E.J.res=E.html+(E.firsts?'<div class="card gold">🎗️ Campeões ganham faixa, valem mais na venda e nos leilões, e você recebe convite para o Leilão Estrelas do Agro deste mês!</div>':'');
+ try{rvJudge(E.best)}catch(e){}if(E.firsts&&typeof celMsg==='function')celMsg('elite','Parabéns pelo título na Exposição! Seu nome entrou na lista de convidados do Leilão Estrelas do Agro deste mês. 🥂',{l:'⭐ Ver leilões',a:'celapp',v:'leiloes'});judgeModal()}
+// ---------- botões
+ACT.jgo=function(){expoStart()};
+function expoApruma(){const E=EXPO;if(!E||E.ph!=='insp'||E.tried)return;const e=E.ents[E.insp];if(!e||!e.me)return;E.tried=1;const ok=E.meter>.62&&E.meter<.9;E.bonus=ok?4:-1;P.paddle=0;
+ E.msg=ok?'✅ Perfeito! O animal ficou aprumado e o jurado sorriu: +4 pontos.':'😬 Puxou na hora errada, o animal se mexeu: −1 ponto.';try{ifx(ok?'good':'bad',0,10)}catch(err){}expoUI(1)}
+// ---------- desenho na pista
+function drawRibbon(g,x,y,k){const c=['#f0c020','#d8dce2','#c87a3a'][k];Rr(g,shade(c,-30),x-1,y+3,2,6);Rr(g,shade(c,-30),x+1,y+3,2,5);g.fillStyle=c;g.beginPath();g.arc(x+1,y+1,3.4,0,Math.PI*2);g.fill();g.fillStyle='#fff';g.beginPath();g.arc(x+1,y+1,1.4,0,Math.PI*2);g.fill()}
+const _evoEx=evoItems;evoItems=function(L,x0,x1,y0,y1){_evoEx(L,x0,x1,y0,y1);if(!EXPO||inRoom())return;const E=EXPO;
+ for(const e of E.ents){const d=e.dir||1,hx=e.x+d*15,hy=e.y+11;L.push([e.y+10,10,{draw:g=>{drawCow(g,e.a,e.x-8,e.y-2,d,e.mv?((frame>>3)&1):0);Rr(g,'#5a3a22',Math.min(hx,e.x+d*6),e.y+2,Math.abs(hx-(e.x+d*6))+1,.8);
+   if(!e.me)OL(g,hx,hy,30,42,c=>drawPerson(c,{x:hx,y:hy,dir:e.mv?(d>0?3:2):0,ph:frame*.12,mv:e.mv,shirt:e.hl.shirt,hair:'#3a2a1a',pants:'#f4f4f0',hat:e.hl.hat}));
+   if(E.ph==='ribbon'&&e.rank<3)drawRibbon(g,e.x,e.y-14,e.rank);if(E.ph==='insp'&&E.ents[E.insp]===e)Rr(g,'rgba(255,240,150,.5)',e.x-10,e.y+10,20,2)}}])}
+ const j=E.judge;L.push([j.y,10,{draw:g=>{OL(g,j.x,j.y,30,42,c=>drawPerson(c,{x:j.x,y:j.y,dir:j.mv?((j.dir||1)>0?3:2):0,ph:frame*.12,mv:j.mv,shirt:'#ffffff',hair:'#c8c8c8',pants:'#3a3a3a',hat:'#e8dcb0',look:{hat:'vaqueiro',hatc:'#e8dcb0',jacket:'#2a3a5a',jk:'terno',slv:'#2a3a5a',cuff:'#fff',beard:'bigode'}}));Rr(g,'#c8a070',j.x+3,j.y-12,3.5,4.5);Rr(g,'#ffffff',j.x+3.5,j.y-11.5,2.5,3)}}]);
+ if(E.ph==='ribbon'){for(let i=0;i<24;i++){const t=(E.t*40+i*13)%60;L.push([9e9,10,{draw:g=>Rr(g,FLAGC[i%6],exRing().x0+(i*37)%(exRing().x1-exRing().x0),exRing().y0-20+t,2,2)}])}}};
+// jogador puxando o próprio animal
+const _updEx=update;update=function(dt){_updEx(dt);if(!EXPO||!S)return;try{expoTick(Math.min(dt,.1));if(EXPO){const me=EXPO.ents.find(x=>x.me),d=me.dir||1;P.x=me.x+d*15;P.y=me.y+11;P.vx=P.vy=0;P.moving=me.mv?1:0;if(me.mv){P.ph+=dt*9;P.dir=d>0?3:2}else P.dir=0}expoUI()}catch(e){console.error(e);EXPO=null;expoUI()}};
+const _ilEx=interactList;interactList=function(){if(EXPO)return[];return _ilEx()};
+// ---------- painel da pista
+const exBox=document.createElement('div');exBox.id='expobox';exBox.style.cssText='position:fixed;left:50%;bottom:6px;transform:translateX(-50%);width:min(600px,96vw);z-index:8;display:none;background:rgba(14,20,8,.9);border:2px solid #7ad04a;border-radius:10px;padding:6px 9px;color:#f3e6c8;font:13px sans-serif';document.body.appendChild(exBox);
+exBox.addEventListener('click',e=>{const b=e.target.closest('[data-ex]');if(!b)return;e.stopPropagation();if(b.dataset.ex==='apr')expoApruma()});
+let exK='';function expoUI(force){if(!EXPO){exBox.style.display='none';return}exBox.style.display='block';const E=EXPO,e=E.ph==='insp'&&E.ents[E.insp],my=e&&e.me&&!E.tried;const k=[E.ci,E.ph,E.msg,my,Math.round(E.meter*20)].join('|');if(!force&&k===exK)return;exK=k;
+ exBox.innerHTML='<div style="display:flex;justify-content:space-between"><b style="color:#7ad04a">🏆 '+(E.pe?'GRANDE JULGAMENTO · FESTA DO PEÃO':'JULGAMENTO DA EXPOSIÇÃO')+'</b><span>'+E.cat.n+' · '+(E.ci+1)+'/'+E.cats.length+'</span></div><div style="margin:3px 0;font-style:italic;min-height:17px">'+E.msg+'</div>'
+ +(my?'<div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:14px;background:#3a2a1a;border-radius:7px;position:relative;overflow:hidden"><div style="position:absolute;left:62%;width:28%;top:0;bottom:0;background:#3a8a2a"></div><div style="position:absolute;left:'+(E.meter*100)+'%;top:-2px;width:4px;height:18px;background:#fff"></div></div><button data-ex="apr" class="b gold" style="font-size:13px">✋ Aprumar o animal</button></div>':'')}
+// campeões valem mais
+const _voEx=valueOf;valueOf=function(a,k){const v=_voEx.apply(this,arguments);return a&&a.titles?v*(1+Math.min(.4,.08*a.titles)):v};
+if(typeof GUIDE!=='undefined')GUIDE.push({lv:3,ic:'🏆',t:'Exposição ao vivo',h:'Na Exposição (a cada 90 dias) e na Festa do Peão, inscreva seus melhores animais na Arena. Você entra na pista puxando o animal; quando o jurado chegar nele, toque em “Aprumar” com a barra no verde para ganhar pontos. Campeões ganham faixa, valem mais e garantem convite para o Leilão Estrelas do Agro.'});
+// ===== 👔 GERENTES: contrate uma pessoa de verdade para cada fazenda do império (e para a sede).
+// Cada gerente tem nome, rosto, habilidade, especialidade, salário e... honestidade (que você só descobre com o tempo).
+const GNM={m:['Valdir Moreira','Claudinei Souza','Reginaldo Batista','Josué Almeida','Edson Ferraz','Marcos Tavares','Antônio Carlos Bueno','Geraldo Pimenta','Sebastião Rocha','Wellington Dias','Adriano Lemes','Fábio Rezende','Rogério Vilela','Juarez Teixeira'],
+ f:['Rosângela Prado','Marta Cardoso','Luciana Fontes','Denise Arruda','Patrícia Moura','Simone Vasconcelos','Cleide Barbosa','Juliana Carvalho']};
+const GSPEC={gado:{n:'Pecuária',tp:['cria','engorda','confina','misto']},graos:{n:'Grãos',tp:['graos','misto']},leite:{n:'Leite',tp:['leite']},cafe:{n:'Café e cana',tp:['cafe','cana']},geral:{n:'Administração geral',tp:[]}};
+const GSTR={cons:{n:'🛡️ Conservador',d:'Menos risco: perdas com seca, praga e crise pela metade, lucro 8% menor.',m:.92,l:.5},eq:{n:'⚖️ Equilibrado',d:'O normal.',m:1,l:1},agr:{n:'🚀 Agressivo',d:'Busca lucro máximo (+12%), mas sofre 60% mais com eventos ruins.',m:1.12,l:1.6}};
+const GFALA={bom:['Patrão, o mês foi bom! A equipe tá motivada.','Tudo nos conformes por aqui. Pode confiar.','Batemos a meta do mês. Bora pra cima!'],med:['Mês mais ou menos, mas tá sob controle.','Teve uns contratempos, mas resolvemos.','Seguimos trabalhando firme.'],ruim:['Mês difícil, patrão. Vou precisar de paciência.','O tempo não ajudou. Mas vamos recuperar.','Perdemos dinheiro esse mês. Já tô vendo o que fazer.']};
+function gerLook(g,h){const f=g.g==='f';return{shirt:['#e8e0d0','#c8dce8','#d8c8a0','#f0e8e0','#c8d8b8'][h%5],hair:['#2a1a10','#5a3a22','#8a8a8a','#1a1a1a','#a87a48'][(h>>3)%5],pants:['#33384a','#5a4a3a','#2a3a2a'][(h>>5)%3],hat:!f&&h%3!==0?['#5a3a22','#d8c8a0','#3a2a1a'][(h>>7)%3]:null,g:f?'f':'m',look:{g:f?'f':'m',beard:f?null:['bigode','nenhuma','barba','cavanhaque'][(h>>9)%4],skirt:null,glasses:h%4===0?1:0}}}
+function gerCand(seed,lvl){const h=hsh('ger'+seed),f=h%5===0,n=pick(f?GNM.f:GNM.m),sk=clamp(1+Math.floor(Math.random()*3+(lvl||0)*.6+Math.random()*1.4),1,5),sp=pick(Object.keys(GSPEC)),hon=clamp(rnd(.25,1)+(sk>=4?.05:0),0,1);
+ const sal=Math.round((7000+sk*sk*2600+(sp!=='geral'?2000:0))*rnd(.9,1.15)/100)*100;return{id:'m'+h%100000,n,g:f?'f':'m',h,sk,sp,hon,sal,xp:0,since:S.day,mood:.7,strat:'eq',caught:0,sus:0,
+  bio:pick(['Veio de uma fazenda grande no '+pick(['Mato Grosso','Goiás','Paraná','Minas','Pará'])+'.','Formado em '+pick(['Zootecnia','Agronomia','Veterinária','Administração'])+'.','Começou como peão aos 14 anos.','Trabalhou 10 anos para um grupo de investidores.','Filho de fazendeiro, conhece tudo de campo.'])}}
+const stars5=n=>'★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n));
+function gerPortrait(m,sz){sz=sz||48;const k='gp'+m.h+sz;if(GPC[k])return GPC[k];const c=mkCanvas(sz,sz*1.2),g=c.getContext('2d');g.fillStyle='#8ab0c8';g.fillRect(0,0,sz,sz*1.2);g.fillStyle='#6a90a8';g.fillRect(0,sz*.85,sz,sz*.35);
+ const ps=PS;PS=1;const rm=RMODE;RMODE=0;g.save();g.scale(sz/20,sz/20);try{drawPerson(g,Object.assign({x:10,y:27,dir:0,ph:0,mv:0},gerLook(m,m.h)))}catch(e){}g.restore();PS=ps;RMODE=rm;return GPC[k]=c.toDataURL()}
+const GPC={};
+function gerContact(k){const id=k.slice(2),E=S.emp;let m=null,fn='';if(id==='sede'){m=S.gm&&S.gm.m;fn='Sede'}else if(E&&E.farms[id]){m=E.farms[id].mgr;const f=EFARMS.find(x=>x.id===id);fn=f?f.n:''}return{n:(m?m.n:'Gerente')+' · '+fn,ic:'👔',c:'#3a4a2a'}}
+// ---------- efeito nas fazendas do império
+const _fpGer=farmProfit;farmProfit=function(f,o,E,ev){const m=o.mgr;if(!m)return _fpGer(f,o,E,ev);const old=o.adm;o.adm=1;let R0;try{R0=_fpGer(f,o,E,ev)}finally{o.adm=old}
+ const st=GSTR[m.strat]||GSTR.eq,spec=GSPEC[m.sp]&&GSPEC[m.sp].tp.includes(f.tp),mult=(.78+m.sk*.075+(spec?.07:0)+(m.mood-.6)*.08)*st.m;
+ R0.rec*=mult;R0.cus+=m.sal-EADM[1].sal;R0.loss*=st.l*(spec?.85:1);if(m.strat==='agr')R0.rec*=1+gauss()*.05;
+ if(m.hon<.5&&Math.random()<.35){const sk=R0.rec*rnd(.03,.1);R0.rec-=sk;m.sus=(m.sus||0)+sk}return R0};
+function gerStep(o,fid,f,res){const m=o.mgr;if(!m)return;m.xp++;if(m.xp%6===0&&m.sk<5)m.sk=Math.min(5,m.sk+.25);m.mood=clamp(m.mood+(res>0?.03:-.04)+rnd(-.03,.03),.2,1);
+ // desvio descoberto (o contador ajuda)
+ if(m.sus>0&&Math.random()<((S.emp&&S.emp.cont)?.5:.22)){const v=Math.round(m.sus);m.caught=(m.caught||0)+1;m.sus=0;S.emp.dec=S.emp.dec||{};S.emp.dec[fid]={k:'roubo',v,d:S.day};
+  celMsg('g_'+fid,'⚠️ (Mensagem do seu contador) Patrão, conferi as notas da '+(f?f.n:'sede')+' e sumiram '+R$(v)+' nos últimos meses. Tudo indica que foi o gerente '+m.n+'. O que fazemos?',{l:'⚖️ Decidir',a:'gerdec',v:fid})}
+ // decisões que o gerente pede
+ else if(Math.random()<.22){const D=pick([{k:'seca',q:'A previsão é de seca forte. Compro ração e suplemento extra? Custa '+R$(Math.round(o.val*.004))+', mas protege o resultado dos próximos meses.',c:Math.round(o.val*.004),eff:'prot'},
+   {k:'maq',q:'O trator principal quebrou de vez. Compro um novo por '+R$(Math.round(o.val*.006))+'? Aumenta a produtividade da fazenda.',c:Math.round(o.val*.006),eff:'lvl'},
+   {k:'aum',q:'A equipe está pedindo aumento. Dou um bônus de '+R$(Math.round(m.sal*1.5))+'? Se não der, o pessoal desanima.',c:Math.round(m.sal*1.5),eff:'mood'},
+   {k:'viz',q:'O vizinho quer vender 200 hectares colados na nossa divisa por '+R$(Math.round(o.val*.08))+'. É um bom negócio, valoriza a fazenda.',c:Math.round(o.val*.08),eff:'val'}]);
+  S.emp.dec=S.emp.dec||{};S.emp.dec[fid]=Object.assign({d:S.day},D);celMsg('g_'+fid,D.q,{l:'✍️ Responder',a:'gerdec',v:fid})}
+ else celMsg('g_'+fid,'📊 Relatório do mês: resultado '+(res>=0?'+':'')+R$(Math.round(res))+'. '+pick(res>o.val*.012?GFALA.bom:res>0?GFALA.med:GFALA.ruim),{l:'🏢 Ver fazendas',a:'celapp',v:'faz'},true)}
+const _emGer=empMonth;empMonth=function(){_emGer.apply(this,arguments);try{const E=S.emp;if(!E||!E.dre||!E.dre[0])return;const D=E.dre[0];EFARMS.forEach(f=>{const o=E.farms[f.id];if(o&&o.mgr)gerStep(o,f.id,f,D.f[f.id]||0)})}catch(e){console.error(e)}};
+// ---------- gerente da sede: cuida do gado sozinho
+function sedeDay(){const G=S.gm;if(!G||!G.m)return;const m=G.m,T=G.t,log=[];let spent=0;const eff=.55+m.sk*.09;
+ if(T.treat){let n=0;for(const a of S.herd)if(a.sick&&Math.random()<eff+.2&&S.money>=treatCost()){treat(a,true);n++}if(n)log.push('tratou '+n+' doente'+(n>1?'s':''))}
+ if(T.vacc&&S.day%15===0){let n=0;for(const a of S.herd)if(!(a.vacc>S.day)&&vaccinate(a))n++;if(n)log.push('vacinou '+n)}
+ if(T.feed&&S.feed<S.herd.length*6){const k=buyFeed(S.herd.length*20);if(k)log.push('comprou '+k+' kg de ração')}
+ if(T.rot&&S.up.piq&&S.pasture<35&&typeof movePq==='function'){const n=S.up.piq+1;let best=S.pq.a,bv=S.pasture;for(let i=0;i<n;i++){const q=pqQ(i);if(q>bv+12){bv=q;best=i}}if(best!==S.pq.a){movePq(best);log.push('levou o gado pro piquete '+(best+1))}}
+ if(T.sell){const H=S.cel&&S.cel.hist&&S.cel.hist.arr,avg=H&&H.length>3?H.reduce((s,x)=>s+x,0)/H.length:0,now=arroba('nelore');const good=!avg||now>=avg*(1.01-m.sk*.006);
+  if(good){const L=S.herd.filter(a=>a.sex==='M'&&!a.breeder&&ready(a)&&!a.title);if(L.length){let t=0;L.slice(0,Math.ceil(L.length*eff)).forEach(a=>t+=sellFrig(a));log.push('vendeu '+L.length+' boi'+(L.length>1?'s':'')+' gordo'+(L.length>1?'s':'')+' por '+R$(t)+' (arroba boa)')}}}
+ if(T.bull){const F=S.herd.filter(a=>a.sex==='F'&&a.age>=450).length,B=S.herd.filter(a=>a.breeder&&a.sex==='M').length;if(F>0&&B<Math.ceil(F/25)){const c=S.herd.filter(a=>a.sex==='M'&&!a.breeder&&a.age>=500).sort((x,y)=>y.gen-x.gen)[0];if(c){c.breeder=1;log.push('separou '+c.name+' como reprodutor')}}}
+ if(S.day%30===1){cash(-m.sal,'Salário: gerente '+m.n);m.xp++;if(m.xp%6===0&&m.sk<5)m.sk=Math.min(5,m.sk+.25);if(m.hon<.5&&Math.random()<.3){const v=Math.round(m.sal*rnd(.4,1.2));m.sus=(m.sus||0)+v;cash(-v,'Despesas da fazenda (diversos)')}
+  if(m.sus>0&&Math.random()<.3){S.emp=S.emp||ensureEmp();S.emp.dec=S.emp.dec||{};S.emp.dec.sede={k:'roubo',v:Math.round(m.sus),d:S.day};m.sus=0;celMsg('g_sede','⚠️ Patrão, o Ademar do leilão me contou que o '+m.n+' anda vendendo coisas da sede por fora... O que fazemos?',{l:'⚖️ Decidir',a:'gerdec',v:'sede'})}}
+ if(log.length)celMsg('g_sede','✅ Hoje: '+log.join(', ')+'.',null,true)}
+const _hdGer=hookDay;hookDay=function(){_hdGer.apply(this,arguments);try{sedeDay()}catch(e){console.error(e)}};
+// gerente da sede andando pelo curral com a prancheta
+const _evoGer=evoItems;let GMP={x:0,y:0,tx:0,ty:0,t:0,dir:1};evoItems=function(L,x0,x1,y0,y1){_evoGer(L,x0,x1,y0,y1);if(inRoom()||!S.gm||!S.gm.m)return;const h=S.t*24;if(h<6||h>18.5)return;
+ if(!GMP.x){GMP.x=26*TS;GMP.y=52*TS}GMP.t-=1/60;if(GMP.t<=0){GMP.tx=rnd(8,40)*TS;GMP.ty=rnd(50,60)*TS;GMP.t=rnd(5,12)}const dx=GMP.tx-GMP.x,dy=GMP.ty-GMP.y,d=Math.hypot(dx,dy),mv=d>2;if(mv){GMP.x+=dx/d*.35;GMP.y+=dy/d*.35;GMP.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1)}
+ if(GMP.x<x0-40||GMP.x>x1+40||GMP.y<y0-40||GMP.y>y1+60)return;const m=S.gm.m;L.push([GMP.y,10,{draw:g=>{OL(g,GMP.x,GMP.y,30,42,c=>drawPerson(c,Object.assign({x:GMP.x,y:GMP.y,dir:GMP.dir,ph:frame*.1,mv},gerLook(m,m.h))));Rr(g,'#c8a070',GMP.x+3,GMP.y-12,3,4);Rr(g,'#fff',GMP.x+3.4,GMP.y-11.6,2.2,2.8)}}])};
+const _ilGer=interactList;interactList=function(){const L=_ilGer();if(inRoom()||!S.gm||!S.gm.m)return L;const h=S.t*24;if(h>=6&&h<=18.5&&Math.hypot(GMP.x-P.x,GMP.y-P.y)<40)L.push({x:GMP.x,y:GMP.y,r:26,label:'👔 Falar com '+S.gm.m.n+' (gerente)',fn:()=>gerModal('sede')});return L};
+// ---------- telas
+function gerCard(m){return '<div style="display:flex;gap:8px;align-items:center"><img src="'+gerPortrait(m,44)+'" style="width:44px;height:53px;border-radius:6px;image-rendering:pixelated;border:2px solid #c8a040;flex:none"><div style="flex:1"><b>'+m.n+'</b> <span class="gold">'+stars5(m.sk)+'</span><div class="dim" style="font-size:12px">'+GSPEC[m.sp].n+' · '+R$(m.sal)+'/mês · '+m.bio+'</div>'+(m.caught?'<div class="red" style="font-size:12px">⚠️ Já foi pego desviando dinheiro '+m.caught+'×</div>':'')+'</div></div>'}
+function gerFazHTML(){let h='';const G=S.gm,E=S.emp;
+ h+='<div class="card"><div class="row"><b>🏠 '+(S.farmName||'Sede')+' (sede)</b>'+(G&&G.m?'<button class="b" data-act="germod" data-v="sede">Gerenciar</button>':'<button class="b gold" data-act="gerhire" data-v="sede">Contratar gerente</button>')+'</div>'+(G&&G.m?gerCard(G.m):'<div class="dim">Sem gerente: você faz tudo. Um gerente trata, vacina, roda os piquetes, compra ração e vende os bois gordos quando a arroba está boa.</div>')+'</div>';
+ const own=E?EFARMS.filter(f=>E.farms[f.id]):[];if(!own.length)h+='<div class="card dim">Compre fazendas pelo Brasil na aba 🏰 Império (patrimônio de R$ 1 milhão) e coloque um gerente em cada uma.</div>';
+ for(const f of own){const o=E.farms[f.id],last=E.dre&&E.dre[0]&&E.dre[0].f[f.id],dec=E.dec&&E.dec[f.id];h+='<div class="card"><div class="row"><b>🌾 '+f.n+'</b><span class="dim">'+f.cid+'/'+f.uf+'</span></div>'+(o.mgr?gerCard(o.mgr):'<div class="dim">Sem gerente: '+EADM[o.adm].ic+' '+EADM[o.adm].n+'</div>')
+  +'<div class="row" style="font-size:13px"><span>Último mês</span><b class="'+((last||0)>=0?'grn':'red')+'">'+(last===undefined?'—':R$s(last))+'</b></div>'+(o.mgr?'<div class="dim" style="font-size:12px">Estratégia: '+GSTR[o.mgr.strat].n+'</div>':'')
+  +'<div class="btns">'+(dec?'<button class="b gold" data-act="gerdec" data-v="'+f.id+'">⚠️ Decisão pendente</button>':'')+(o.mgr?'<button class="b" data-act="germod" data-v="'+f.id+'">Gerenciar</button>':'<button class="b gold" data-act="gerhire" data-v="'+f.id+'">Contratar gerente</button>')+'</div></div>'}
+ return h}
+function gerCands(fid){S.gcand=S.gcand||{};const M=Math.floor(S.day/30),k=fid;if(!S.gcand[k]||S.gcand[k].m!==M){const lv=fid==='sede'?0:Math.min(2,Math.floor(Math.log10(Math.max(1,(EFARMS.find(f=>f.id===fid)||{p:1e6}).p))-5.5));S.gcand[k]={m:M,L:[0,1,2].map(i=>gerCand(fid+M+i+S.day,lv))}}return S.gcand[k].L}
+function gerHire(fid){const L=gerCands(fid);reModal=null;showModal('<h3>👔 Candidatos a gerente · '+(fid==='sede'?'Sede':(EFARMS.find(f=>f.id===fid)||{}).n)+'</h3><div class="dim">Habilidade aumenta o resultado. Especialidade certa ajuda mais. A honestidade... só o tempo diz. Novos candidatos todo mês.</div>'
+ +L.map((m,i)=>'<div class="card">'+gerCard(m)+'<div class="btns"><button class="b gold" data-act="gerok" data-v="'+fid+'|'+i+'">Contratar</button></div></div>').join('')+'<div class="btns"><button class="b gray" data-act="close">Voltar</button></div>')}
+function gerModal(fid){const m=fid==='sede'?S.gm&&S.gm.m:S.emp.farms[fid]&&S.emp.farms[fid].mgr;if(!m)return gerHire(fid);reModal=()=>gerModal(fid);
+ let h='<h3>👔 '+m.n+'</h3>'+gerCard(m)+'<div class="card" style="font-size:16px"><i>“'+pick(m.mood>.7?['Tá tudo sob controle, patrão.','A equipe tá afiada!']:m.mood>.45?['Dá pra melhorar, mas tô em cima.','Seguimos firmes.']:['Tá puxado, viu... a turma tá desanimada.','Preciso de mais apoio, patrão.'])+'”</i><div class="dim" style="font-size:12px">Ânimo: '+Math.round(m.mood*100)+'% · na função há '+Math.max(0,S.day-m.since)+' dias</div></div>';
+ if(fid==='sede'){const T=S.gm.t,tg=(k,n,d)=>'<div class="row"><span>'+n+'<div class="dim" style="font-size:11px">'+d+'</div></span><button class="b '+(T[k]?'gold':'gray')+'" data-act="gertask" data-v="'+k+'">'+(T[k]?'Sim':'Não')+'</button></div>';
+  h+='<div class="card"><b>O que ele faz por você</b>'+tg('treat','🩺 Tratar doentes','Chama o veterinário na hora.')+tg('vacc','💉 Vacinar o rebanho','A cada 15 dias, quem estiver sem vacina.')+tg('feed','🌽 Comprar ração','Quando o silo estiver baixo.')+tg('rot','🚧 Rodar piquetes','Leva o gado pro piquete com mais capim.')+tg('sell','💰 Vender bois gordos','Só quando a arroba está acima da média.')+tg('bull','🐂 Separar reprodutores','Garante 1 touro para cada 25 vacas.')+'</div>'}
+ else{const o=S.emp.farms[fid];h+='<div class="card"><b>Estratégia</b>'+Object.keys(GSTR).map(k=>'<div class="row"><span>'+GSTR[k].n+'<div class="dim" style="font-size:11px">'+GSTR[k].d+'</div></span><button class="b '+(m.strat===k?'gold':'gray')+'" data-act="gerstr" data-v="'+fid+'|'+k+'">'+(m.strat===k?'✓':'Usar')+'</button></div>').join('')+'</div>'}
+ h+='<div class="btns"><button class="b" data-act="gerbonus" data-v="'+fid+'">🎁 Dar bônus ('+R$(Math.round(m.sal*.5))+')</button><button class="b red" data-act="gerfire" data-v="'+fid+'">Demitir</button><button class="b gray" data-act="close">Fechar</button></div>';showModal(h)}
+Object.assign(ACT,{gerhire(e){gerHire(e.v)},germod(e){gerModal(e.v)},
+ gerok(e){const [fid,i]=String(e.v).split('|'),m=gerCands(fid)[+i];if(!m)return;const c=JSON.parse(JSON.stringify(m));c.since=S.day;if(fid==='sede'){S.gm={m:c,t:{treat:1,vacc:1,feed:1,rot:1,sell:0,bull:1}}}else{const o=S.emp.farms[fid];if(!o)return;o.mgr=c}S.gcand[fid].L.splice(+i,1);gainXP(20,'gestão');
+  celMsg('g_'+fid,pick(['Obrigado pela confiança, patrão! Pode deixar comigo.','Começo amanhã cedinho. Vamos fazer essa fazenda render!','Não vou te decepcionar.']));gerModal(fid)},
+ gerfire(e){const fid=e.v;if(fid==='sede'){const n=S.gm.m.n;S.gm.m=null;toast('👋 '+n+' foi demitido.')}else{const o=S.emp.farms[fid];const n=o.mgr.n;o.mgr=null;toast('👋 '+n+' foi demitido. A fazenda volta ao '+EADM[o.adm].n.toLowerCase()+'.')}hideModal()},
+ gerbonus(e){const fid=e.v,m=fid==='sede'?S.gm.m:S.emp.farms[fid].mgr,v=Math.round(m.sal*.5);if(S.money<v)return toast('Dinheiro insuficiente','bad');cash(-v,'Bônus: '+m.n);m.mood=Math.min(1,m.mood+.25);if(m.hon<.5)m.hon=Math.min(1,m.hon+.08);toast('🎁 '+m.n+' ficou feliz com o bônus!','good');gerModal(fid)},
+ gertask(e){const T=S.gm.t;T[e.v]=T[e.v]?0:1;gerModal('sede')},
+ gerstr(e){const [fid,k]=String(e.v).split('|');S.emp.farms[fid].mgr.strat=k;gerModal(fid)},
+ gerdec(e){const fid=e.v,E=S.emp,D=E&&E.dec&&E.dec[fid];if(!D)return toast('Essa decisão já foi tomada.');const m=fid==='sede'?S.gm&&S.gm.m:E.farms[fid]&&E.farms[fid].mgr;reModal=null;
+  if(D.k==='roubo')return showModal('<h3>⚖️ Desvio de dinheiro</h3><div class="card">Sumiram <b class="red">'+R$(D.v)+'</b>. Suspeito: <b>'+(m?m.n:'o gerente')+'</b>.</div><div class="btns"><button class="b red" data-act="gerdo" data-v="'+fid+'|fire">Demitir e chamar a polícia</button><button class="b" data-act="gerdo" data-v="'+fid+'|warn">Dar mais uma chance</button></div>');
+  showModal('<h3>✍️ '+(m?m.n:'Gerente')+' pergunta</h3><div class="card" style="font-size:16px">'+D.q+'</div><div class="btns"><button class="b gold" data-act="gerdo" data-v="'+fid+'|yes">Sim ('+R$(D.c)+')</button><button class="b gray" data-act="gerdo" data-v="'+fid+'|no">Não</button></div>')},
+ gerdo(e){const [fid,ans]=String(e.v).split('|'),E=S.emp,D=E.dec[fid];if(!D)return hideModal();delete E.dec[fid];const o=fid==='sede'?null:E.farms[fid],m=fid==='sede'?S.gm&&S.gm.m:o&&o.mgr;
+  if(D.k==='roubo'){if(ans==='fire'){const back=Math.round(D.v*rnd(.3,.7));cash(back,'Recuperado na justiça');if(fid==='sede')S.gm.m=null;else o.mgr=null;S.rep=Math.min(100,S.rep+1);toast('🚔 Gerente demitido. A justiça recuperou '+R$(back)+'.','good')}else{if(m){m.hon=Math.min(1,m.hon+.15);m.mood=Math.max(.2,m.mood-.1)}toast('Você deu mais uma chance. Fique de olho...')}return hideModal()}
+  if(ans==='yes'){if(S.money<D.c)return toast('Dinheiro insuficiente','bad');cash(-D.c,'Decisão do gerente: '+D.k);if(D.eff==='lvl'&&o)o.lvl=Math.min(3,o.lvl+1);if(D.eff==='val'&&o)o.val+=D.c*1.25;if(D.eff==='prot'&&o)o.prot=S.day+90;if(m)m.mood=Math.min(1,m.mood+.12);toast('✅ Feito! '+(m?m.n:'O gerente')+' agradece.','good')}
+  else{if(m)m.mood=Math.max(.2,m.mood-(D.eff==='mood'?.25:.06));if(D.eff==='prot'&&o)o.noprot=S.day+60;toast('Ok, vamos sem.')}hideModal()}});
+// ração extra protege da seca
+const _fpGer2=farmProfit;farmProfit=function(f,o,E,ev){const R0=_fpGer2(f,o,E,ev);if(o.prot>S.day)R0.loss*=.4;return R0};
+// o botão antigo "trocar responsável" do Império abre os candidatos
+if(ACT.efadm)ACT.efadm=function(e){gerModal(e.v)};
+if(typeof GUIDE!=='undefined')GUIDE.push({lv:4,ic:'👔',t:'Gerentes',h:'Pelo 📱 celular › Fazendas você contrata um gerente para a sede e para cada fazenda do império. Ele tem habilidade, especialidade, salário e honestidade escondida. O gerente da sede trata, vacina, roda piquetes, compra ração e vende os bois gordos na arroba boa. Os gerentes mandam relatório e pedem decisões pelo celular.'});
+// ===== Coleta da caça animada: o caçador agacha, prepara o animal, levanta do chão e joga no ombro.
+// ===== Depois carrega o último animal nas costas (os grandes vão arrastados) até vender na Loja do Caçador.
+const _spPk=startPick;startPick=function(a){_spPk(a);if(AIM.pick){const dx=a.x-P.x,dy=a.y-P.y;P.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1)}};
+const pkPh=()=>{const k=AIM.pick;if(!k)return null;const u=clamp(k.t/k.T,0,1);return{u,crouch:u<.18?u/.18:u<.66?1:u<.9?1-(u-.66)/.24:0,lift:u<.66?0:Math.min(1,(u-.66)/.24),work:u>=.18&&u<.66}};
+const _dwPk=drawWild;drawWild=function(g,a){if(a._lift&&AIM.pick&&AIM.pick.a===a)return;return _dwPk(g,a)};
+function pkProxy(sp,x,y,dir,src){return Object.assign({},src||{},{sp,x,y,dir,st:'dead',vis:1,wait:0,dt:0,bleed:0})}
+function drawShoulderCarcass(g,proxy,sx,sy,sc,rot){g.save();g.translate(sx,sy);g.rotate(rot||0);g.scale(sc,sc);g.translate(-sx,-sy);try{_dwPk(g,proxy)}catch(e){}g.restore()}
+const BIGSP=new Set(['elk','bear','moose','boar_big','anta','capivara','jacare']);
+const _dpbPk=drawPlayerBase;drawPlayerBase=function(g){const ph=pkPh();
+ if(ph&&ph.crouch>0){g.save();g.translate(P.x,P.y);g.scale(1+.08*ph.crouch,1-.36*ph.crouch);g.translate(-P.x,-P.y);_dpbPk(g);g.restore()}else _dpbPk(g);
+ if(ph){const a=AIM.pick.a,side=P.dir>=2?(P.dir===3?1:-1):0;
+  if(ph.crouch>.5&&ph.lift===0){// braços até o animal e a faca trabalhando
+   const hx=a.x-(side||0)*4,hy=a.y-2,sx0=P.x+(side||0)*2,sy0=P.y-10;let slc='#8a3a2a';try{slc=S.h.outfit==='casual'?(lookToH(S.look).slv||lookToH(S.look).sc):OUTFITS[S.h.outfit].c[0]}catch(e){}for(const o of[-1.2,1.2]){const ex=hx+o,ey=hy+(o>0?1:0);for(let k=0;k<=8;k++){const t=k/8;Rr(g,k<4?slc:'#c89a72',sx0+o*.6+(ex-sx0-o*.6)*t-.8,sy0+(ey-sy0)*t-.8,1.7,1.7)}}Rr(g,'#c89a72',hx-1.5,hy-1,3,2);
+   if(ph.work&&((frame>>3)&1)){Rr(g,'#c8ccd2',hx+2,hy-3,.8,3);Rr(g,'#ffffff',hx+2,hy-3,.8,.8)}
+   if(ph.work&&((frame>>4)&1))a._jig=1;else a._jig=0}
+  if(ph.lift>0){a._lift=1;const k=Math.sin(ph.lift*Math.PI/2),big=BIGSP.has(a.sp)||a.kg>120,sx=a.x+(P.x-a.x)*k,sy=a.y+((P.y-(big?2:21))-a.y)*k;
+   drawShoulderCarcass(g,pkProxy(a.sp,sx,sy,a.dir,a),sx,sy,big?1:1-.3*k,big?0:(side||1)*-.35*k);Rr(g,'#c89a72',P.x+3,P.y-17+4*(1-k),1.6,4)}}
+ else if(S.h&&S.h.bag&&S.h.bag.length&&!P.drive&&!inRoom()&&RMODE!==4){// leva o último animal coletado
+  const b=S.h.bag[S.h.bag.length-1],side=P.dir===2?-1:1,big=BIGSP.has(b.sp)||b.kg>90;
+  if(big){const bx=P.x-side*20,by=P.y+2;Rr(g,'#5a3a22',Math.min(bx,P.x-side*3),P.y-6,Math.abs(P.x-side*3-bx),.8);drawShoulderCarcass(g,pkProxy(b.sp,bx,by,side,b),bx,by,.9,0)}
+  else{/* desenhado antes do corpo (atrás dos ombros): ver abaixo */}}};
+// animal pequeno/médio atravessado nos ombros: vai ATRÁS do caçador (de frente) ou na frente (de costas), com as patas penduradas
+const _dpbPk0=drawPlayerBase;drawPlayerBase=function(g){const b=!AIM.pick&&S.h&&S.h.bag&&S.h.bag.length&&!P.drive&&!inRoom()&&RMODE!==4&&S.h.bag[S.h.bag.length-1];
+ const small=b&&!(BIGSP.has(b.sp)||b.kg>90);if(!small)return _dpbPk0(g);const side=P.dir===2?-1:P.dir===3?1:0,bob=P.moving?Math.abs(Math.cos(P.ph))*.8:0,sx=P.x-side*1.5,sy=P.y-25+bob;
+ const pr=Object.assign(pkProxy(b.sp,sx,sy,side||1,b),{st:'idle',wait:9});const draw=()=>drawShoulderCarcass(g,pr,sx,sy,.6,side?-side*.15:0);
+ if(P.dir===1){_dpbPk0(g);draw()}else{draw();_dpbPk0(g);Rr(g,'#c89a72',P.x+(side||1)*3.4,P.y-18.5,1.6,2.5)}};
+// tremidinha da carcaça enquanto é preparada
+const _dwPk2=drawWild;drawWild=function(g,a){if(a._jig&&AIM.pick&&AIM.pick.a===a){g.save();g.translate(Math.sin(frame*.9)*.6,0);try{_dwPk2(g,a)}finally{g.restore()}return}return _dwPk2(g,a)};
+const _fpPk=finishPick;finishPick=function(){const a=AIM.pick&&AIM.pick.a;if(a){a._lift=0;a._jig=0}try{ifx('step','grass',10)}catch(e){}return _fpPk()};
+
+// a barra de progresso desce para não cobrir a animação
+const progEl=document.getElementById('prog');const _updPk=update;update=function(dt){_updPk(dt);if(progEl)progEl.style.top=AIM.pick?'68%':'40%'};
 // ===== Comportamento de app no celular: botão voltar do Android fecha janelas em vez de sair; sem "puxar para atualizar" =====
 (function(){
  const st=document.createElement('style');st.textContent='html,body{overscroll-behavior:none}';document.head.appendChild(st);

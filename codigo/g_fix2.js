@@ -93,14 +93,14 @@ const spotFree=sp=>!BARF.some(b=>b.spot===sp&&b.st!=='off');
 function stepBarF(dt){const want=barWant(),act=BARF.filter(b=>b.st!=='off').length;
  if(act<want){const b=BARF.find(q=>q.st==='off'&&q.t<=0);if(b){const free=BSEAT.concat(BSTAND).filter(spotFree);if(free.length){b.spot=pick(free);b.x=(Math.random()<.5?133:153)*TS;b.y=46.5*TS;b.st='go';b.vis=1;b.cup=0}}}
  for(const b of BARF){b.t-=dt;if(b.st==='off')continue;
-  if(b.st==='go'||b.st==='leave'||b.st==='door'){const tx=b.st==='leave'?(b.x<139*TS?128:154)*TS:b.st==='door'?(VBAR.door+.5)*TS:b.spot[0]*TS,ty=b.st==='door'?46.4*TS:b.spot[1]*TS;
+  if(b.st==='go'||b.st==='leave'||b.st==='door'){if(b.st==='go'&&!b.spot){b.st='leave'}const tx=b.st==='leave'?(b.x<139*TS?128:154)*TS:b.st==='door'?(VBAR.door+.5)*TS:b.spot[0]*TS,ty=b.st==='door'||b.st==='leave'?46.4*TS:b.spot[1]*TS;
    const dx=tx-b.x,dy=ty-b.y,d=Math.hypot(dx,dy);if(d<1.5){if(b.st==='leave'){b.st='off';b.vis=0;b.spot=null;b.t=rnd(20,80);continue}if(b.st==='door'){b.st='inside';b.vis=0;b.t=rnd(8,25);continue}b.st='stay';b.t=rnd(25,70);b.mv=0;b.dir=b.spot[2];continue}
    const s=Math.min(d,(b.drunk?11:15)*dt);b.x+=dx/d*s;b.y+=dy/d*s+(b.drunk?Math.sin(frame/9+b.i)*.15:0);b.mv=1;b.ph+=dt*2.2;b.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1)}
-  else if(b.st==='inside'){if(b.t<=0){b.st='go';b.vis=1;b.cup=1;b.x=(VBAR.door+.5)*TS;b.y=46.4*TS}}
+  else if(b.st==='inside'){if(b.t<=0){b.vis=1;b.cup=1;b.x=(VBAR.door+.5)*TS;b.y=46.4*TS;if(!b.spot){const free=BSEAT.concat(BSTAND).filter(spotFree);b.spot=free.length?pick(free):null}b.st=b.spot?'go':'leave'}}
   else if(b.st==='stay'){b.mv=0;b.raise=Math.max(0,b.raise-dt);if(Math.random()<dt/14&&b.cup)b.raise=1.2;
    const nb=BARF.filter(q=>q!==b&&q.st==='stay'&&Math.abs(q.x-b.x)<40);if(nb.length&&Math.random()<dt/6){const q=pick(nb);b.dir=q.x>b.x?3:2}
    b.drunk=dayHour()>=23||dayHour()<2;
-   if(b.t<=0){const r=Math.random(),over=BARF.filter(q=>q.st!=='off').length>barWant();if(over||r<.3){b.st='leave';b.spot=null}else if(r<.75){b.st='door'}else{const free=BSEAT.concat(BSTAND).filter(spotFree);if(free.length)b.spot=pick(free);b.st='go'}}}}}
+   if(b.t<=0){const r=Math.random(),over=BARF.filter(q=>q.st!=='off').length>barWant();if(over||r<.3){b.st='leave';b.spot=null}else if(r<.75){b.st='door'}else{const free=BSEAT.concat(BSTAND).filter(spotFree);if(free.length){b.spot=pick(free);b.st='go'}else{b.st='leave';b.spot=null}}}}}}
 const _updBarF=update;update=function(dt){_updBarF(dt);if(paused()||inRoom())return;if(Math.abs(P.x-140*TS)>VW+300||Math.abs(P.y-46*TS)>VH+300)return;try{stepBarF(Math.min(dt,.1)*Math.max(1,Math.min(speed||1,6)))}catch(e){console.error(e)}};
 // substitui a "turma parada" antiga por essa
 drawBarCrowd=function(L,add){const x0=CX-40,x1=CX+VW+40;
