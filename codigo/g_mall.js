@@ -1,0 +1,107 @@
+// ===== SHOPPING CAMPO GRANDE de verdade: corredor com fachadas, lojas físicas com atendente, vitrines e salas VIP =====
+const MLR=(g,c,x,y,w,h)=>Rr(g,c,x,y,w,h);
+const MALLS=[
+ {id:'lj_lv',dn:'Luís Vitton',st:'lv',x:83,n:'LUIS VITTON',wall:'#3a281c',trim:'#c8a040',floor:'wood',sc:'#c8a040',bg:'#2a1c12',clk:{n:'Consultora Beatriz',shirt:'#1a1a1a',hair:'#2a1a10',g:'f',pants:'#1a1a1a'},vip:'vip_lv',
+  items:[{k:'bagshelf',x:1,y:2,w:3,h:1},{k:'bagshelf',x:7,y:2,w:3,h:1},{k:'luxtable',x:5,y:5,w:2,h:1,show:'bags'},{k:'counter',x:4,y:3,w:4,h:1,glass:1,act:'lxs'},{k:'clerk',x:6,y:2},{k:'rack',x:1,y:5,w:2,h:1,c:['#5a3a22','#8a6a3a','#3a281c']},{k:'mirror',x:10,y:5,w:1,h:1},{k:'luxsofa',x:9,y:7,w:2,h:1},{k:'luxplant',x:1,y:7},{k:'vipdoor',x:10,y:2,w:1,h:1,act:'lxvip'}]},
+ {id:'lj_gu',dn:'Guccio',st:'gu',x:98,n:'GUCCIO',wall:'#183a28',trim:'#b8342a',floor:'marble',sc:'#f0d060',bg:'#10281c',clk:{n:'Atendente Rafael',shirt:'#f4f4f0',hair:'#1a1a1a',pants:'#1a1a1a'},
+  items:[{k:'rack',x:1,y:3,w:3,h:1,c:['#1f4a32','#b8342a','#f4f4f0','#f0d060']},{k:'rack',x:8,y:3,w:3,h:1,c:['#2a6a4a','#1a1a1a','#b8342a']},{k:'counter',x:4,y:3,w:4,h:1,glass:1,act:'lxs'},{k:'clerk',x:6,y:2},{k:'manequim',x:1,y:6,w:1,h:1,c:'#1f4a32'},{k:'manequim',x:3,y:6,w:1,h:1,c:'#b8342a'},{k:'luxtable',x:8,y:5,w:2,h:1,show:'belts'},{k:'mirror',x:10,y:7,w:1,h:1},{k:'luxplant',x:10,y:8}]},
+ {id:'lj_ar',dn:'Armandi',st:'ar',x:113,n:'ARMANDI',wall:'#1e1e26',trim:'#a8a8b0',floor:'marble',sc:'#e8e8e8',bg:'#121218',clk:{n:'Alfaiate Sr. Vittorio',shirt:'#f4f4f0',hair:'#c8c8c8',pants:'#1a1a22',beard:1},
+  items:[{k:'manequim',x:1,y:3,w:1,h:1,c:'#18181f',suit:1},{k:'manequim',x:3,y:3,w:1,h:1,c:'#ece6d6',suit:1},{k:'manequim',x:9,y:3,w:1,h:1,c:'#1e2a48',suit:1},{k:'manequim',x:10,y:3,w:1,h:1,c:'#5a4a3a',suit:1},{k:'counter',x:5,y:3,w:3,h:1,act:'lxs'},{k:'clerk',x:6,y:2},{k:'tailor',x:1,y:5,w:2,h:1},{k:'mirror',x:10,y:5,w:1,h:1},{k:'luxsofa',x:7,y:7,w:2,h:1},{k:'luxplant',x:10,y:7}]},
+ {id:'lj_ro',dn:'Rolês',st:'ro',x:128,n:'ROLES',wall:'#14402a',trim:'#c8a040',floor:'marble',sc:'#c8a040',bg:'#0c2a1a',clk:{n:'Consultor Henrique',shirt:'#f4f4f0',hair:'#3a2a1a',pants:'#14402a'},vip:'vip_ro',
+  items:[{k:'vitrine',x:1,y:3,w:2,h:1},{k:'vitrine',x:9,y:5,w:2,h:1},{k:'vitrine',x:1,y:6,w:2,h:1},{k:'counter',x:4,y:4,w:4,h:1,glass:1,act:'lxs'},{k:'clerk',x:6,y:3},{k:'luxsofa',x:8,y:7,w:2,h:1},{k:'luxplant',x:1,y:8},{k:'clockbig',x:5,y:2,w:2,h:1},{k:'vipdoor',x:10,y:2,w:1,h:1,act:'lxvip'},{k:'guard',x:3,y:8}]},
+ {id:'lj_ch',dn:'Chapelaria Texas',st:'ch',x:143,n:'CHAPELARIA TEXAS',wall:'#6a4428',trim:'#3a2414',floor:'wood',sc:'#f0d080',bg:'#3a2414',clk:{n:'Seu Dalton',shirt:'#8a5a2a',hair:'#c8c8c8',hat:'#3a2414',pants:'#3a3a5a',beard:1},
+  items:[{k:'hatwall',x:1,y:2,w:3,h:1},{k:'hatwall',x:8,y:2,w:3,h:1},{k:'counter',x:4,y:3,w:4,h:1,act:'lxs'},{k:'clerk',x:6,y:2},{k:'hatstand',x:2,y:5},{k:'hatstand',x:9,y:5},{k:'mirror',x:5,y:6,w:1,h:1},{k:'saddle2',x:10,y:7}]},
+ {id:'lj_bo',dn:'Botas & Cia',st:'bo',x:158,n:'BOTAS & CIA',wall:'#7a5232',trim:'#3a2414',floor:'wood',sc:'#f0d080',bg:'#3a2414',clk:{n:'Dona Cleide',shirt:'#a84a2a',hair:'#3a2a1a',g:'f',pants:'#3a3a5a'},
+  items:[{k:'bootshelf',x:1,y:2,w:3,h:1},{k:'bootshelf',x:8,y:2,w:3,h:1},{k:'counter',x:4,y:3,w:4,h:1,act:'lxs'},{k:'clerk',x:6,y:2},{k:'luxbench',x:2,y:6,w:3,h:1},{k:'luxbench',x:7,y:6,w:3,h:1},{k:'mirror',x:10,y:7,w:1,h:1}]},
+ {id:'lj_rb',dn:'Ray-Bom',st:'rb',x:173,n:'RAY-BOM',wall:'#e8e8ec',trim:'#c8302a',floor:'white',sc:'#c8302a',bg:'#f4f4f4',clk:{n:'Atendente Lívia',shirt:'#c8302a',hair:'#1a1a1a',g:'f',pants:'#1a1a1a'},
+  items:[{k:'glassdisp',x:1,y:2,w:3,h:1},{k:'glassdisp',x:8,y:2,w:3,h:1},{k:'counter',x:4,y:3,w:4,h:1,glass:1,act:'lxs'},{k:'clerk',x:6,y:2},{k:'glasstower',x:2,y:6},{k:'glasstower',x:9,y:6},{k:'mirror',x:5,y:6,w:1,h:1}]},
+ {id:'lj_mm',dn:'Magazine da Moda',st:'moda',x:188,n:'MAGAZINE DA MODA',wall:'#f0e0c8',trim:'#2a6ab0',floor:'tile',sc:'#ffffff',bg:'#2a6ab0',clk:{n:'Caixa Jéssica',shirt:'#2a6ab0',hair:'#5a3a22',g:'f',pants:'#2a2a3a'},
+  items:[{k:'rack',x:1,y:3,w:3,h:1,c:['#2a5aa0','#a8c8e8','#b8342a','#f0e060']},{k:'rack',x:8,y:3,w:3,h:1,c:['#2a4a7a','#a8905a','#5a8a3a']},{k:'rack',x:1,y:6,w:3,h:1,c:['#d86a8a','#f4f4f0','#3a3a3a']},{k:'counter',x:5,y:3,w:3,h:1,act:'lxs'},{k:'clerk',x:6,y:2},{k:'pilha',x:8,y:5,w:2,h:1},{k:'provador',x:10,y:7,w:1,h:1}]}
+];
+MALLS.forEach(m=>{ROOMS[m.id]=Object.assign({id:m.id,x:m.x,y:184,w:12,h:10,floor:m.floor,wall:m.wall,trim:m.trim,win:[],mall:m,items:m.items,wallx:[{k:'brand',x:3,n:m.n,c:m.sc,bg:m.bg}]});CLERK[m.id]=m.clk});
+// salas VIP (salinha separada)
+ROOMS.vip_ro={id:'vip_ro',x:203,y:184,w:9,h:8,floor:'marble',wall:'#0c2a1a',trim:'#c8a040',win:[],vipOf:'lj_ro',items:[{k:'velvet',x:2,y:3,w:3,h:1},{k:'traytable',x:3,y:5,w:3,h:1,act:'lxvipshop'},{k:'clerk',x:6,y:4},{k:'champ',x:7,y:6},{k:'luxplant',x:1,y:6}],wallx:[{k:'brand',x:2,n:'SALA PRIVATIVA',c:'#c8a040',bg:'#0c2a1a'}]};
+ROOMS.vip_lv={id:'vip_lv',x:215,y:184,w:9,h:8,floor:'wood',wall:'#2a1c12',trim:'#c8a040',win:[],vipOf:'lj_lv',items:[{k:'velvet',x:2,y:3,w:3,h:1},{k:'traytable',x:3,y:5,w:3,h:1,act:'lxvipshop',bags:1},{k:'clerk',x:6,y:4},{k:'champ',x:7,y:6},{k:'mirror',x:1,y:5,w:1,h:1}],wallx:[{k:'brand',x:2,n:'SALA PRIVATIVA',c:'#c8a040',bg:'#2a1c12'}]};
+CLERK.vip_ro={n:'Gerente Sr. Augusto',shirt:'#f4f4f0',hair:'#c8c8c8',pants:'#0c2a1a',beard:1};CLERK.vip_lv={n:'Gerente Madame Celine',shirt:'#1a1a1a',hair:'#c8a050',g:'f',pants:'#1a1a1a'};
+// corredor do shopping
+const MFRONT=MALLS.map((m,i)=>({k:'front',x:1+i*5+(i>3?1:0),y:2,w:4,h:1,act:'lxenter',to:m.id,m}));
+ROOMS.mall={id:'mall',x:34,y:184,w:46,h:12,floor:'marble',wall:'#e8e2d8',trim:'#c8a040',win:[],items:MFRONT.concat([
+ {k:'mfountain',x:21,y:6,w:3,h:2},{k:'luxplant',x:2,y:7},{k:'luxplant',x:43,y:7},{k:'mbench',x:8,y:7,w:2,h:1},{k:'mbench',x:35,y:7,w:2,h:1},{k:'kiosk',x:13,y:6,w:2,h:1,act:'lxcafe'},{k:'infodesk',x:29,y:6,w:3,h:1,act:'lxinfo'},{k:'luxplant',x:17,y:9},{k:'luxplant',x:27,y:9},{k:'escada',x:40,y:5,w:3,h:2}])};
+CLERK.mall={n:'Moça do balcão de informações',shirt:'#c8a040',hair:'#2a1a10',g:'f',pants:'#1a1a1a'};
+const MSHOP=[];(function(){for(let i=0;i<9;i++)MSHOP.push({x:(36+hs(i,3)*40)*TS,y:(190+hs(3,i)*4)*TS,tx:0,ty:0,wait:rnd(0,4),dir:0,ph:0,mv:0,o:{shirt:pick(['#c83a2a','#3a6ab0','#f4f4f0','#1a1a1a','#e0a431','#d86a8a','#5a8a3a']),hair:pick(['#2a1a10','#c8a050','#1a1a1a','#8a5a2a']),pants:pick(['#1a1a22','#2a4a7a','#e8e2d4']),g:i%2?'f':null,hat:null},bag:i%3===0?pick(['#c8a040','#b8342a','#1a1a1a']):null})})();
+// ---------- entrar e sair
+let MSTK=[];
+function goRoom(id,ret,fx){const r=ROOMS[id];if(!r)return;fade(()=>{MSTK.push(RET);RET=ret;S.horseOn=false;P.aim=0;P.vx=P.vy=0;P.x=(fx!==undefined?fx:r.door)*TS+8;P.y=(r.y+r.h-2)*TS+12;P.dir=1;camInit=0});
+ const m=r.mall;if(m)setTimeout(()=>toast('🛍️ '+m.clk.n+': “Seja bem-vindo(a) à '+m.dn+'!”','good'),400)}
+const cap1=s=>s.replace(/\b\w/g,c=>c.toUpperCase());
+const _exitMall=exitRoom;exitRoom=function(){const cr=inRoom()&&roomAt(P.x,P.y);if(RET&&!RET.city&&cr&&(cr.mall||cr.vipOf)){const R=RET,back=MSTK.pop()||null;fade(()=>{P.x=R.x;P.y=R.y;P.dir=0;P.vx=P.vy=0;camInit=0;RET=back;moveParty(P.x,P.y-4)});return}
+ if(RET&&RET.city){MSTK=[];fade(()=>{RET=null;P.x=BUSST.x;P.y=BUSST.y+10;P.dir=0;camInit=0;setTimeout(()=>cityModal('Você saiu do Shopping Campo Grande.'),250)});return}return _exitMall()};
+ACT.cshop=function(){if(inRoom()){const r=roomAt(P.x,P.y);if(r&&(r.mall||r.vipOf||r.id==='mall'))return hideModal()}hideModal();MSTK=[];RET=null;goRoom('mall',{city:1});setTimeout(()=>toast('🏬 Shopping Campo Grande · 8 lojas · ande até a vitrine da loja para entrar'),500)};
+// ---------- interações
+const vipOk=()=>myNW()>=2e6||(S.rep||0)>=35||Object.keys((S.wd&&S.wd.own)||{}).some(id=>LUXI[id]&&LUXI[id].p>=20000);
+const VIPX={ro:[{id:'rarco',n:'Rolês Daytona Arco-íris (edição limitada)',s:'watch',p:650000,r:12,o:{},c:'#ff8ad8',st:'ro'},{id:'rpaul',n:'Rolês Paul Newman vintage',s:'watch',p:480000,r:10,o:{},c:'#f0e8d0',st:'ro'}],
+ lv:[{id:'lvcroc',n:'Bolsa de couro de crocodilo sob medida',s:'bag',p:240000,r:6,o:{bag:'#2a4a32'},st:'lv'},{id:'lvmala',n:'Jaqueta de couro exótico bordada',s:'top',p:180000,r:5,o:{shirt:'lisa',sc:'#f0e8d8',jacket:'#2a1c12',scarfN:'#c8a040'},st:'lv'}]};
+for(const k in VIPX)VIPX[k].forEach(i=>{LUXI[i.id]=i});
+function vipShop(r){const st=ROOMS[r.vipOf].mall.st,L=VIPX[st],W=ensureWd(),C=CLERK[r.id];
+ showModal('<h3>🥂 Sala privativa · '+ROOMS[r.vipOf].mall.dn+'</h3><div class="card"><i>'+C.n+' serve uma taça de champanhe e traz as peças numa bandeja de veludo. “Estas peças não ficam na vitrine. Só mostramos aos nossos clientes especiais.”</i></div>'+
+ L.concat(LUXS.find(s=>s.id===st).it.filter(i=>i.p>=20000)).map(i=>{const own=W.own[i.id],on=W.eq[i.s]===i.id;return '<div class="card"'+(on?' style="border-color:#c8a040"':'')+'><div class="row"><b>'+(VIPX[st].includes(i)?'💎 ':'')+i.n+'</b><span class="gold">'+R$(i.p)+'</span></div><div class="dim">'+SLOTN[i.s]+' · +'+i.r+' reputação'+(VIPX[st].includes(i)?' · exclusivo da sala VIP':'')+'</div><div class="btns">'+(own?(on?'<button class="b gray" data-act="lxoff" data-v="'+i.id+'">Tirar</button>':'<button class="b gold" data-act="lxon" data-v="'+i.id+'">Usar</button>'):'<button class="b gold" data-act="lxbuy" data-v="'+i.id+'">Comprar</button>')+'</div></div>'}).join('')+'<div class="btns"><button class="b gray" data-act="close">Fechar</button></div>');LXV='vip';VIPR=r}
+let VIPR=null;
+const _lxStoreMall=luxStore;luxStore=function(id){if(LXV==='vip'&&VIPR)return vipShop(VIPR);_lxStoreMall(id);const m=MALLS.find(x=>x.st===id);if(m){const box=document.getElementById('mbox'),h=box&&box.querySelector('h3');if(h)h.insertAdjacentHTML('afterend','<div class="card"><i>'+m.clk.n+' te atende pessoalmente'+(m.vip?' · peças ainda mais exclusivas na sala privativa (porta dourada)':'')+'.</i></div>');if(inRoom())box.querySelectorAll('[data-act=cshop]').forEach(b=>{b.dataset.act='close';b.textContent='Fechar'})}};
+const _lxoffM=ACT.lxoff,_lxonM=ACT.lxon;ACT.lxon=function(e){if(LXV==='vip'&&VIPR){const i=LUXI[e.v],W=ensureWd();if(i&&W.own[i.id]){W.eq[i.s]=i.id;S.h.outfit='casual';toast('Usando: '+i.n)}return vipShop(VIPR)}return _lxonM(e)};
+ACT.lxoff=function(e){if(LXV==='vip'&&VIPR){const i=LUXI[e.v],W=ensureWd();if(i&&W.eq[i.s]===i.id)delete W.eq[i.s];return vipShop(VIPR)}return _lxoffM(e)};
+const _lxbuyM=ACT.lxbuy;ACT.lxbuy=function(e){const i=LUXI[e.v];if(LXV==='vip'&&VIPR&&i){const W=ensureWd();if(W.own[i.id])return;if(S.money<i.p)return toast('Dinheiro insuficiente','bad');cash(-i.p,i.n);W.own[i.id]=1;W.eq[i.s]=i.id;S.rep=Math.min(100,(S.rep||0)+i.r);S.h.outfit='casual';toast('🥂 '+CLERK[VIPR.id].n+': “Excelente escolha!” Comprou '+i.n,'good');return vipShop(VIPR)}return _lxbuyM(e)};
+const _roomActMall=roomAct;roomAct=function(it,r){
+ if(it.act==='lxenter'){const m=it.m,R=ROOMS[m.id];return goRoom(m.id,{x:(r.x+it.x+2)*TS,y:(r.y+it.y+1)*TS+12})}
+ if(it.act==='lxs'){LXV='st';VIPR=null;LXS=r.mall.st;return luxStore(r.mall.st)}
+ if(it.act==='lxvip'){const C=CLERK[r.id];if(!vipOk())return toast('🚪 '+C.n+': “A sala privativa é só para clientes especiais. Volte quando for um grande fazendeiro (patrimônio de R$ 2 milhões) ou já tiver uma peça de grife.”','bad');const v=ROOMS[r.mall.vip];return goRoom(v.id,{x:(r.x+it.x)*TS+8,y:(r.y+it.y+1)*TS+12})}
+ if(it.act==='lxvipshop'){return vipShop(r)}
+ if(it.act==='lxcafe'){if(S.money<12)return toast('Dinheiro insuficiente','bad');cash(-12,'Café no shopping');P.hp=Math.min(100,P.hp+8);return toast('☕ Um espresso com pão de queijo. (+8 vida)','good')}
+ if(it.act==='lxinfo')return showModal('<h3>ℹ️ Informações</h3><div class="card"><i>“Bem-vindo ao Shopping Campo Grande! Temos '+MALLS.length+' lojas neste piso. Rolês e Luís Vitton têm sala privativa para clientes especiais.”</i></div>'+MALLS.map(m=>'<div class="dim">• '+m.dn+' — '+m.clk.n+'</div>').join('')+'<div class="btns"><button class="b gold" data-act="cshopold">🎁 Presentes e binóculo</button><button class="b" data-act="wdrobe">👔 Guarda-roupa</button><button class="b gray" data-act="close">Fechar</button></div>');
+ if(0)return toast('ℹ️ “Lojas: '+MALLS.map(m=>cap1(m.n.toLowerCase())).join(', ')+'. Rolês e Luís Vitton têm sala privativa para clientes especiais.”');
+ return _roomActMall(it,r)};
+const MLB={lxenter:it=>'🛍️ Entrar: '+it.m.dn,lxs:(it,r)=>'💬 Ser atendido por '+CLERK[r.id].n,lxvip:()=>'🚪 Sala privativa (VIP)',lxvipshop:(it,r)=>'🥂 Atendimento exclusivo com '+CLERK[r.id].n,lxcafe:()=>'☕ Café e pão de queijo (R$ 12)',lxinfo:()=>'ℹ️ Informações'};
+const _ilMall=interactList;interactList=function(){const L=_ilMall();if(!inRoom())return L;const r=roomAt(P.x,P.y);if(!r||!(r.mall||r.id==='mall'||r.vipOf))return L;
+ for(const l of L){const it=r.items.find(i=>i.act&&MLB[i.act]&&Math.abs((r.x+i.x+(i.w||1)/2)*TS-l.x)<1&&Math.abs((r.y+i.y+(i.h||1))*TS+4-l.y)<1);if(it){l.label=MLB[it.act](it,r);if(it.act==='lxenter')l.r=30}if(l.label==='🚪 Sair')l.label=r.id==='mall'?'🚪 Sair do shopping':'🚪 Voltar ao corredor'}return L};
+// ---------- desenho
+const _dfMall=drawFurn;drawFurn=function(g,it,x,y,r){const R=(c,a,b,w,h)=>MLR(g,c,x+a,y+b,w,h),W=(it.w||1)*TS,H=(it.h||1)*TS;
+ switch(it.k){
+ case 'front':{const m=it.m,fx=x-4,fw=W+8;R('#d8d2c6',-4,-34,fw,50);R(m.bg,-2,-32,fw-4,10);ptext(g,m.n.length>11?m.n.slice(0,11):m.n,x+W/2-ptw(m.n.length>11?m.n.slice(0,11):m.n)/2,y-30,m.sc);
+  R('#1a1a1a',-2,-21,fw-4,35);R('rgba(170,210,240,.55)',0,-19,fw-8,31);R('rgba(255,255,255,.35)',2,-18,4,28);R(m.bg,W/2-6,-19,12,31);R('rgba(255,250,220,.35)',W/2-5,-18,10,30);
+  const c=m.sc;R(c,4,-8,4,10);R(shade(c,-30),12,-12,3,6);R(c,W-12,-10,6,8);R('#c8a040',W/2-1,-6,2,2);R('#e8e2d8',-4,13,fw,3);break}
+ case 'bagshelf':R('#2a1c12',0,-14,W,H+12);for(let s=0;s<3;s++){R('#c8a040',0,-12+s*9,W,1);for(let i=0;i<3;i++){const bx=3+i*15,by=-11+s*9;R(['#6a4a2a','#8a6a3a','#3a281c'][(i+s)%3],bx,by,9,6);R('#c8a040',bx+3,by-2,3,2);R('#e8c860',bx+4,by+2,1,1)}}break;
+ case 'luxtable':R('rgba(0,0,0,.2)',1,H-2,W,3);R('#f4f0e8',0,2,W,H-4);R('#c8a040',0,2,W,1.4);R('#3a281c',2,H-4,3,4);R('#3a281c',W-5,H-4,3,4);if(it.show==='bags'){R('#6a4a2a',4,-4,8,7);R('#c8a040',7,-6,3,2);R('#8a6a3a',18,-3,8,6)}else{for(let i=0;i<4;i++){R('#1a1a1a',3+i*7,0,5,2);R('#f0d060',4+i*7,0,2,2)}}break;
+ case 'rack':{R('#9aa0a8',0,-18,1.4,H+16);R('#9aa0a8',W-1.4,-18,1.4,H+16);R('#9aa0a8',0,-18,W,1.4);const C=it.c||['#888'];for(let i=0;i<Math.floor(W/5);i++){const c=C[i%C.length];R(c,2+i*5,-16,4,14);R(shade(c,-25),2+i*5,-3,4,1.2);R('#c8c8c8',3.5+i*5,-18,1,2)}break}
+ case 'manequim':{const c=it.c;R('rgba(0,0,0,.2)',2,14,12,3);R('#d8d4cc',6,10,4,5);R('#8a8a8a',4,14,8,2);R(c,3,-12,10,14);R(shade(c,-20),3,-12,1.4,14);R('#e8e0d4',6,-18,4,6);if(it.suit){R('#f4f4f0',7,-12,2,8);R('#b8242a',7.4,-11,1.2,6)}R(c,1,-11,2,10);R(c,13,-11,2,10);break}
+ case 'mirror':R('#c8a040',0,-14,W,H+10);R('#b8d8e8',2,-12,W-4,H+6);R('rgba(255,255,255,.6)',4,-10,2,H);break;
+ case 'luxsofa':R('rgba(0,0,0,.2)',2,H-2,W,3);R('#6a1a2a',0,0,W,H-2);R('#8a2a3a',3,3,W-6,H-8);R('#4a1020',0,0,W,4);R('#4a1020',0,0,4,H-2);R('#4a1020',W-4,0,4,H-2);R('#c8a040',6,5,4,4);break;
+ case 'luxplant':R('#e8e2d8',3,6,10,8);R('#c8a040',3,6,10,1.4);R('#2f6a2f',1,-10,14,16);R('#3f8a3e',4,-14,8,10);R('#5ab04a',7,-12,3,4);break;
+ case 'vipdoor':R('#c8a040',0,-26,W,30);R('#5a1a2a',2,-24,W-4,28);R('#c8a040',W-5,-10,2,2);R('#1a1a1a',2,-32,W-4,5);ptext(g,'VIP',x+W/2-ptw('VIP')/2,y-31,'#f0d060');break;
+ case 'vitrine':{R('rgba(0,0,0,.2)',1,H-2,W,3);R('#2a2a2a',0,0,W,H-2);R('#c8a040',0,0,W,1.4);R('rgba(200,235,255,.45)',0,-12,W,12);R('#c8c8c8',0,-13,W,1);for(let i=0;i<4;i++){const wx=3+i*7;R('#f4f0e8',wx,-8,5,6);R(['#e8c840','#e8ecf0','#d8c070','#fff8c0'][i],wx+1,-7,3,3);R('#5a5a5a',wx+2,-2,1,2)}if(((frame>>3)+it.x)%11===0)R('#fff',5,-10,1,3);break}
+ case 'clockbig':R('#c8a040',0,-24,W,24);R('#14402a',2,-22,W-4,20);R('#f4f0e8',W/2-7,-19,14,14);R('#1a1a1a',W/2,-17,1,6);R('#1a1a1a',W/2,-12,5,1);ptext(g,'ROLES',x+W/2-ptw('ROLES')/2,y-4,'#c8a040');break;
+ case 'guard':{const gx=x+8,gy=y+12;OL(g,gx,gy+3,30,42,c=>drawPerson(c,{x:gx,y:gy,dir:0,ph:0,mv:0,shirt:'#1a1a22',hair:'#1a1a1a',pants:'#1a1a22'}));R('#3a3a3a',8,-18,4,1);break}
+ case 'hatwall':R('#4a2e18',0,-16,W,H+12);for(let s=0;s<2;s++)for(let i=0;i<4;i++){const hx=2+i*11,hy=-13+s*12,c=['#3a2414','#f0ead8','#e8dcb0','#1a1a1a','#5a3a22'][(i+s*2)%5];R(c,hx,hy+4,10,2);R(c,hx+2,hy,6,5);R(shade(c,-25),hx+2,hy+3,6,1)}break;
+ case 'hatstand':R('#3a2414',7,-6,2,20);R('#3a2414',3,13,10,2);R('#f0ead8',2,-10,12,3);R('#f0ead8',4,-14,8,5);R('#6a4a2a',4,-11,8,1);break;
+ case 'saddle2':R('#6a3a1a',0,2,16,8);R('#8a5a2a',2,0,12,4);R('#c8a040',6,4,3,3);R('#3a2414',2,10,2,4);R('#3a2414',12,10,2,4);break;
+ case 'bootshelf':R('#4a2e18',0,-16,W,H+12);for(let s=0;s<2;s++)for(let i=0;i<5;i++){const bx=2+i*9,by=-13+s*12,c=['#8a7050','#3e4a32','#141414','#6a4a2a','#a8805a'][(i+s)%5];R(c,bx,by,4,9);R(c,bx,by+7,7,3);R(shade(c,30),bx+1,by+1,1,6)}break;
+ case 'luxbench':R('rgba(0,0,0,.2)',1,H-2,W,3);R('#8a2a3a',0,2,W,H-6);R('#6a1a2a',0,2,W,2);R('#3a2414',2,H-4,3,4);R('#3a2414',W-5,H-4,3,4);break;
+ case 'glassdisp':R('#f4f4f4',0,-14,W,H+12);R('#c8302a',0,-14,W,2);for(let s=0;s<3;s++)for(let i=0;i<5;i++){const gx=3+i*9,gy=-10+s*8;R('#1a1a1a',gx,gy,3,2);R('#1a1a1a',gx+4,gy,3,2);R('#1a1a1a',gx+3,gy,1,1);if(i%2)R('#c8a040',gx,gy-1,7,.8)}break;
+ case 'glasstower':R('#e8e8ec',4,-14,8,28);R('#c8302a',4,-14,8,2);for(let i=0;i<4;i++){R('#1a1a1a',5,-10+i*6,2.6,1.6);R('#1a1a1a',8.4,-10+i*6,2.6,1.6)}break;
+ case 'pilha':for(let i=0;i<4;i++)for(let j=0;j<3;j++)R(['#2a5aa0','#f4f4f0','#b8342a','#5a8a3a'][(i+j)%4],2+i*7,6-j*4,6,4);R('#c8c8c8',0,10,W,4);break;
+ case 'provador':R('#5a3a22',0,-22,W,26);R('#b8342a',1,-20,W-2,24);for(let i=1;i<W;i+=3)R('#8a242a',i,-20,1,24);break;
+ case 'tailor':R('#c8a060',0,0,W,H-2);R('#a8803a',0,0,W,2);R('#f4f4f0',4,3,10,1);R('#3a3a3a',18,3,6,4);R('#c8302a',8,6,1,1);break;
+ case 'velvet':R('rgba(0,0,0,.25)',2,H-2,W,3);R('#5a1020',0,-6,W,H+4);R('#7a1a30',3,-3,W-6,H-4);R('#c8a040',0,-6,W,1.4);for(let i=6;i<W;i+=10)R('#c8a040',i,0,2,2);break;
+ case 'traytable':R('rgba(0,0,0,.25)',2,H-2,W,3);R('#2a1c12',0,0,W,H-2);R('#c8a040',0,0,W,1.4);R('#5a1020',6,-4,W-12,5);if(r.vipOf==='lj_ro')for(let i=0;i<4;i++){R('#f4f0e8',9+i*7,-3,5,3);R(['#ff8ad8','#f0e8d0','#e8c840','#e8ecf0'][i],10+i*7,-3,3,2)}else{R('#2a4a32',10,-6,9,6);R('#c8a040',13,-8,3,2);R('#2a1c12',24,-6,9,6)}break;
+ case 'champ':R('#e8e8ec',4,-2,8,14);R('#c8a040',5,-1,6,4);R('#1a3a1a',6,-12,4,11);R('#c8a040',6,-14,4,3);R('#f4f0e8',13,2,2,8);R('#f0e080',13,2,2,3);break;
+ case 'mfountain':{R('rgba(0,0,0,.2)',2,H-2,W,4);R('#d8d2c6',0,0,W,H);R('#6ab0d8',3,3,W-6,H-8);R('#e8e2d8',W/2-4,-10,8,14);const t=frame/6;for(let i=0;i<5;i++){const a=t+i*1.26;R('rgba(220,240,255,.8)',W/2+Math.cos(a)*8,-12+Math.sin(a)*2+((frame+i*7)%14)*.7,1.4,2)}break}
+ case 'mbench':R('rgba(0,0,0,.2)',1,H-2,W,3);R('#7a5232',0,0,W,4);R('#5a3a22',0,-6,W,3);R('#2a2a2a',2,4,2,8);R('#2a2a2a',W-4,4,2,8);break;
+ case 'kiosk':R('rgba(0,0,0,.2)',1,H-2,W,3);R('#6a3a1a',0,0,W,H-2);R('#c8a040',0,0,W,2);R('#3a2414',0,-26,2,26);R('#3a2414',W-2,-26,2,26);R('#c8302a',-2,-30,W+4,6);ptext(g,'CAFE',x+W/2-ptw('CAFE')/2,y-29,'#ffffff');R('#f4f4f0',6,-4,4,4);R('#6a3a1a',7,-3,2,2);R('#e8c070',16,-3,6,3);break;
+ case 'infodesk':R('rgba(0,0,0,.2)',1,H-2,W,3);R('#f4f0e8',0,0,W,H-2);R('#c8a040',0,0,W,2);R('#2a6ab0',W/2-8,-14,16,10);ptext(g,'INFO',x+W/2-ptw('INFO')/2,y-12,'#ffffff');{const cx=x+W/2,cy=y-2;OL(g,cx,cy+3,30,42,c=>drawPerson(c,{x:cx,y:cy,dir:0,ph:0,mv:0,shirt:'#c8a040',hair:'#2a1a10',g:'f',pants:'#1a1a1a'}))}break;
+ case 'escada':R('#9aa0a8',0,-10,W,H+8);for(let i=0;i<8;i++)R(i%2?'#6a7078':'#8a9098',2,-8+i*4.5,W-4,3);R('#2a2a2a',0,-10,2,H+8);R('#2a2a2a',W-2,-10,2,H+8);ptext(g,'PISO 2',x+2,y-16,'#3a3a3a');break;
+ default:return _dfMall(g,it,x,y,r)}};
+const _dwdMall=drawWallDeco;drawWallDeco=function(g,wd,x,y){if(wd.k==='brand'){const t=wd.n,tw=ptw(t)+10,bx=x;Rr(g,wd.bg,bx-1,y+5,tw+2,11);Rr(g,wd.c,bx,y+6,tw,1);Rr(g,wd.c,bx,y+14,tw,1);ptext(g,t,bx+5,y+8,wd.c);return}return _dwdMall(g,wd,x,y)};
+// clientes passeando no corredor
+function stepMallPpl(dt){const r=ROOMS.mall;if(!inRoom()||roomAt(P.x,P.y)!==r)return;for(const p of MSHOP){if(p.wait>0){p.wait-=dt;p.mv=0;continue}if(!p.tx){p.tx=(r.x+2+Math.random()*(r.w-4))*TS;p.ty=(r.y+4.4+Math.random()*5)*TS}const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.hypot(dx,dy);if(d<2){p.tx=0;p.wait=rnd(1,6);continue}const nx=p.x+dx/d*14*dt,ny=p.y+dy/d*14*dt;if(!solidAt(nx,ny-2)){p.x=nx;p.y=ny}else{p.tx=0;p.wait=1}p.mv=1;p.ph+=dt*2.2;p.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1)}}
+const _updMall=update;update=function(dt){_updMall(dt);stepMallPpl(dt)};
+const _evoMall=evoItems;evoItems=function(L,x0,x1,y0,y1){_evoMall(L,x0,x1,y0,y1);if(!inRoom())return;const r=roomAt(P.x,P.y);if(r!==ROOMS.mall)return;for(const p of MSHOP)L.push([p.y,10,{draw:g=>{OL(g,p.x,p.y+3,30,42,c=>drawPerson(c,Object.assign({x:p.x,y:p.y,dir:p.dir,ph:p.ph,mv:p.mv},p.o)));if(p.bag&&RMODE!==4){Rr(g,p.bag,p.x+(p.dir===2?-7:4),p.y-9,4,5);Rr(g,'#f4f4f0',p.x+(p.dir===2?-6:5),p.y-11,2,2)}}}])};
+// cidade: o shopping agora é físico
+if(typeof GUIDE!=='undefined')GUIDE.push({lv:3,ic:'🏬',t:'Shopping Campo Grande',h:'Na cidade, o Shopping tem corredor com fonte, café e 8 lojas de verdade com atendente: Luís Vitton, Guccio, Armandi, Rolês, Chapelaria Texas, Botas & Cia, Ray-Bom e Magazine da Moda. Rolês e Luís Vitton têm sala privativa (porta dourada VIP) com peças exclusivas para clientes especiais.'});
