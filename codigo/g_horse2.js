@@ -46,7 +46,7 @@ const RAIL={x:28,y:46};
 function railPos(i){return{x:(RAIL.x+i*2.3)*TS+8,y:RAIL.y*TS+12}}
 function drawRail(g){const x0=RAIL.x*TS,y=RAIL.y*TS+6;Rr(g,'rgba(0,0,0,.2)',x0,y+6,6*TS,3);for(let i=0;i<=3;i++)Rr(g,'#5a3a22',x0+i*2*TS,y-6,2.4,12);Rr(g,'#8a6a42',x0,y-4,6*TS+2,2);Rr(g,'#6a4a2a',x0,y-2.4,6*TS+2,.6);
  Rr(g,'#7a5232',x0+6*TS+6,y-4,10,8);Rr(g,'#3a7ab8',x0+6*TS+7,y-3,8,3);signBoard(g,x0+3*TS,y-16,'COCHEIRA','#5a3a22','#ffd75e','#1e140c')}
-const idleHorses=()=>ensureHorses().filter(h=>h!==S.horse||!S.horseOn);
+const idleHorses=()=>ensureHorses().filter(h=>!(h===S.horse&&S.horseOn)&&!h.pos).sort((a,b)=>(b===S.horse)-(a===S.horse));
 const _evoHo=evoItems;evoItems=function(L,x0,x1,y0,y1){_evoHo(L,x0,x1,y0,y1);if(inRoom())return;const hs2=ensureHorses();
  if(RAIL.x*TS<x1+40&&(RAIL.x+8)*TS>x0-40&&RAIL.y*TS<y1+40&&RAIL.y*TS>y0-60){L.push([RAIL.y*TS+6,10,{draw:drawRail}]);idleHorses().slice(0,3).forEach((h,i)=>{const p=railPos(i);L.push([p.y,10,{draw:g=>OL(g,p.x,p.y,40,44,c=>drawHorseS(c,p.x,p.y,i%2?2:3,h.b,{graze:((frame>>7)+i)%3===0,saddle:h.tame>=80,id:h.id}))}])})}
  if(CMT.on)cmtItems(L,x0,x1,y0,y1);

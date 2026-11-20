@@ -1,6 +1,6 @@
 // ===== Cães e ladrões =====
 const THV=[],DR=new Map();const thActive=t=>t.st!=='gone'&&t.st!=='down'&&t.st!=='surr'&&t.st!=='cuffed'&&t.st!=='ride';let lastHour=-1;
-const kennelCap=()=>[1,2,3,5][S.up.kennel||0];
+const kennelCap=()=>[1,2,3,5][S.up.kennel||0]+(S.dogs?S.dogs.filter(d=>DOGS[d.breed]&&DOGS[d.breed].lgd).length:0);
 const dogDef=d=>DOGS[d.breed];
 const guardScore=()=>S.dogs.reduce((m,d)=>Math.max(m,DOGS[d.breed].guard),0);
 function dogRT(d){
