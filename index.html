@@ -7527,18 +7527,18 @@ function drawHuman(g,o,L){
  // ---------- pernas e botas
  const skirt=L.skirt;
  if(side){const o1=sw*3,o2=-o1,lift1=mv&&o1*dr>0?Math.min(1,o1*dr*.45):0,lift2=mv&&o2*dr>0?Math.min(1,o2*dr*.45):0;
-  const leg=(ox,c,cD,lf)=>{const lx=x-1.25+ox*.85;R(c,lx,by-9.5,2.5,7.2-lf);R(cD,lx+(dr>0?0:1.9),by-9.5,.6,7.2-lf);if(L.pants==='bombacha')R(c,lx-.4,by-7.5,3.3,3.5-lf);
-   const bx=x-1.4+ox,byy=y-2.6-lf;R(bt,bx,byy,2.8,2.6);R(bt,bx+(dr>0?2.2:-1),byy+1,1.6,1.6);R(btD,bx-(dr>0?.2:0),byy+2.1,3.4+.6,.5);R(btD,bx+(dr>0?0:2.2),byy+2,.8,.6);R(shade(bt,15),bx,byy,2.8,.5);if(L.tallBoot){R(bt,bx+.1,byy-2,2.6,2.2);R(shade(bt,15),bx+.1,byy-2,2.6,.4);for(let k=0;k<3;k++)R('#c8b890',bx+(dr>0?1.8:.4),byy-1.6+k*.7,.5,.3)}if(L.hunt&&c!==sk){R(shade(c,-16),lx+(dr>0?.3:.2),by-8,2,2);R(shade(c,-28),lx+(dr>0?.3:.2),by-8,2,.4)}};
+  const leg=(ox,c,cD,lf)=>{const lx=x-1.25+ox*.85;R(c,lx,by-9.5,2.5,7.2-lf);R(cD,lx+(dr>0?0:1.9),by-9.5,.6,7.2-lf);if(L.crease)R(shade(c,16),lx+(dr>0?1.8:.4),by-9.3,.3,6.9-lf);if(L.cargoP)R(cD,lx+.5,by-6.8,1.6,1.9);if(L.pants==='bombacha')R(c,lx-.4,by-7.5,3.3,3.5-lf);
+   const bx=x-1.4+ox,byy=y-2.6-lf;R(bt,bx,byy,2.8,2.6);R(bt,bx+(dr>0?2.2:-1),byy+1,1.6,1.6);R(btD,bx-(dr>0?.2:0),byy+2.1,3.4+.6,.5);if(L.bootP)luxBoot(R,L,bx,byy-(L.tallBoot?2:0),2.8,2.6+(L.tallBoot?2:0));R(btD,bx+(dr>0?0:2.2),byy+2,.8,.6);R(shade(bt,15),bx,byy,2.8,.5);if(L.tallBoot){R(bt,bx+.1,byy-2,2.6,2.2);R(shade(bt,15),bx+.1,byy-2,2.6,.4);for(let k=0;k<3;k++)R('#c8b890',bx+(dr>0?1.8:.4),byy-1.6+k*.7,.5,.3)}if(L.hunt&&c!==sk){R(shade(c,-16),lx+(dr>0?.3:.2),by-8,2,2);R(shade(c,-28),lx+(dr>0?.3:.2),by-8,2,.4)}};
   if(skirt){leg(o2,skD,skD,lift2);leg(o1,sk,skD,lift1);}else{leg(o2,pcD,shade(pcD,-15),lift2);leg(o1,pc,pcD,lift1)}
  }else{const l1=mv?Math.max(0,sw)*1.5:0,l2=mv?Math.max(0,-sw)*1.5:0;
-  const leg=(lx,lf,c,cD)=>{R(c,lx,by-9.5,2.5,7.2-lf);R(cD,lx+1.9,by-9.5,.6,7.2-lf);if(L.pants==='jeans'&&!skirt)R(pcL,lx+.5,by-8,.4,4);if(L.pants==='bombacha'&&!skirt){R(c,lx-.5,by-8,3.5,3.8-lf);R(cD,lx+.4,by-7.5,.4,3)}
-   const byy=y-2.6-lf;R(bt,lx-.15,byy,2.8,2.6);R(shade(bt,18),lx-.15,byy,2.8,.5);R(btD,lx-.3,byy+2.1,3.1,.5);if(dir===0)R(shade(bt,10),lx+.3,byy+1.2,1.4,.6);if(L.tallBoot){R(bt,lx-.05,byy-2,2.6,2.2);R(shade(bt,15),lx-.05,byy-2,2.6,.4);if(dir===0)for(let k=0;k<3;k++)R('#c8b890',lx+1,byy-1.6+k*.7,.6,.3)}if(L.hunt&&c!==sk&&dir===0){R(shade(c,-16),lx+(lx<x?-.3:1.2),by-8.2,1.7,2.1);R(shade(c,-28),lx+(lx<x?-.3:1.2),by-8.2,1.7,.4)}};
+  const leg=(lx,lf,c,cD)=>{R(c,lx,by-9.5,2.5,7.2-lf);R(cD,lx+1.9,by-9.5,.6,7.2-lf);if(!skirt){if(L.crease)R(shade(c,16),lx+1.05,by-9.3,.3,6.9-lf);if(L.cargoP){R(cD,lx+(lx<x?-.25:1.45),by-6.8,1.3,1.9);R(shade(c,12),lx+(lx<x?-.25:1.45),by-6.8,1.3,.3)}}if(L.pants==='jeans'&&!skirt)R(pcL,lx+.5,by-8,.4,4);if(L.pants==='bombacha'&&!skirt){R(c,lx-.5,by-8,3.5,3.8-lf);R(cD,lx+.4,by-7.5,.4,3)}
+   const byy=y-2.6-lf;R(bt,lx-.15,byy,2.8,2.6);R(shade(bt,18),lx-.15,byy,2.8,.5);R(btD,lx-.3,byy+2.1,3.1,.5);if(L.bootP)luxBoot(R,L,lx-.15,byy-(L.tallBoot?2:0),2.8,2.6+(L.tallBoot?2:0));if(dir===0)R(shade(bt,10),lx+.3,byy+1.2,1.4,.6);if(L.tallBoot){R(bt,lx-.05,byy-2,2.6,2.2);R(shade(bt,15),lx-.05,byy-2,2.6,.4);if(dir===0)for(let k=0;k<3;k++)R('#c8b890',lx+1,byy-1.6+k*.7,.6,.3)}if(L.hunt&&c!==sk&&dir===0){R(shade(c,-16),lx+(lx<x?-.3:1.2),by-8.2,1.7,2.1);R(shade(c,-28),lx+(lx<x?-.3:1.2),by-8.2,1.7,.4)}};
   if(skirt){leg(x-3,l1,sk,skD);leg(x+.5,l2,sk,skD)}else{leg(x-3,l1,pc,pcD);leg(x+.5,l2,pc,pcD);R(pc,x-1,by-9.5,2,1.5)}
  }
  if(skirt){const top=by-11,h=6.8;for(let i=0;i<h;i+=.5){const w=(side?5.6:7)+i*.45;R(i%2?skirt:shade(skirt,-6),x-w/2,top+i,w,.5)}R(shade(skirt,-25),x-((side?5.6:7)+h*.45)/2,top+h-.5,(side?5.6:7)+h*.45,.5);R(shade(skirt,20),x-(side?2.8:3.5),top,(side?5.6:7),.5)}
  blot(x-3.2,by-9.5,6.4,7,id+3);
  // ---------- braço de trás (perfil)
- const armSw=o.work?wk*2.6:sw*2.4,sleeve=L.shirt==='regata'?sk:(L.coat||sc),sleeveD=shade(sleeve,-30);
+ const armSw=o.work?wk*2.6:sw*2.4,sleeve=L.shirt==='regata'?sk:(L.coat||L.slv||sc),sleeveD=shade(sleeve,-30);
  if(side){const ax=x-.8-armSw*dr*-1;R(sleeveD,ax,sY+1,1.7,5);R(shade(sk,-25),ax+.1,sY+6,1.5,1.4)}
  // ---------- tronco
  const fem=f&&!L.coat;
@@ -7554,8 +7554,10 @@ function drawHuman(g,o,L){
  else if(st==='camo'){blot(tL,sY,tW,7.4,id)}
  else if(st==='farda'){if(dir===0){R(scD,x-3.4,sY+1.4,2.2,1.8);R(scD,x+1.2,sY+1.4,2.2,1.8);R(scL,x-3.4,sY+1.4,2.2,.4);R(scL,x+1.2,sY+1.4,2.2,.4);R(shade(sc,-12),x-.2,sY+.5,.4,6.8)}R(scD,x-4.6,sY,1.6,.7);R(scD,x+3,sY,1.6,.7)}
  else if(st==='polo'&&dir===0){R(scL,x-1.6,sY,3.2,1);R(scD,x-.3,sY+1,.6,2);R('#e0e0e0',x+1.6,sY+2,1,1)}
+ if(L.print&&L.print.length)for(let i=0;i<22;i++){const r=hsh(i*29+7),px=tL+(r%100)/100*(tW-.8),py=sY+((r>>7)%100)/100*6.8,c=L.print[i%L.print.length];R(c,px,py,.8,.6);R(c,px+.2,py-.2,.4,1);R(shade(c,-30),px+.5,py+.4,.3,.3)}
  if(L.vest){const vc=L.vest;if(side)R(vc,x-2.6+(dr>0?0:.4),sY,4.8,7.4);else{R(vc,x-4.5,sY,3.2,7.4);R(vc,x+1.3,sY,3.2,7.4);if(dir===1)R(vc,x-4.5,sY,9,7.4);R(shade(vc,-20),x-1.4,sY+.5,.4,6.8);R(shade(vc,-20),x+1.2,sY+.5,.4,6.8);if(L.vestPk){R(shade(vc,-15),x-4,sY+3.5,2,1.6);R(shade(vc,-15),x+2,sY+3.5,2,1.6)}}}
  if(L.jacket){const jc=L.jacket;if(!side&&dir===0){R(jc,x-4.6,sY,3.4,7.6);R(jc,x+1.2,sY,3.4,7.6);R(shade(jc,-25),x-1.3,sY,.5,7.6);R(shade(jc,-25),x+1.1,sY,.5,7.6);R(shade(jc,15),x-2.4,sY,1,2);R(shade(jc,15),x+1.6,sY,1,2)}else R(jc,side?x-2.6:x-4.5,sY,side?5.2:9,7.6)}
+ if(L.jacket&&L.jk)luxJacket(R,L,x,sY,wY,dir,side,dr);
  if(L.coat&&!side&&dir===0){R(scL,x-1.2,sY,2.4,4)}
  if(L.coat){const cc=L.coat,ccD=shade(cc,-18);if(!side&&dir===0){R(cc,x-4.8,sY,3.6,10);R(cc,x+1.2,sY,3.6,10);R(ccD,x-1.4,sY+1,.4,9);R(ccD,x-4,sY+5,1.8,1.4);R(ccD,x+2.2,sY+5,1.8,1.4)}else if(dir===1)R(cc,x-4.6,sY,9.2,10.4);else{R(cc,x-2.8,sY,5.6,10.4);R(ccD,x+(dr>0?-2.8:2.3),sY,.5,10.4)}}
  // colarinho, botões, gravata
@@ -7563,14 +7565,14 @@ function drawHuman(g,o,L){
   if(st==='xadrez'||st==='lisa'||st==='social'){for(let j=1.6;j<7;j+=1.8)R(shade(sc,35),x-.25,sY+j,.5,.5)}
   if(st==='lisa'||st==='xadrez')R(scD,x-3.4,sY+1.6,2,.4)}
  if(L.tie&&dir===0){R(L.tie,x-.5,sY+.4,1,5);R(shade(L.tie,-20),x-.7,sY+.2,1.4,.8)}
- if(L.scarfN&&dir!==1){R(L.scarfN,x-2.2,sY-.4,4.4,1.4);if(dir===0){R(L.scarfN,x-.6,sY+.8,1.6,2.4);R(shade(L.scarfN,-20),x-.6,sY+2.6,1.6,.5)}}
+ if(L.scarfN&&dir!==1){R(L.scarfN,x-2.2,sY-.4,4.4,1.4);if(dir===0){R(L.scarfN,x-.6,sY+.8,1.6,2.4);R(shade(L.scarfN,-20),x-.6,sY+2.6,1.6,.5);if(L.scarfP){R(L.scarfN,x+.6,sY+.6,1.4,3.6);for(let i=0;i<4;i++){R(L.scarfP,x-1.9+i*1.1,sY-.1,.35,.35);R(L.scarfP,x-.3,sY+1+i*.5,.3,.3);R(L.scarfP,x+1,sY+1.2+i*.6,.3,.3)}for(let i=0;i<3;i++){R(shade(L.scarfN,-30),x-.5+i*.5,sY+3.1,.25,.8);R(shade(L.scarfN,-30),x+.7+i*.45,sY+4.2,.25,.8)}}}else if(L.scarfP){R(L.scarfN,x+(dr>0?-2.2:.8),sY+.8,1.4,3);R(L.scarfP,x-1,sY,.35,.35)}}
  if(L.apron&&dir!==1){const ac=L.apron;if(side)R(ac,x+(dr>0?.6:-2.6),sY+1.6,2,9);else{R(ac,x-3,sY+1.2,6,9.4);R(shade(ac,-10),x-3,sY+5.6,6,.5);R(shade(ac,-15),x-2,sY+6.6,4,2);R(ac,x-.4,sY-.2,.8,1.4)}}
  // cinto
- if(!skirt&&!L.coat){R('#3a2414',x-(side?2.6:4.1),wY,side?5.2:8.2,1.1);if(dir===0){R(L.buckle||'#d8b860',x-.9,wY-.1,1.8,1.3);R(shade(L.buckle||'#d8b860',-30),x-.4,wY+.3,.8,.5)}else if(side)R('#d8b860',x+dr*2.2-.4,wY,.8,1.1)}
+ if(!skirt&&!L.coat){if(L.beltK)luxBelt(R,L,x,wY,dir,side,dr);else{R('#3a2414',x-(side?2.6:4.1),wY,side?5.2:8.2,1.1);if(dir===0){R(L.buckle||'#d8b860',x-.9,wY-.1,1.8,1.3);R(shade(L.buckle||'#d8b860',-30),x-.4,wY+.3,.8,.5)}else if(side)R('#d8b860',x+dr*2.2-.4,wY,.8,1.1)}}
  if(L.holster&&!L.coat){const hx=side?x-dr*1.4:x+3.2;R('#2a1a10',hx,wY+.4,1.6,3.2);R('#1a1a1a',hx+.4,wY-.6,.8,1.4)}
  if(L.badge&&dir===0){R('#ffd75e',x-3.2,sY+1.4,1.4,1.4);R('#c8a030',x-2.8,sY+1.8,.6,.6)}
  if(L.steth&&dir===0){R('#3a3a3a',x-1.8,sY,.4,3.6);R('#3a3a3a',x+1.4,sY,.4,3.6);R('#3a3a3a',x-1.8,sY+3.4,3.6,.4);R('#b8c0c8',x-.4,sY+3.6,1,1)}
- if(L.bag&&dir!==0){R(L.bag,x-(side?dr*2.8+1:2.6),sY+1,side?2.6:5.2,5);R(shade(L.bag,-20),x-(side?dr*2.8+1:2.6),sY+1,side?2.6:5.2,.6)}
+ if(L.bag)luxBag(R,L,x,sY,wY,dir,side,dr);
  if(L.hunt){const vc=L.huntVest||'#4a4a32',vD=shade(vc,-22),vL=shade(vc,14);
   if(dir===0){R(vc,x-4.6,sY+.2,3.3,7.6);R(vc,x+1.3,sY+.2,3.3,7.6);R(vD,x-1.4,sY+.3,.4,7.4);R(vD,x+1.2,sY+.3,.4,7.4);R(vL,x-4.6,sY+.2,3.3,.5);R(vL,x+1.3,sY+.2,3.3,.5);
    for(let i=0;i<5;i++){R('#c8a040',x-4.3+i*.62,sY+2.2,.42,1.2);R('#8a2a1a',x-4.3+i*.62,sY+3.2,.42,.4)}R(vD,x-4.4,sY+1.9,3,.35);R(vD,x+1.6,sY+4.2,2.6,2.4);R(vL,x+1.6,sY+4.2,2.6,.5);R('#9a9aa0',x+2.6,sY+4.4,.6,.4);R(vD,x-4.3,sY+5.2,2.6,2);R(vL,x-4.3,sY+5.2,2.6,.45);
@@ -7582,10 +7584,10 @@ function drawHuman(g,o,L){
   const kx=side?x-dr*.6-.5:x+3.3;if(dir!==1){R('#3a2414',kx,wY+.5,1.1,3.4);R('#c8c8c8',kx+.25,wY-.6,.6,1.2);R('#2a1a10',kx+.15,wY-1,.8,.5)}}
  // ---------- braços (frente)
  const hand=(hx,hy)=>{R(L.gloves||sk,hx,hy,1.7,1.6);R(L.gloves?shade(L.gloves,-20):skD,hx,hy+1.1,1.7,.5)};
- if(side){const ax=x-.8+armSw*dr,ay=sY+1+(o.work?-1.5:0);R(sleeve,ax-.1,ay-.6,1.9,5.6);R(sleeveD,ax+(dr>0?1.3:-.1),ay,.5,5);if(L.shirt!=='regata')R(shade(sleeve,20),ax-.1,ay+4.6,1.9,.5);hand(ax,ay+5)}
+ if(side){const ax=x-.8+armSw*dr,ay=sY+1+(o.work?-1.5:0);R(sleeve,ax-.1,ay-.6,1.9,5.6);R(sleeveD,ax+(dr>0?1.3:-.1),ay,.5,5);if(L.shirt!=='regata')R(L.cuff||shade(sleeve,20),ax-.1,ay+4.6,1.9,L.cuff?.7:.5);hand(ax,ay+5)}
  else{const a1=o.work?wk*2.5-1.5:sw*.9,a2=o.work?-wk*2.5-1.5:-sw*.9,ax1=x-(f?5.6:6),ax2=x+(f?3.9:4.3);
   R(sleeve,ax1,sY+.4+a1*.3,1.8,6+a1*.4);R(sleeve,ax2,sY+.4+a2*.3,1.8,6+a2*.4);R(sleeveD,ax1,sY+.4,.5,6);R(sleeveD,ax2+1.3,sY+.4,.5,6);
-  if(L.shirt!=='regata'){R(shade(sleeve,22),ax1,sY+5.9+a1*.7,1.8,.5);R(shade(sleeve,22),ax2,sY+5.9+a2*.7,1.8,.5)}
+  if(L.shirt!=='regata'){R(L.cuff||shade(sleeve,22),ax1,sY+5.9+a1*.7-(L.cuff?.2:0),1.8,L.cuff?.7:.5);R(L.cuff||shade(sleeve,22),ax2,sY+5.9+a2*.7-(L.cuff?.2:0),1.8,L.cuff?.7:.5);if(L.slvHi){R(shade(sleeve,30),ax1+.3,sY+1+a1*.3,.35,3.5);R(shade(sleeve,30),ax2+.3,sY+1+a2*.3,.35,3.5)}}
   hand(ax1+.05,sY+6.3+a1*.7);hand(ax2+.05,sY+6.3+a2*.7)}
  if(L.ghillie){const gc=[camo[1],camo[2],'#6a6a3a','#5a4a2a','#8a8a4a','#4a5a2a'],w0=side?6.4:11;for(let r2=0;r2<4;r2++)for(let i=0;i<(side?8:13);i++){const r=hsh(i*7+r2*31+id),gx=x-w0/2+i*(w0/(side?8:13)),gy=sY-1.4+r2*3.6+((r%6)/3);R(gc[(i+r2)%6],gx,gy+Math.sin(frame/7+i+r2)*.3,.8,2.6+(r%3)*.7)}for(let i=0;i<11;i++){const r=hsh(i*13+id);R(gc[i%6],x-(side?3:5)+i*(side?.6:1),by-7+Math.sin(frame/6+i)*.3,.7,2.4+(r%3)*.6)}}
  // ---------- pescoço e cabeça
@@ -7606,13 +7608,13 @@ function drawHuman(g,o,L){
    R(f?'#c05a5a':shade(sk,-35),hx+2.2,hy+5.3,2,.45);if(o.smile)R(shade(sk,-35),hx+1.9,hy+5,.4,.4),R(shade(sk,-35),hx+4.1,hy+5,.4,.4);
    if(f||L.blush)R('rgba(230,110,110,.35)',hx+.8,hy+4.2,1.2,.7),R('rgba(230,110,110,.35)',hx+4.4,hy+4.2,1.2,.7);
    if(L.old){R(skD,hx+.8,hy+4,.4,.6);R(skD,hx+5.2,hy+4,.4,.6);R(skD,hx+1.4,hy+1.2,1,.3);R(skD,hx+3.9,hy+1.2,1,.3)}
-   if(L.glasses){R('#1a1a1a',hx+.7,hy+2.3,2.1,.4);R('#1a1a1a',hx+3.6,hy+2.3,2.1,.4);R('#1a1a1a',hx+2.7,hy+2.6,1,.35);R('rgba(200,230,255,.35)',hx+.8,hy+2.7,1.9,1.2);R('rgba(200,230,255,.35)',hx+3.7,hy+2.7,1.9,1.2)}}
+   if(L.glasses){if(L.glassesK)luxGlasses(R,L,hx,hy,0,0);else{R('#1a1a1a',hx+.7,hy+2.3,2.1,.4);R('#1a1a1a',hx+3.6,hy+2.3,2.1,.4);R('#1a1a1a',hx+2.7,hy+2.6,1,.35);R('rgba(200,230,255,.35)',hx+.8,hy+2.7,1.9,1.2);R('rgba(200,230,255,.35)',hx+3.7,hy+2.7,1.9,1.2)}}}
  }else if(side){const ex=x+dr*1.5-.45,fx=x+(dr>0?3:-3.6);
   if(L.mask)R(L.mask,x+(dr>0?-.5:-3),hy+2.6,3.6,4.2);
   if(blink)R(skD,ex-.3,hy+3,1.3,.4);else{R('#f4f0e8',ex-.2,hy+2.6,1.4,1.1);R(eyeC,ex+(dr>0?.4:-.2),hy+2.6,.8,1.1);if(f)R('#1a1210',ex-.3,hy+2.3,1.6,.35)}
   R(L.brow||hcD,ex-.4,hy+1.7,1.7,.45);
   if(!L.mask){R(sk,fx,hy+3,.7,1.4);R(skD,fx+(dr>0?0:.2),hy+4.2,.5,.3);R(f?'#c05a5a':shade(sk,-35),x+dr*2-.5,hy+5.2,1.4,.4);R(skD,x-dr*.6-.4,hy+2.4,.9,1.6);R(shade(sk,-28),x-dr*.6-.2,hy+2.9,.4,.6);if(f||L.blush)R('rgba(230,110,110,.35)',x+dr*1.2-.5,hy+4.2,1.2,.7)}
-  if(L.glasses){R('#1a1a1a',ex-.5,hy+2.3,2,.4);R('#1a1a1a',x-dr*.6-.2,hy+2.5,dr>0?ex-x:x-ex,.35)}
+  if(L.glasses&&L.glassesK){luxGlasses(R,L,ex,hy,1,dr)}else if(L.glasses){R('#1a1a1a',ex-.5,hy+2.3,2,.4);R('#1a1a1a',x-dr*.6-.2,hy+2.5,dr>0?ex-x:x-ex,.35)}
  }
  // barba
  const bd=L.beard,bc=L.bc||hc;
@@ -7646,7 +7648,7 @@ function drawHuman(g,o,L){
  const ht=L.hat,hc2=L.hatc;
  if(ht&&ht!=='nenhum'){const d=shade(hc2,-25),l=shade(hc2,18),cy=hy-.4;
   if(ht==='vaqueiro'||ht==='pantaneiro'){const bw=ht==='pantaneiro'?13.6:12;R(hc2,x-bw/2,cy+.4,bw,1.3);R(hc2,x-bw/2-.3,cy-.4,1.2,1);R(hc2,x+bw/2-.9,cy-.4,1.2,1);R(d,x-bw/2+.6,cy+1.3,bw-1.2,.5);R(l,x-bw/2+1,cy+.4,bw-2,.4);
-   R(hc2,x-3.1,cy-3.4,6.2,3.8);R(hc2,x-2.7,cy-3.9,5.4,.6);R(d,x-.4,cy-3.8,.8,1.6);R(l,x-2.6,cy-3.3,1.6,.5);R(L.band||'#2a1a10',x-3.1,cy-.6,6.2,.9);if(ht==='pantaneiro')R('#c8a040',x+2,cy-.6,.8,.9)}
+   R(hc2,x-3.1,cy-3.4,6.2,3.8);R(hc2,x-2.7,cy-3.9,5.4,.6);R(d,x-.4,cy-3.8,.8,1.6);R(l,x-2.6,cy-3.3,1.6,.5);R(L.band||'#2a1a10',x-3.1,cy-.6,6.2,.9);if(ht==='pantaneiro')R('#c8a040',x+2,cy-.6,.8,.9);if(L.concho&&dir!==1){R(L.concho,x+(side?dr*1.2-.6:-.7),cy-.75,1.4,1.2);R('#fff8d0',x+(side?dr*1.2-.4:-.5),cy-.7,.5,.4)}if(L.hatStitch)for(let i=0;i<6;i++)R(shade(hc2,30),x-bw/2+1+i*(bw-2)/6,cy+.9,.6,.2)}
   else if(ht==='palha'){R('#e8d090',x-6.5,cy+.4,13,1.4);for(let i=-6;i<6.5;i+=1.4)R('#c8a860',x+i,cy+.6,.5,1);R('#b89850',x-6.2,cy+1.6,12.4,.4);R('#e8d090',x-3,cy-3,6,3.6);for(let i=-2.6;i<3;i+=1.3)R('#c8a860',x+i,cy-2.6,.4,3);R(L.band||'#b03a2a',x-3,cy-.5,6,.8)}
   else if(ht==='bone'){R(hc2,x-3.4,cy-2.6,6.8,3);R(hc2,x-2.8,cy-3.1,5.6,.6);R(l,x-2.4,cy-2.8,4,.5);if(L.capCamo)blot(x-3.4,cy-3,6.8,3,77);else R('#fff',x-.4,cy-3.2,.8,.5);
    if(side)R(d,x+(dr>0?2.6:-6.6),cy-.2,4,1.1);else if(dir===0){R(d,x-3,cy+.1,6,1.1);R(shade(hc2,-40),x-3,cy+1,6,.3);R(L.logo||'#ffd75e',x-.8,cy-2,1.6,1.1)}}
@@ -10313,6 +10315,76 @@ const _pUpLux=pUp;pUp=function(){const W=ensureWd(),n=Object.keys(W.own).length;
 // moradores reparam na roupa cara
 let luxT=0;const _updLux=update;update=function(dt){_updLux(dt);luxT-=dt;if(luxT>0||!S.wd||!inTown())return;luxT=25;const E=S.wd.eq,val=Object.values(E).reduce((s,id)=>s+(LUXI[id]?LUXI[id].p:0),0);if(val<20000||S.h.outfit!=='casual')return;
  if(Math.random()<.5)toast('💬 '+pick(['“Olha o patrão chique!”','“Esse relógio aí vale uma boiada, hein?”','“Tá parecendo artista de novela!”','“Que roupa bonita, doutor!”','“Vai pra festa, é?”']))};
+// ===== Roupas de grife com detalhe de verdade no boneco: cintos, jaquetas, ternos, seda, bolsas, cachecóis, botas, óculos, chapéus e relógios
+function luxBoot(R,L,x,y,w,h){const k=L.bootP;
+ if(k==='cobra'){for(let j=0;j<h;j+=.7)for(let i=((j/.7)%2)*.45;i<w-.3;i+=.9){R('#c8b088',x+i,y+j,.45,.35);R('#4a3a24',x+i+.45,y+j+.35,.3,.3)}}
+ else if(k==='jacare'){for(let j=0;j<h-.4;j+=.9)for(let i=((j/.9)%2)*.5;i<w-.4;i+=1){R('#2a3420',x+i,y+j,.85,.15);R('#2a3420',x+i,y+j,.15,.75);R('#5a6a48',x+i+.25,y+j+.25,.4,.3)}}
+ if(L.bootShine||k){R('rgba(255,255,255,.55)',x+.4,y+.3,.6,.3);R('rgba(255,255,255,.35)',x+.3,y+h-1.2,.4,.4)}
+ if(L.tallBoot)R(L.bootTip||'#c8c8d0',x+(w>2.9?2.2:1.8),y+h-.6,.8,.5)}// biqueira de metal
+function luxBelt(R,L,x,wY,dir,side,dr){const k=L.beltK,bc=k==='gg'?'#141416':'#4a2a16',gd='#f0d060',gD='#a8801e',W=side?5.2:8.2,X=x-(side?2.6:4.1);
+ R(bc,X,wY-.1,W,1.3);R(shade(bc,28),X,wY-.1,W,.25);R(shade(bc,-30),X,wY+1,W,.2);
+ if(k==='lv'&&dir!==1){for(let i=0;i<W-.4;i+=1.05){if(!side&&Math.abs(X+i-x)<1.8)continue;R('#c8a060',X+.2+i,wY+.3,.35,.35);R('#8a6a3a',X+.65+i,wY+.55,.25,.25)}}
+ if(k==='lv'&&dir===1)for(let i=0;i<W-.4;i+=1.05)R('#a8804a',X+.2+i,wY+.35,.3,.3);
+ if(dir===0){
+  if(k==='lv'){R(gD,x-1.75,wY-.55,3.5,2.3);R(gd,x-1.6,wY-.45,3.2,2);R('#fff8c0',x-1.5,wY-.4,1.2,.35);// fivela grande
+   R(gD,x-1.25,wY-.2,.42,1.45);R(gD,x-1.25,wY+.95,1,.35);// L
+   R(gD,x+.05,wY-.2,.38,1.05);R(gD,x+.95,wY-.2,.38,1.05);R(gD,x+.35,wY+.75,.7,.5)}// V
+  else if(k==='gg'){const ring=(cx,flip)=>{R(gD,cx-1.15,wY-.55,2.3,2.3);R(gd,cx-1.05,wY-.45,2.1,2.1);R(bc,cx-.55,wY+.05,1.1,1.1);R(bc,cx+(flip?-1.05:.55),wY+.05,.5,.45);R(gd,cx+(flip?-.6:.1),wY+.5,.5,.3)};
+   ring(x-.85,0);ring(x+.85,1);R('#fff8c0',x-1.8,wY-.4,.8,.3);R('#fff8c0',x+.2,wY-.4,.6,.3)}}
+ else if(side){R(gD,x+dr*2.3-.6,wY-.55,1.2,2.3);R(gd,x+dr*2.3-.5,wY-.45,1,2.1);R('#fff8c0',x+dr*2.3-.4,wY-.4,.4,.5)}}
+function luxJacket(R,L,x,sY,wY,dir,side,dr){const jc=L.jacket,jD=shade(jc,-30),jL=shade(jc,22),k=L.jk;
+ if(k==='terno'){
+  if(dir===0){R(jc,x-1.3,sY+3.6,2.6,4);// fecha embaixo
+   R(jD,x-2.2,sY-.2,1,3.8);R(jD,x+1.2,sY-.2,1,3.8);R(jL,x-2.6,sY+.2,.5,3.2);R(jL,x+2.1,sY+.2,.5,3.2);// lapelas
+   R(jD,x-1.4,sY+3.4,.4,.4);R(jD,x+1,sY+3.4,.4,.4);// entalhe das lapelas
+   R(shade(jc,40),x-.2,sY+4.4,.45,.45);R(shade(jc,40),x-.2,sY+5.8,.45,.45);// botões
+   R(jD,x-4,sY+5.6,2.2,.35);R(jD,x+1.8,sY+5.6,2.2,.35);R(jD,x+2.3,sY+1.8,1.6,.3);// bolsos
+   R(L.psq||'#f4f4f0',x+2.5,sY+1.2,1.1,.65);R(shade(L.psq||'#f4f4f0',-25),x+2.9,sY+1.2,.3,.65);// lenço no bolso
+   R(jL,x-4.5,sY,1,.4);R(jL,x+3.5,sY,1,.4)}// ombreiras
+  else if(dir===1){R(jD,x-.2,sY+4.6,.4,3);R(jL,x-4.5,sY,9,.4);R(jD,x-4.5,sY+7.2,9,.4)}
+  else{R(jD,x+(dr>0?.6:-1.2),sY,.6,3.6);R(jD,x+(dr>0?-1.8:1.2),sY+5.6,.6,.35);R(shade(jc,40),x+(dr>0?1.6:-2),sY+4.6,.4,.4)}}
+ else if(k==='couro'){
+  if(dir===0){R(jD,x-2.5,sY-.5,1.4,2.4);R(jD,x+1.1,sY-.5,1.4,2.4);R(jL,x-2.4,sY-.4,.4,1.8);R(jL,x+2,sY-.4,.4,1.8);// gola
+   R('#c8ccd2',x-1.35,sY+.6,.3,6.8);R('#c8ccd2',x+1.05,sY+.6,.3,6.8);// zíperes
+   R('#c8ccd2',x-4,sY+4.4,2,.25);R('#c8ccd2',x+2,sY+4.4,2,.25);R('#e8ecf0',x-2.1,sY+4.3,.4,.5);// bolsos com zíper
+   R('rgba(255,255,255,.28)',x-4.1,sY+1,.45,2.6);R('rgba(255,255,255,.2)',x+3.4,sY+1.2,.4,2.2);R(jD,x-4.6,sY+6.8,3.4,.8);R(jD,x+1.2,sY+6.8,3.4,.8)}
+  else if(dir===1){R(jD,x-4.5,sY+6.8,9,.8);R('rgba(255,255,255,.22)',x-3.4,sY+1,2.4,.4);R(jD,x-3,sY-.4,6,1)}
+  else{R(jD,x+(dr>0?-2.6:1.2),sY-.4,1.4,1.6);R('#c8ccd2',x+(dr>0?1.6:-1.9),sY+.6,.3,6.6);R('rgba(255,255,255,.28)',x-.6,sY+1,.4,3);R(jD,x-2.6,sY+6.8,5.2,.8)}}
+ else if(k==='bomber'){const rib=(yy,w0,x0)=>{R('#1f4a32',x0,yy,w0,.3);R('#b8342a',x0,yy+.3,w0,.3);R('#1f4a32',x0,yy+.6,w0,.3)};
+  if(dir===0){R(jc,x-1.3,sY+1.6,2.6,6);R('#c8ccd2',x-.15,sY+1.4,.3,5.8);R('#e8ecf0',x-.3,sY+1.4,.6,.6);// fechada com zíper
+   rib(sY+6.9,9,x-4.5);rib(sY-.5,4.4,x-2.2);
+   R('#f0d060',x+1.9,sY+2,1.4,1);R('#1a1a1a',x+2.1,sY+2.3,1,.25);R('#f0d060',x+1.6,sY+1.7,.6,.4);R('#e8ecf0',x+3,sY+1.7,.6,.4);R('#c8302a',x+2.4,sY+3,.4,.4);// abelha bordada
+   R(jD,x-4,sY+4,.35,2);R(jD,x+3.6,sY+4,.35,2);R(jL,x-4.3,sY+.6,.5,2)}
+  else if(dir===1){rib(sY+6.9,9,x-4.5);rib(sY-.5,6,x-3);R('#f0d060',x-1.6,sY+2.4,3.2,1.6);R('#1a1a1a',x-1.4,sY+3,2.8,.3);R('#c8302a',x-.4,sY+2.6,.8,.4)}// abelha grande nas costas
+  else{rib(sY+6.9,5.2,x-2.6);R('#c8ccd2',x+(dr>0?1.8:-2),sY+1.4,.3,5.6)}}}
+function luxBag(R,L,x,sY,wY,dir,side,dr){const b=L.bag,bD=shade(b,-25),bL=shade(b,18),gd='#e0c070';
+ const mono=(X,Y,w,h)=>{for(let j=.5;j<h-.4;j+=1)for(let i=.4+((j|0)%2)*.5;i<w-.4;i+=1){R(gd,X+i,Y+j,.35,.35)}};
+ if(dir===0){for(let t=0;t<=1;t+=.07)R(bD,x-3.6+t*7.2,sY+.2+t*(wY-sY-.6),.7,.55);// alça atravessada
+  R(b,x+2.7,wY-.6,3.4,3);R(bL,x+2.7,wY-.6,3.4,.5);mono(x+2.7,wY-.6,3.4,3);R(bD,x+2.7,wY+.8,3.4,.4);R(gd,x+4.1,wY+.7,.6,.6)}
+ else if(dir===1){for(let t=0;t<=1;t+=.07)R(bD,x+3.6-t*7.2,sY+.2+t*(wY-sY-.6),.7,.55);R(b,x-6.1,wY-.6,3.4,3);mono(x-6.1,wY-.6,3.4,3)}
+ else{R(bD,x-.4,sY,.7,wY-sY);const bx=x-dr*2.4-1.4;R(b,bx,wY-.8,2.8,3.2);R(bL,bx,wY-.8,2.8,.5);mono(bx,wY-.8,2.8,3.2);R(gd,bx+1.1,wY+.5,.6,.6)}}
+function luxGlasses(R,L,hx,hy,side,dr){const avi=L.glassesK==='avi',fr=avi?'#d8b040':'#121214';
+ if(!side){if(avi){R(fr,hx+.5,hy+2.25,5.4,.28);R('#1e2a3a',hx+.6,hy+2.5,2.2,1.5);R('#1e2a3a',hx+3.6,hy+2.5,2.2,1.5);R('#1e2a3a',hx+.9,hy+3.9,1.6,.4);R('#1e2a3a',hx+3.9,hy+3.9,1.6,.4);R('#6a8aaa',hx+.8,hy+2.6,.8,.4);R('#6a8aaa',hx+3.8,hy+2.6,.8,.4);R(fr,hx+2.8,hy+2.6,.8,.25)}
+  else{R(fr,hx+.5,hy+2.2,2.5,1.9);R(fr,hx+3.4,hy+2.2,2.5,1.9);R('#0a0a0c',hx+.75,hy+2.45,2,1.4);R('#0a0a0c',hx+3.65,hy+2.45,2,1.4);R(fr,hx+2.9,hy+2.5,.6,.4);R('rgba(255,255,255,.5)',hx+.9,hy+2.5,.6,.3);R('rgba(255,255,255,.5)',hx+3.8,hy+2.5,.6,.3)}}
+ else{const ex=hx;R(avi?'#1e2a3a':'#0a0a0c',ex-.5,hy+2.4,2.1,avi?1.6:1.3);R(fr,ex-.6,hy+2.2,2.3,.35);R(fr,ex+(dr>0?-2.6:1.6),hy+2.5,2.4,.3);if(avi)R('#6a8aaa',ex-.3,hy+2.6,.7,.4)}}
+// ---------- liga os detalhes às peças das lojas
+const LXO={
+ jeansp:{pants:'jeans'},cargo:{cargoP:1},
+ lvbag:{bag:'#6a4a2a'},lvjac:{jk:'couro',slv:'#5a3a22',slvHi:1,cuff:'#3a2414'},lvsc:{scarfP:'#e0c070',scarfN:'#7a5a32'},lvbelt:{beltK:'lv'},
+ gusilk:{shirt:'seda',print:['#f0d060','#c8302a','#f4f4f0','#1a3a5a']},gubomb:{jk:'bomber',slv:'#1f4a32',cuff:'#b8342a'},gupant:{crease:1},gubelt:{beltK:'gg'},
+ tpreto:{jk:'terno',slv:'#18181f',cuff:'#f4f4f0',crease:1,psq:'#b8242a'},tbranco:{jk:'terno',slv:'#ece6d6',cuff:'#ffffff',crease:1,psq:'#6a4a2a'},tazul:{jk:'terno',slv:'#1e2a48',cuff:'#f4f4f0',crease:1,psq:'#c8a040'},
+ hcouro:{band:'#1a0e06',hatStitch:1,concho:'#c8c8d0'},hstet:{band:'#2a1a10',concho:'#f0d060'},hpana:{band:'#1a1a1a'},hpant:{band:'#c8a040'},
+ bcobra:{bootP:'cobra',tallBoot:1},bjac:{bootP:'jacare',tallBoot:1,bootTip:'#d8c070'},bpreta:{bootShine:1,tallBoot:1},
+ oavi:{glassesK:'avi'},owf:{glassesK:'sq'}};
+for(const id in LXO)if(LUXI[id])Object.assign(LUXI[id].o,LXO[id]);
+// ---------- relógio de verdade no pulso (acompanha o balanço do braço)
+(function(){const W0=drawPlayerBase;drawPlayerBase=function(g){const W=S.wd,keep=W&&W.eq.watch;if(keep)W.eq.watch=null;try{W0(g)}finally{if(keep)W.eq.watch=keep}
+ if(!keep||S.h.outfit!=='casual'||P.drive||RMODE===4)return;const i=LUXI[keep];if(!i)return;
+ const mv=P.moving&&!P.aim,sw=mv?Math.sin(P.ph):0,bob=mv?Math.abs(Math.cos(P.ph))*(P.run?1.4:.8):0,by=P.y-bob+(P.sneak?2.5:0),sY=by-17.5,dir=P.dir,f=S.look.g==='f';
+ let x,y;if(dir===0){const a2=-sw*.9;x=P.x+(f?3.9:4.3);y=sY+5.4+a2*.7}else if(dir===1){const a1=sw*.9;x=P.x-(f?5.6:6);y=sY+5.4+a1*.7}else{const dr=dir===3?1:-1;x=P.x-.8+sw*2.4*dr;y=sY+5.4}
+ const c=i.c,d=shade(c,-35);Rr(g,d,x-.1,y-.1,2,1.3);Rr(g,c,x,y,1.8,1.1);if(dir!==1){Rr(g,i.id==='rsub'?'#1a2a6a':i.id==='rday'?'#f4f4f0':'#1a1a1a',x+.4,y+.15,1,.8);Rr(g,c,x+.8,y+.3,.2,.4)}
+ if(i.id==='rdiam'){for(let k=0;k<4;k++)if(((frame+k*17)%60)<10)Rr(g,'#ffffff',x+(k%2)*1.4,y+(k>>1)*.9,.3,.3)}
+ if(((frame+30)%140)<8){Rr(g,'#ffffff',x+.6,y-1.4,.5,3.8);Rr(g,'#ffffff',x-.8,y+.3,3.4,.5)}}})();
 // ===== SHOPPING CAMPO GRANDE de verdade: corredor com fachadas, lojas físicas com atendente, vitrines e salas VIP =====
 const MLR=(g,c,x,y,w,h)=>Rr(g,c,x,y,w,h);
 const MALLS=[
