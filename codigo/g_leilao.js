@@ -25,7 +25,7 @@ const GALA=[
 const GALAF=['#1a1a2a','#2a1a1a','#1a2a2a','#2a2a2a','#3a2a1a','#141418'];// ternos dos demais convidados
 const LBRD=k=>BREEDS[k]?k:'nelore';
 // ---------- prédio: Salão de Gala, ao lado da Arena
-if(!BLD.some(b=>b.id==='elite'))BLD.push({id:'elite',x:122,y:76,w:13,h:7,door:128,roof:'#2a1a12',wall:'#f4efe4',label:'Salão de Gala · Leilões Estrelas do Agro',sign:'GALA'});
+if(!BLD.some(b=>b.id==='elite'))BLD.push({id:'elite',x:167,y:77,w:13,h:7,door:173,roof:'#2a1a12',wall:'#f4efe4',label:'Salão de Gala · Leilões Estrelas do Agro',sign:'GALA'});
 const _rfcElite=rfCarve;rfCarve=function(){_rfcElite();const b=BLD.find(q=>q.id==='elite');if(!b)return;
  for(let y=b.y-1;y<=b.y+b.h+2;y++)for(let x=b.x-2;x<=b.x+b.w+1;x++){const i=ti(x,y);if(x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h){SOL[i]=1;continue}SOL[i]=0}
  for(let y=b.y+b.h;y<=b.y+b.h+3;y++)for(let x=b.door-1;x<=b.door+1;x++)G[ti(x,y)]=3;

@@ -15,6 +15,7 @@ const hsDoor=h=>({x:(h.x+Math.floor(h.hw/2))*TS+8,y:(h.y+h.hh)*TS+8});
 const HOMEOF={joao:'h1',lourdes:'h2',bisc:'h2',ramos:'h3',marina:'h4',tiao:'canil',zeca:'pescador',guarda:'posto',ze:'hs:ze',benedita:'hs:benedita',rosa:'hs:rosa',bene:'hs:bene',lino:'hs:lino'};
 const YARDOWN={h1:'joao',h2:'lourdes',h3:'ramos',h4:'marina'};
 function homePt(id){const k=HOMEOF[id];if(!k)return null;if(k.startsWith('hs:'))return hsDoor(HSD(k.slice(3)));return DOORP(k)}
+let HIDEW=n=>false;// quem entra no prédio quando chega no trabalho
 const WORKP={joao:{x:116*TS,y:57*TS},lourdes:DOORP('padaria'),ramos:DOORP('delegacia'),marina:DOORP('vet'),tiao:DOORP('canil'),ze:DOORP('agro'),zeca:{x:142*TS+8,y:71*TS},guarda:{x:112*TS,y:40*TS}};
 const PRACA2={x:121*TS,y:58*TS},IGREJA=DOORP('igreja'),PADP=DOORP('padaria');
 // rotina: [hora de início, atividade, lugar]
@@ -68,10 +69,10 @@ stepNPC=function(dt){
   if(key!==n.akey){n.akey=key;n.task=a[0];n.goal=actTarget(n,a);n.hid=0;n.arr=0;n.work=0;n.path=null;n.wait=0}
   if(!n.goal){n.mv=0;continue}
   const far=Math.hypot(n.goal.x-n.x,n.goal.y-n.y);
-  if(n.hid){if(a[0]!=='home'&&a[0]!=='school'&&a[0]!=='mass')n.hid=0;else continue}
+  if(n.hid){if(a[0]!=='home'&&a[0]!=='school'&&a[0]!=='mass'&&!(a[0]==='work'&&HIDEW(n)))n.hid=0;else continue}
   if(far>2.5&&!n.arr){if(far>1400||(far>520&&!evis(n.x,n.y,60)&&!evis(n.goal.x,n.goal.y,60))){n.x=n.goal.x;n.y=n.goal.y}npcGo(n,n.goal.x,n.goal.y,dt,n.kid?20:16);continue}
   // chegou
-  if(!n.arr){n.arr=1;n.mv=0;n.wait=rnd(1,3);if(a[0]==='home'||a[0]==='school'){n.hid=1;continue}}
+  if(!n.arr){n.arr=1;n.mv=0;n.wait=rnd(1,3);if(a[0]==='home'||a[0]==='school'||(a[0]==='work'&&HIDEW(n))){n.hid=1;continue}}
   if(a[0]==='mass'){n.hid=1;continue}
   if(n.wait>0){n.wait-=dt;n.mv=0;continue}
   // dentro da atividade: pequenas andadas e trabalho

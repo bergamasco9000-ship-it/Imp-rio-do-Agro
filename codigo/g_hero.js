@@ -90,7 +90,7 @@ function escortDog(d,r,def,dt){
  }
  if(eng){tx=eng.x;ty=eng.y;spd=def.spd*1.35;
   if(Math.hypot(eng.x-r.x,eng.y-r.y)<11&&r.cd<=0){r.cd=1.1;r.bark=.8;
-   if(eng.sp){eng.hp-=def.bite*2.5;if(eng.hp<=0)killWild(eng);const sp=SPECIES[eng.sp];d.hp-=(sp.dmg||10)*(1-arm.red)*.45;if(d.hp<20){d.hp=20;toast('🐕 '+d.name+' se feriu e recuou!','bad')}}
+   if(eng.sp){eng.hp-=def.bite*2.5;if(eng.hp<=0)killWild(eng);const sp=SPECIES[eng.sp];dogHurt(d,(sp.dmg||10)*.45,eng);if(d.dead)return;}
    else biteThief(eng,def.bite,d)}}
  else{const ang=Math.PI*(.75+.5*(i<0?0:i)),dist=34+(i<0?0:i)*8,gx=P.x-Math.cos(ang*0+(P.dir===3?0:P.dir===2?Math.PI:P.dir===0?-Math.PI/2:Math.PI/2))*dist+Math.cos(ang)*10,gy=P.y-Math.sin(P.dir===1?-Math.PI/2:P.dir===0?Math.PI/2:0)*dist*0+Math.sin(ang)*10;
   tx=gx;ty=gy+(i<0?0:i)*6;const dd=Math.hypot(tx-r.x,ty-r.y);if(dd<8)tx=null;else if(dd>100)spd=def.spd*1.3}
