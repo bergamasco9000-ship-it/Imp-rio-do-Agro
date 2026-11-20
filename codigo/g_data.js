@@ -69,5 +69,5 @@ function addItem(id,n){
 const hasItem=(id,n)=>(S.inv[id]||0)>=(n||1);
 function takeItem(id,n){n=n||1;if(!hasItem(id,n))return false;S.inv[id]-=n;if(S.inv[id]<=0)delete S.inv[id];return true}
 const priceMult=()=>clamp(.9*mktEff()+.1,.8,1.3)*(1+townBonus())*(feiraHoje()?1.12:1);
-const itemPrice=id=>Math.max(1,Math.round(ITEMS[id].p*(ITEMS[id].cat==='seed'?1:priceMult())*10)/10);
+const itemPrice=id=>Math.max(1,Math.round(ITEMS[id].p*(ITEMS[id].cat==='seed'?1:priceMult())*(ITEMS[id].cat==='crop'&&typeof cropF==='function'?cropF(id):1)*10)/10);
 const money1=n=>R$(n);
