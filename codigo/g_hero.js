@@ -100,7 +100,7 @@ const _drawDog=drawDog;
 drawDog=function(g,d){
  _drawDog(g,d);const r=dogRT(d),def=DOGS[d.breed],arm=DARM[d.arm||0],s=def.sz,W=[10,13,16][s],H=[5,7,9][s],dr=r.dir,x=r.x,y=r.y;
  const f=(c,dx,dy,w,h)=>Rr(g,c,dr>0?x+dx:x-dx-w+1,y+dy,w,h);
- if(arm.col){f(arm.col,2,-H,W-6,3);f('#ddd',3,-H,1,1);if(d.arm===2){f('#bbb',3,-H-1,1,1);f('#bbb',5,-H-1,1,1);f('#bbb',7,-H-1,1,1)}}
+ 
  if(d.esc&&d.id!==S.dogAct)Rr(g,'#6ac04a',x+(W>>1),y-H-6,2,2);
  if((d.hp===undefined?100:d.hp)<=25)Rr(g,'#e03030',x+(W>>1)-1,y-H-9,3,1),Rr(g,'#e03030',x+(W>>1),y-H-10,1,3);
 };

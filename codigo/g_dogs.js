@@ -440,7 +440,7 @@ setInterval(()=>{
  document.querySelectorAll('canvas[data-dogpv]:not([data-done])').forEach(cv=>{
   cv.dataset.done=1;const b=cv.dataset.dogpv,d=cv.dataset.id?dogById(cv.dataset.id):null,g=cv.getContext('2d'),ps=PS;PS=4;g.setTransform(4,0,0,4,0,0);
   Rr(g,'rgba(60,110,40,.5)',0,15,32,5);
-  drawDogSprite(g,15,18,1,DOGS[b].v,d&&d.hp<dogMax(d)*.35?'lie':'stand',0,{wag:1,pant:1,arm:d?d.arm:0,col:d?d.col:0,gps:d&&d.gps,wounds:d?d.wounds:null});PS=ps;
+  const eq=cv.dataset.eq?JSON.parse(cv.dataset.eq):null;drawDogSprite(g,15,18,1,DOGS[b].v,eq?'stand':d&&d.hp<dogMax(d)*.35?'lie':'stand',0,Object.assign({wag:1,pant:1,arm:d?d.arm:0,col:d?d.col:0,gps:d&&d.gps,wounds:d?d.wounds:null},eq||{}));PS=ps;
  });
 },250);
 // HUD dos cães
