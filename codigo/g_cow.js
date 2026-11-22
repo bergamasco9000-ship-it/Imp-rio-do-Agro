@@ -105,6 +105,7 @@ function cowSprite(a,cls,pose,k){
  const FR=(x,y,w,h)=>{const a=Math.round(x*sc),b=Math.round(y*sc),c2=Math.max(a+1,Math.round((x+w)*sc)),d=Math.max(b+1,Math.round((y+h)*sc));g.fillRect(a,b,c2-a,d-b)};
  g.fillStyle='rgba(22,12,6,.85)';for(const p of ops)FR(p[1]+ox-ol,p[2]+oy-ol,p[3]+ol*2,p[4]+ol*2);
  for(const p of ops){g.fillStyle=p[0];FR(p[1]+ox,p[2]+oy,p[3],p[4])}
+ try{shadeSprite(cv,{top:.13,bot:.2,mid:.42,hi:[[.5,.3,.18,.08]],fur:.035,seed:hsh(a.breed+v)})}catch(e){}
  sp={cv,ox:-ox*kb,oy:-oy*kb,w:W/PS,h:H/PS,kb};if(CSPR.size>600)CSPR.clear();CSPR.set(key,sp);return sp;
 }
 drawCow=function(g,a,x,y,dir,f,mini){

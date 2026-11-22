@@ -18,3 +18,9 @@ function gfxVignette(g){const k=VW+'x'+VH;if(k!==VIGK){VIGK=k;const w=Math.max(8
   const c=VIGC.getContext('2d'),r=Math.hypot(w,h)/2,gr=c.createRadialGradient(w/2,h/2,r*.62,w/2,h/2,r*1.05);gr.addColorStop(0,'rgba(10,6,2,0)');gr.addColorStop(1,'rgba(10,6,2,.22)');c.fillStyle=gr;c.fillRect(0,0,w,h)}
  g.drawImage(VIGC,0,0,VW,VH)}
 const _lpGfx=lightPass;lightPass=function(g,ox,oy,dl){_lpGfx(g,ox,oy,dl);try{gfxVignette(g)}catch(e){}};
+
+// ---------- sombra das construções: silhueta do próprio desenho (já em cache), deslocada para baixo e à direita
+function mkShadow(cv){const c=document.createElement('canvas');c.width=cv.width;c.height=cv.height;const g=c.getContext('2d');try{g.filter='blur('+Math.max(1,Math.round(PS*.8))+'px)'}catch(e){}g.drawImage(cv,0,0);g.filter='none';g.globalCompositeOperation='source-in';g.fillStyle='rgba(18,12,4,.30)';g.fillRect(0,0,c.width,c.height);return c}
+const _bcGfx=bCached;bCached=function(g,b){if(RMODE!==4&&!inRoom()){const v=bVar(b),key=b.id+'|'+b.x+','+b.y+'|'+v+'|'+PS,c=BCACHE.get(key);
+  if(c){if(!c.sh)c.sh=mkShadow(c.cv);const x=b.x*TS,y=b.y*TS,w=b.w*TS,h=b.h*TS,mx=40,mt=60,mb=20,al=.55+daylight()*.45;g.globalAlpha=al;g.drawImage(c.sh,x-mx+9,y-mt+6,w+mx*2,h+mt+mb);g.globalAlpha=1}}
+ return _bcGfx(g,b)};

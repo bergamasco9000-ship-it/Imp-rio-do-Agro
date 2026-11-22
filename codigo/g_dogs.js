@@ -103,10 +103,12 @@ function drawDogSprite(g,x,y,dr,v,pose,ph,o){
  f(c,-half,top+rearY,half+.6,H);f(c,0,top+frontY,half,H);
  if(sit){f(c,-half+1,top+rearY-1.2,half,1.4)}
  f(shade(c,-12),-half,top+rearY,half,1);f(shade(c,-12),0,top+frontY,half-1,1);
+ f(shade(c,14),-half+.8,top+rearY+1,half-.4,.7);f(shade(c,14),0,top+frontY+1,half-1.6,.7);f(shade(c,24),-half+2,top+rearY+1,2.2,.5);
+ f(shade(c,-13),-half+1.2,top+rearY+H-1.8,half-.6,.8);f(shade(c,-13),0,top+frontY+H-1.8,half-2.5,.8);
  f(bl,-half+2,top+rearY+H-1,half,1);f(bl,0,top+frontY+H-1,half-2.5,1);
  f(v.chest||bl,half-3.2,top+frontY+H-1.6,3.2,1.8);
  if(v.saddle){f(v.saddle,-half+1,top+rearY,half,Math.ceil(H*.55));f(v.saddle,0,top+frontY,half-2.5,Math.ceil(H*.5))}
- if(v.brindle)for(let i=-half+1;i<half-1;i+=1.8)f(v.brindle,i,top+(i<0?rearY:frontY)+1,.8,H-2);
+ if(v.brindle){let i=-half+1,k=0;while(i<half-1.2){const r=((k*73+17)%29)/29,r2=((k*41+5)%23)/23,yy=top+(i<0?rearY:frontY)+1,hh=H-2-r2*1.6,w=.45+r*.45;f(v.brindle,i,yy+r2*.8,w,hh*.55);f(v.brindle,i+.35,yy+r2*.8+hh*.5,w,hh*.5);i+=.9+r*1.5;k++}}
  if(o.thick)f(shade(c,-20),-half+2,top+rearY+1,L-5,.6);
  // armadura / colete
  if(o.arm===1){f('#d84a2a',-half+1.5,top+frontY+.5,L-4.5,H-1.2);f('#f0f060',-half+1.5,top+frontY+H/2,L-4.5,.8);f('#222',half-4,top+frontY+.5,.7,H-1.2)}

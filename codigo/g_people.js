@@ -69,6 +69,9 @@ function drawHuman(g,o,L){
  if(L.jacket&&L.jk)luxJacket(R,L,x,sY,wY,dir,side,dr);
  if(L.coat&&!side&&dir===0){R(scL,x-1.2,sY,2.4,4)}
  if(L.coat){const cc=L.coat,ccD=shade(cc,-18);if(!side&&dir===0){R(cc,x-4.8,sY,3.6,10);R(cc,x+1.2,sY,3.6,10);R(ccD,x-1.4,sY+1,.4,9);R(ccD,x-4,sY+5,1.8,1.4);R(ccD,x+2.2,sY+5,1.8,1.4)}else if(dir===1)R(cc,x-4.6,sY,9.2,10.4);else{R(cc,x-2.8,sY,5.6,10.4);R(ccD,x+(dr>0?-2.8:2.3),sY,.5,10.4)}}
+ // dobras da roupa: amassado acima do cinto e sombra na axila
+ if(!L.coat&&!L.apron&&!L.ghillie){if(side){R(scD,x-2+(dr>0?0:.4),wY-1.5,2.6,.4);R(shade(sc,-14),x+(dr>0?-2.6:1.8),sY+.4,.8,2.2)}
+  else{R(scD,x-3.2,wY-1.6,1.8,.4);R(scD,x+.9,wY-2,1.6,.4);R(scD,x-1,wY-1.1,1.4,.35);R(shade(sc,-16),x-4.4,sY+.8,.7,2);R(shade(sc,-16),x+3.7,sY+.8,.7,2)}}
  // colarinho, botões, gravata
  if(dir===0&&!L.coat){if(st!=='regata'&&st!=='camo'){R(scL,x-1.8,sY-.2,1.6,1.2);R(scL,x+.2,sY-.2,1.6,1.2);R(skD,x-.5,sY,1,1)}
   if(st==='xadrez'||st==='lisa'||st==='social'){for(let j=1.6;j<7;j+=1.8)R(shade(sc,35),x-.25,sY+j,.5,.5)}
@@ -107,6 +110,10 @@ function drawHuman(g,o,L){
  // cabeça arredondada
  if(side){R(sk,x-3,hy+.6,6,5.6);R(sk,x-2.5,hy,5,6.6);R(sk,x+(dr>0?2.8:-3.6),hy+2.8,.8,1.4);R(skD,x-3,hy+5.6,6,.6)}
  else{R(sk,hx,hy+.6,6.4,5.4);R(sk,hx+.5,hy,5.4,6.6);if(f)R(sk,hx+.8,hy+6.4,4.8,.3);R(skD,hx,hy+5.4,6.4,.6);R(skD,hx+.6,hy+6,5.2,.6);if(dir===0){R(sk,hx-.5,hy+2.2,.6,1.6);R(sk,hx+6.3,hy+2.2,.6,1.6);R(skD,hx-.5,hy+3,.4,.6);R(skD,hx+6.5,hy+3,.4,.6)}}
+ // volume do rosto: lado da sombra e luz na testa (sol vindo de cima à esquerda)
+ if(side){R(shade(sk,-10),x-dr*2.2-.45,hy+1,.9,4.6);R(skL,x+dr*.4-.5,hy+.8,1.2,.5)}
+ else if(dir===0){R(shade(sk,-8),hx+5.6,hy+1.2,.8,4.2);R(shade(sk,-5),hx+4.9,hy+4.6,.8,1);R(skL,hx+.9,hy+.9,1.6,.5);R(skL,hx+.7,hy+1.4,.5,1.4)}
+ else{R(shade(sk,-12),hx+5.6,hy+1.2,.8,4.2)}
  // rosto
  const eyeC=L.eye||'#2a1a10';
  if(L.paint&&!L.mask){if(dir===0){R('#2a3a1c',hx+.6,hy+3.9,2,.5);R('#2a3a1c',hx+3.8,hy+3.9,2,.5);R('#4a5a2a',hx+.8,hy+4.6,1.6,.4);R('#4a5a2a',hx+4,hy+4.6,1.6,.4);R('#3a4a24',hx+2.6,hy+1.2,1.2,.5)}else if(side){R('#2a3a1c',x+dr*.6-1,hy+3.9,2.4,.5);R('#4a5a2a',x+dr*.6-.8,hy+4.6,2,.4)}}

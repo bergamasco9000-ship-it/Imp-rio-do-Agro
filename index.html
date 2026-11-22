@@ -2895,10 +2895,12 @@ function drawDogSprite(g,x,y,dr,v,pose,ph,o){
  f(c,-half,top+rearY,half+.6,H);f(c,0,top+frontY,half,H);
  if(sit){f(c,-half+1,top+rearY-1.2,half,1.4)}
  f(shade(c,-12),-half,top+rearY,half,1);f(shade(c,-12),0,top+frontY,half-1,1);
+ f(shade(c,14),-half+.8,top+rearY+1,half-.4,.7);f(shade(c,14),0,top+frontY+1,half-1.6,.7);f(shade(c,24),-half+2,top+rearY+1,2.2,.5);
+ f(shade(c,-13),-half+1.2,top+rearY+H-1.8,half-.6,.8);f(shade(c,-13),0,top+frontY+H-1.8,half-2.5,.8);
  f(bl,-half+2,top+rearY+H-1,half,1);f(bl,0,top+frontY+H-1,half-2.5,1);
  f(v.chest||bl,half-3.2,top+frontY+H-1.6,3.2,1.8);
  if(v.saddle){f(v.saddle,-half+1,top+rearY,half,Math.ceil(H*.55));f(v.saddle,0,top+frontY,half-2.5,Math.ceil(H*.5))}
- if(v.brindle)for(let i=-half+1;i<half-1;i+=1.8)f(v.brindle,i,top+(i<0?rearY:frontY)+1,.8,H-2);
+ if(v.brindle){let i=-half+1,k=0;while(i<half-1.2){const r=((k*73+17)%29)/29,r2=((k*41+5)%23)/23,yy=top+(i<0?rearY:frontY)+1,hh=H-2-r2*1.6,w=.45+r*.45;f(v.brindle,i,yy+r2*.8,w,hh*.55);f(v.brindle,i+.35,yy+r2*.8+hh*.5,w,hh*.5);i+=.9+r*1.5;k++}}
  if(o.thick)f(shade(c,-20),-half+2,top+rearY+1,L-5,.6);
  // armadura / colete
  if(o.arm===1){f('#d84a2a',-half+1.5,top+frontY+.5,L-4.5,H-1.2);f('#f0f060',-half+1.5,top+frontY+H/2,L-4.5,.8);f('#222',half-4,top+frontY+.5,.7,H-1.2)}
@@ -6120,6 +6122,7 @@ function cowSprite(a,cls,pose,k){
  const FR=(x,y,w,h)=>{const a=Math.round(x*sc),b=Math.round(y*sc),c2=Math.max(a+1,Math.round((x+w)*sc)),d=Math.max(b+1,Math.round((y+h)*sc));g.fillRect(a,b,c2-a,d-b)};
  g.fillStyle='rgba(22,12,6,.85)';for(const p of ops)FR(p[1]+ox-ol,p[2]+oy-ol,p[3]+ol*2,p[4]+ol*2);
  for(const p of ops){g.fillStyle=p[0];FR(p[1]+ox,p[2]+oy,p[3],p[4])}
+ try{shadeSprite(cv,{top:.13,bot:.2,mid:.42,hi:[[.5,.3,.18,.08]],fur:.035,seed:hsh(a.breed+v)})}catch(e){}
  sp={cv,ox:-ox*kb,oy:-oy*kb,w:W/PS,h:H/PS,kb};if(CSPR.size>600)CSPR.clear();CSPR.set(key,sp);return sp;
 }
 drawCow=function(g,a,x,y,dir,f,mini){
@@ -7594,6 +7597,9 @@ function drawHuman(g,o,L){
  if(L.jacket&&L.jk)luxJacket(R,L,x,sY,wY,dir,side,dr);
  if(L.coat&&!side&&dir===0){R(scL,x-1.2,sY,2.4,4)}
  if(L.coat){const cc=L.coat,ccD=shade(cc,-18);if(!side&&dir===0){R(cc,x-4.8,sY,3.6,10);R(cc,x+1.2,sY,3.6,10);R(ccD,x-1.4,sY+1,.4,9);R(ccD,x-4,sY+5,1.8,1.4);R(ccD,x+2.2,sY+5,1.8,1.4)}else if(dir===1)R(cc,x-4.6,sY,9.2,10.4);else{R(cc,x-2.8,sY,5.6,10.4);R(ccD,x+(dr>0?-2.8:2.3),sY,.5,10.4)}}
+ // dobras da roupa: amassado acima do cinto e sombra na axila
+ if(!L.coat&&!L.apron&&!L.ghillie){if(side){R(scD,x-2+(dr>0?0:.4),wY-1.5,2.6,.4);R(shade(sc,-14),x+(dr>0?-2.6:1.8),sY+.4,.8,2.2)}
+  else{R(scD,x-3.2,wY-1.6,1.8,.4);R(scD,x+.9,wY-2,1.6,.4);R(scD,x-1,wY-1.1,1.4,.35);R(shade(sc,-16),x-4.4,sY+.8,.7,2);R(shade(sc,-16),x+3.7,sY+.8,.7,2)}}
  // colarinho, botões, gravata
  if(dir===0&&!L.coat){if(st!=='regata'&&st!=='camo'){R(scL,x-1.8,sY-.2,1.6,1.2);R(scL,x+.2,sY-.2,1.6,1.2);R(skD,x-.5,sY,1,1)}
   if(st==='xadrez'||st==='lisa'||st==='social'){for(let j=1.6;j<7;j+=1.8)R(shade(sc,35),x-.25,sY+j,.5,.5)}
@@ -7632,6 +7638,10 @@ function drawHuman(g,o,L){
  // cabeça arredondada
  if(side){R(sk,x-3,hy+.6,6,5.6);R(sk,x-2.5,hy,5,6.6);R(sk,x+(dr>0?2.8:-3.6),hy+2.8,.8,1.4);R(skD,x-3,hy+5.6,6,.6)}
  else{R(sk,hx,hy+.6,6.4,5.4);R(sk,hx+.5,hy,5.4,6.6);if(f)R(sk,hx+.8,hy+6.4,4.8,.3);R(skD,hx,hy+5.4,6.4,.6);R(skD,hx+.6,hy+6,5.2,.6);if(dir===0){R(sk,hx-.5,hy+2.2,.6,1.6);R(sk,hx+6.3,hy+2.2,.6,1.6);R(skD,hx-.5,hy+3,.4,.6);R(skD,hx+6.5,hy+3,.4,.6)}}
+ // volume do rosto: lado da sombra e luz na testa (sol vindo de cima à esquerda)
+ if(side){R(shade(sk,-10),x-dr*2.2-.45,hy+1,.9,4.6);R(skL,x+dr*.4-.5,hy+.8,1.2,.5)}
+ else if(dir===0){R(shade(sk,-8),hx+5.6,hy+1.2,.8,4.2);R(shade(sk,-5),hx+4.9,hy+4.6,.8,1);R(skL,hx+.9,hy+.9,1.6,.5);R(skL,hx+.7,hy+1.4,.5,1.4)}
+ else{R(shade(sk,-12),hx+5.6,hy+1.2,.8,4.2)}
  // rosto
  const eyeC=L.eye||'#2a1a10';
  if(L.paint&&!L.mask){if(dir===0){R('#2a3a1c',hx+.6,hy+3.9,2,.5);R('#2a3a1c',hx+3.8,hy+3.9,2,.5);R('#4a5a2a',hx+.8,hy+4.6,1.6,.4);R('#4a5a2a',hx+4,hy+4.6,1.6,.4);R('#3a4a24',hx+2.6,hy+1.2,1.2,.5)}else if(side){R('#2a3a1c',x+dr*.6-1,hy+3.9,2.4,.5);R('#4a5a2a',x+dr*.6-.8,hy+4.6,2,.4)}}
@@ -13882,6 +13892,12 @@ function gfxVignette(g){const k=VW+'x'+VH;if(k!==VIGK){VIGK=k;const w=Math.max(8
   const c=VIGC.getContext('2d'),r=Math.hypot(w,h)/2,gr=c.createRadialGradient(w/2,h/2,r*.62,w/2,h/2,r*1.05);gr.addColorStop(0,'rgba(10,6,2,0)');gr.addColorStop(1,'rgba(10,6,2,.22)');c.fillStyle=gr;c.fillRect(0,0,w,h)}
  g.drawImage(VIGC,0,0,VW,VH)}
 const _lpGfx=lightPass;lightPass=function(g,ox,oy,dl){_lpGfx(g,ox,oy,dl);try{gfxVignette(g)}catch(e){}};
+
+// ---------- sombra das construções: silhueta do próprio desenho (já em cache), deslocada para baixo e à direita
+function mkShadow(cv){const c=document.createElement('canvas');c.width=cv.width;c.height=cv.height;const g=c.getContext('2d');try{g.filter='blur('+Math.max(1,Math.round(PS*.8))+'px)'}catch(e){}g.drawImage(cv,0,0);g.filter='none';g.globalCompositeOperation='source-in';g.fillStyle='rgba(18,12,4,.30)';g.fillRect(0,0,c.width,c.height);return c}
+const _bcGfx=bCached;bCached=function(g,b){if(RMODE!==4&&!inRoom()){const v=bVar(b),key=b.id+'|'+b.x+','+b.y+'|'+v+'|'+PS,c=BCACHE.get(key);
+  if(c){if(!c.sh)c.sh=mkShadow(c.cv);const x=b.x*TS,y=b.y*TS,w=b.w*TS,h=b.h*TS,mx=40,mt=60,mb=20,al=.55+daylight()*.45;g.globalAlpha=al;g.drawImage(c.sh,x-mx+9,y-mt+6,w+mx*2,h+mt+mb);g.globalAlpha=1}}
+ return _bcGfx(g,b)};
 // ===== Comportamento de app no celular: botão voltar do Android fecha janelas em vez de sair; sem "puxar para atualizar" =====
 (function(){
  const st=document.createElement('style');st.textContent='html,body{overscroll-behavior:none}';document.head.appendChild(st);
