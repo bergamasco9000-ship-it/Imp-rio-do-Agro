@@ -155,6 +155,8 @@ function drawHuman(g,o,L){
     if(hs==='coque'){R(hc,x-1.4,hy-2.2,2.8,2);R(hcL,x-.6,hy-2,1,.5)}}}
  }
  if(L.scarf){const sfc=L.scarf;R(sfc,hx-.5,hy-.8,7.4,3.2);if(dir!==1)R(shade(sfc,-15),hx-.5,hy+2,7.4,.6);if(side||dir===1){R(sfc,side?(dr>0?x-3.6:x+1.6):x-1,hy+2.4,2,3)}R(shade(sfc,20),hx+.6,hy-.4,1,.5);R(shade(sfc,20),hx+3.6,hy-.4,1,.5)}
+ // sombra da aba do chapéu no rosto
+ if(L.hat&&L.hat!=='nenhum'&&L.hat!=='touca'&&L.hat!=='capuz'&&dir!==1){R('rgba(40,20,10,.22)',side?x-3:hx,hy+.3,side?6:6.4,1.3);R('rgba(40,20,10,.12)',side?x-3:hx,hy+1.6,side?6:6.4,.7)}
  // chapéus
  const ht=L.hat,hc2=L.hatc;
  if(ht&&ht!=='nenhum'){const d=shade(hc2,-25),l=shade(hc2,18),cy=hy-.4;

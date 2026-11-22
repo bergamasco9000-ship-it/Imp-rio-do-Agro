@@ -11,7 +11,7 @@ const PAL={
  4:['#b2945a','#c3a46a','#d2b67e','#dec48e','#ead4a2'].map(hex3),
  5:['#aebfcc','#c2d1dc','#d6e2ea','#e6eef4','#f6faff'].map(hex3),
  6:['#344d23','#3f5a2b','#4b6836','#587741','#69884d'].map(hex3),
- red:['#9a5230','#aa6038','#ba7044','#c88050','#d6905e'].map(hex3),
+ red:['#9a6442','#a8704c','#b67e58','#c28c64','#cf9a72'].map(hex3),
  mud:['#3e3222','#4a3c2a','#564634','#62523e','#706048'].map(hex3),
  litter:['#7a4e24','#9a6a2a','#b0862e','#8a5a2a','#6a4a22'].map(hex3),
  sand:['#b49a64','#c4aa72','#d2b880','#ddc590','#e8d4a2'].map(hex3),
@@ -31,7 +31,15 @@ prerender=function(){
  for(let h=0;h<q.length;h++){const i=q[h],x=tix(i),y=tiy(i);for(const[a,b]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+a,ny=y+b;if(nx<XMIN||ny<YMIN||nx>=MW||ny>=MH)continue;const j=ti(nx,ny);if(G[j]===2&&dep[j]<0){dep[j]=Math.min(4,dep[i]+1);q.push(j)}}}
  const depAt=(px,py)=>{const fx=px/16-.5,fy=py/16-.5,x0=Math.floor(fx),y0=Math.floor(fy),ax=fx-x0,ay=fy-y0;const s=(x,y)=>{if(x<XMIN||y<YMIN||x>=MW||y>=MH)return 0;const v=dep[ti(x,y)];return v<0?-.6:v};
   return (s(x0,y0)*(1-ax)+s(x0+1,y0)*ax)*(1-ay)+(s(x0,y0+1)*(1-ax)+s(x0+1,y0+1)*ax)*ay};
+ const LF=new Float32Array(NT);for(let i=0;i<NT;i++)LF[i]=vn(tix(i)/5.5,tiy(i)/5.5,123);
+ const lfAt=(px,py)=>{const fx=px/16-.5,fy=py/16-.5,x0=Math.floor(fx),y0=Math.floor(fy),ax=fx-x0,ay=fy-y0,s2=(x,y)=>x<XMIN||y<YMIN||x>=MW||y>=MH?.5:LF[ti(x,y)];
+  return (s2(x0,y0)*(1-ax)+s2(x0+1,y0)*ax)*(1-ay)+(s2(x0,y0+1)*(1-ax)+s2(x0+1,y0+1)*ax)*ay};
  const land=t=>t!==2,grassy=t=>t===0||t===1||t===4||t===5||t===6;
+ let wcT=-1,wcV=false,wLand=0,wNarV=false;const wNear=(tx,ty)=>{const i=ti(tx,ty);if(i===wcT)return wcV;wcT=i;wcV=false;wNarV=true;
+  for(const[a,b]of[[1,0],[-1,0],[0,1],[0,-1],[-1,-1],[1,-1],[-1,1],[1,1]]){const n=gt(tx+a,ty+b);if(n>=0&&n!==2){if(!wcV)wLand=n;wcV=true}}
+  for(const[a,b]of[[2,0],[-2,0],[0,2],[0,-2],[1,1],[-1,-1],[1,-1],[-1,1]]){const j=gt(tx+a,ty+b)===2?dep[ti(tx+a,ty+b)]:-1;if(j>=1){wNarV=false;break}}return wcV};
+ const wNar=()=>wNarV;
+ let lfC=.5;
  const gt=(x,y)=>(x<XMIN||y<YMIN||x>=MW||y>=MH)?-1:G[ti(x,y)];
  const SH=256;// desenha em faixas para gastar menos memória no celular
  for(let sy=0;sy<GH;sy+=SH){const hh=Math.min(SH,GH-sy),img=g.createImageData(GW,hh),D=img.data;let o=0;
@@ -44,9 +52,12 @@ prerender=function(){
     const nb=[[lx,gt(tx-1,ty)],[15-lx,gt(tx+1,ty)],[ly,gt(tx,ty-1)],[15-ly,gt(tx,ty+1)]];
     for(const[d,n]of nb){if(n<0||n===t)continue;
      if(t===3&&grassy(n)){if(d<1.2+en*3.2){m=n;break}}
-     else if(t===2&&land(n)){const w=1.6+en*2.6;if(d<w){m=100+n;break}else if(d<w+1.4){m=200;}}
+     else if(t===2&&land(n)&&tx>=100&&ty<=40){const w=1.6+en*2.6;if(d<w){m=100+n;break}else if(d<w+1.4){m=200;}}
      else if(t!==2&&t!==3&&grassy(n)&&n!==t){if(d<7&&jn<(1-d/7)*.5)m=n}
     }
+    if(t===2&&m===2&&!(tx>=100&&ty<=40)&&wNear(tx,ty)){// margem orgânica: campo de profundidade suavizado + ondulação
+     const d=depAt(px,py),e=d<0?(d+.3)/.6*16:8+d*16,amp=wNar(tx,ty)?4:12,wob=(vn(px/18,py/18,31)-.5)*amp+(vn(px/5,py/5,33)-.5)*2.5,v=e+wob;
+     if(v<3.6)m=100+wLand;else if(v<5)m=200}
     if(t===3&&m===3){for(const[a,b]of[[-1,-1],[1,-1],[-1,1],[1,1]]){const n=gt(tx+a,ty+b);if(!grassy(n)||gt(tx+a,ty)!==3||gt(tx,ty+b)!==3)continue;const cx=a<0?lx:15-lx,cy=b<0?ly:15-ly;if(Math.hypot(cx,cy)<1.6+en*2.4){m=n;break}}}
    }
    let r,gg,bb;
@@ -61,7 +72,8 @@ prerender=function(){
     const n=m-100,P=n===5?PAL.ice:n===6?PAL.mud:n===4?PAL.sand:n===1?PAL.mud:PAL.sand;[r,gg,bb]=P[Math.min(4,(1+vn(px/4,py/4,2)*2.5+(jn-.5)*.8)|0)];
    }else{
     let P=PAL[m]||PAL[0],v=vn(px/7,py/7,m+1)*.65+vn(px/23,py/23,m+31)*.35,k=v*3.3+(jn-.5)*.9+.35;
-    if(m===4&&vn(px/26,py/26,77)>.66){P=PAL.red;k=vn(px/5,py/5,8)*3+(jn-.5)}
+    if(m===0||m===1||m===6||m===4||m===5){if((px&3)===0)lfC=lfAt(px,py);k+=(lfC-.5)*(m===5?1:1.7)}
+    if(m===4){const rv=vn(px/26,py/26,77)+(en-.5)*.05;if(rv>.6){const e=rv-.665;if(e>.025||(e>-.045&&jn<(e+.045)/.07)){P=PAL.red;k=vn(px/5,py/5,8)*3+(jn-.5)+(e<.04?.6:0)}}}
     if(m===6&&vn(px/18,py/18,61)>.7){P=PAL.mud;k=vn(px/5,py/5,8)*3}
     if(m===1&&ih(px,py,21)<.07){P=PAL.litter;k=ih(px,py,22)*4.99}
     let kk=Math.max(0,Math.min(4,k|0));

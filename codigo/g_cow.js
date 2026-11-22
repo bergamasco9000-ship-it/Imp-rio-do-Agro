@@ -4,7 +4,7 @@ const CPAL={
  girolando:{c:'#f2f0ea',lt:'#ffffff',dk:'#d4d0c6',cf:'#f2f0ea',fc:'#f2f0ea',cm:'#e8a8a0',hoof:'#3a2a20',ch:'#e8dcc0',sw:'#1e1c1c',ear:'flat',hump:.35,dew:.4,horn:'none',spots:'#1e1c1c',dairy:1},
  brahman:{c:'#bdb8ae',lt:'#d4d0c8',dk:'#9a958c',cf:'#9f9a90',cfB:'#7c776f',fc:'#c4c0b6',cm:'#2e2a28',hoof:'#262220',ch:'#c8b898',sw:'#262220',ear:'long',hump:1.35,dew:1.5,horn:'up',eye:'#2e2a28'},
  hereford:{c:'#9a3d1e',lt:'#b8552c',dk:'#73290f',cf:'#9a3d1e',fc:'#f4efe2',cm:'#f0b8a8',hoof:'#4a3a30',ch:'#ece2c8',sw:'#f4efe2',ear:'flat',hump:0,dew:.25,horn:'curl',white:'#f4efe2'},
- angus:{c:'#1f1f24',lt:'#3c3c46',dk:'#121216',cf:'#1f1f24',fc:'#24242a',cm:'#18181c',hoof:'#101012',ch:'#000',sw:'#101012',ear:'flat',hump:0,dew:.2,horn:'none',stocky:1},
+ angus:{c:'#232329',lt:'#4c4c5a',dk:'#121216',cf:'#26262c',fc:'#2a2a32',cm:'#18181c',hoof:'#101012',ch:'#000',sw:'#101012',ear:'flat',hump:0,dew:.2,horn:'none',stocky:1},
  wagyu:{c:'#3b2820',lt:'#5a4236',dk:'#24170f',cf:'#3b2820',fc:'#3e2a22',cm:'#1e1614',hoof:'#140e0c',ch:'#d8ccb4',sw:'#140e0c',ear:'flat',hump:0,dew:.2,horn:'small',slim:1}
 };
 // padrões de manchas da girolanda (x,y,w,h no corpo, coordenadas locais)

@@ -13,12 +13,12 @@ prerender=function(){
    if(inMountainLake(x,y)){Rr(g,'#bcd6e4',bx,by,TS,TS);Rr(g,'#d8eaf2',bx+((h*10)|0),by+3,5,2);if(h<.4){Rr(g,'#e8f4fa',bx+2,by+((h*14)|0),9,1);Rr(g,'#e8f4fa',bx+10,by+((h*14)|0)-2,1,3)}if(h>.8)Rr(g,'#9ac0d4',bx+6,by+9,4,4)}
    if(adjW(x,y)&&(G[ti(x+1,y)]!==2||G[ti(x-1,y)]!==2||G[ti(x,y+1)]!==2||G[ti(x,y-1)]!==2)){
     const fc=inMountainLake(x,y)?'#f2f8fa':'rgba(220,240,255,.55)';
-    if(G[ti(x,y-1)]!==2)Rr(g,fc,bx,by,TS,2);if(G[ti(x,y+1)]!==2)Rr(g,fc,bx,by+TS-2,TS,2);if(G[ti(x-1,y)]!==2)Rr(g,fc,bx,by,2,TS);if(G[ti(x+1,y)]!==2)Rr(g,fc,bx+TS-2,by,2,TS);
+    if(inMountainLake(x,y)){if(G[ti(x,y-1)]!==2)Rr(g,fc,bx,by,TS,2);if(G[ti(x,y+1)]!==2)Rr(g,fc,bx,by+TS-2,TS,2);if(G[ti(x-1,y)]!==2)Rr(g,fc,bx,by,2,TS);if(G[ti(x+1,y)]!==2)Rr(g,fc,bx+TS-2,by,2,TS)}
     if(!inMountainLake(x,y)&&(x>=100||x<30)&&h<.35){const lx=bx+3+((h*20)|0)%8,ly=by+4+((h*40)|0)%7;Rr(g,'#3a8a3a',lx,ly,5,3);Rr(g,'#2a6a2a',lx+2,ly+1,2,1);if(h<.15){Rr(g,'#f08ab0',lx+1,ly-1,2,2);Rr(g,'#fff',lx+1.5,ly-.5,1,1)}}
    }
    continue;
   }
-  if(adjW(x,y)&&t!==3){const sc=t===5?'#e4ecf0':t===4?'#d8b878':t===6?'#5a4a2a':'#b8a070';if(G[ti(x,y-1)]===2)Rr(g,sc,bx,by,TS,3);if(G[ti(x,y+1)]===2)Rr(g,sc,bx,by+TS-3,TS,3);if(G[ti(x-1,y)]===2)Rr(g,sc,bx,by,3,TS);if(G[ti(x+1,y)]===2)Rr(g,sc,bx+TS-3,by,3,TS)}
+
   if(t===1){for(let i=0;i<3;i++){const hh=hs(x+i*31,y+i*17);Rr(g,['#8a5a2a','#b07a2a','#6a4a2a','#a8902a'][(hh*4)|0],bx+((hh*15)|0),by+((hs(y+i,x)*15)|0),2,1)}if(h<.12)Rr(g,'#4a3220',bx+2,by+10,7,1);if(h>.94)Rr(g,'rgba(255,240,170,.18)',bx,by,TS,TS)}
   else if(t===5){Rr(g,'#d4e2ea',bx+((h*12)|0),by+((hs(y,x)*12)|0),4,2);if(h<.08){blob(g,'#8a9098',bx+8,by+9,12,7);blob(g,'#a8b0b8',bx+7,by+8,7,3);blob(g,'#f4f8fa',bx+8,by+6,9,2)}if(h>.9)Rr(g,'#fff',bx+((h*99)|0)%14,by+((h*77)|0)%14,1,1)}
   else if(t===6){if(h<.04){blob(g,'#3e3424',bx+8,by+8,14,9);blob(g,'#4a4030',bx+9,by+7,9,5);if(h<.02)blob(g,'#4a6a7a',bx+7,by+9,6,3)}else if(h<.3)Rr(g,'#5a7a3a',bx+((h*40)|0)%12,by+((h*70)|0)%12,3,1);if(h>.85)Rr(g,'#7a9a4a',bx+4,by+4,1,6)}
