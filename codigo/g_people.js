@@ -1,3 +1,4 @@
+let HLEAN=0;
 // ===== Pessoas com mais detalhe (jogador, parceiro, moradores, peões, visitantes) + correção do tutorial =====
 (()=>{const st=document.createElement('style');st.textContent='#tut button,#tut .btns{pointer-events:auto}';document.head.appendChild(st)})();
 function setH(el,h){if(!el)return;if(el._h!==h){el._h=h;el.innerHTML=h}}
@@ -30,20 +31,24 @@ function drawHuman(g,o,L){
  if(!side&&dir===0&&(L.hair==='comprido')&&!L.scarf){R(hcD,x-4,by-21,8,7);}
  // ---------- pernas e botas
  const skirt=L.skirt;
- if(side){const o1=sw*3,o2=-o1,lift1=mv&&o1*dr>0?Math.min(1,o1*dr*.45):0,lift2=mv&&o2*dr>0?Math.min(1,o2*dr*.45):0;
-  const leg=(ox,c,cD,lf)=>{const lx=x-1.25+ox*.85;R(c,lx,by-9.5,2.5,7.2-lf);R(cD,lx+(dr>0?0:1.9),by-9.5,.6,7.2-lf);if(L.crease)R(shade(c,16),lx+(dr>0?1.8:.4),by-9.3,.3,6.9-lf);if(L.cargoP)R(cD,lx+.5,by-6.8,1.6,1.9);if(L.pants==='bombacha')R(c,lx-.4,by-7.5,3.3,3.5-lf);
-   const bx=x-1.4+ox,byy=y-2.6-lf;R(bt,bx,byy,2.8,2.6);R(bt,bx+(dr>0?2.2:-1),byy+1,1.6,1.6);R(btD,bx-(dr>0?.2:0),byy+2.1,3.4+.6,.5);if(L.bootP)luxBoot(R,L,bx,byy-(L.tallBoot?2:0),2.8,2.6+(L.tallBoot?2:0));R(btD,bx+(dr>0?0:2.2),byy+2,.8,.6);R(shade(bt,15),bx,byy,2.8,.5);if(L.tallBoot){R(bt,bx+.1,byy-2,2.6,2.2);R(shade(bt,15),bx+.1,byy-2,2.6,.4);for(let k=0;k<3;k++)R('#c8b890',bx+(dr>0?1.8:.4),byy-1.6+k*.7,.5,.3)}if(L.hunt&&c!==sk){R(shade(c,-16),lx+(dr>0?.3:.2),by-8,2,2);R(shade(c,-28),lx+(dr>0?.3:.2),by-8,2,.4)}};
+ if(side){const st=o.run&&mv?4.2:3,o1=sw*st,o2=-o1,cp=mv?Math.cos(ph)*dr:0,lk=o.run?1.9:1.15,lift1=mv?Math.max(0,cp)*lk:0,lift2=mv?Math.max(0,-cp)*lk:0,crouch=o.sneak?1:0;
+  const leg=(ox,c,cD,lf)=>{const lx=x-1.25+ox*.85,kb=-dr*lf*(o.run?1.2:.85)+dr*crouch*1.5,kT=by-5.9,bot=by-2.3-lf,th=kT-(by-9.5)+.5;
+   R(c,lx,by-9.5,2.5,th);R(c,lx+kb,kT,2.5,bot-kT);R(cD,lx+(dr>0?0:1.9),by-9.5,.6,th);R(cD,lx+kb+(dr>0?0:1.9),kT,.6,bot-kT);
+   if(Math.abs(kb)>.3){R(c,lx+kb*.5,kT-.6,2.5,1.4);R(shade(c,-10),lx+kb*.5+(dr>0?1.7:0),kT-.4,.8,.9)}
+   if(L.crease){R(shade(c,16),lx+(dr>0?1.8:.4),by-9.3,.3,th-.3);R(shade(c,16),lx+kb+(dr>0?1.8:.4),kT,.3,bot-kT-.2)}if(L.cargoP)R(cD,lx+.5,by-6.8,1.6,1.9);if(L.pants==='bombacha')R(c,lx-.4+kb*.4,by-7.5,3.3,3.5-lf);
+   const bx=x-1.4+ox+kb,byy=y-2.6-lf;R(bt,bx,byy,2.8,2.6);R(bt,bx+(dr>0?2.2:-1),byy+1,1.6,1.6);R(btD,bx-(dr>0?.2:0),byy+2.1,3.4+.6,.5);if(L.bootP)luxBoot(R,L,bx,byy-(L.tallBoot?2:0),2.8,2.6+(L.tallBoot?2:0));R(btD,bx+(dr>0?0:2.2),byy+2,.8,.6);R(shade(bt,15),bx,byy,2.8,.5);if(L.tallBoot){R(bt,bx+.1,byy-2,2.6,2.2);R(shade(bt,15),bx+.1,byy-2,2.6,.4);for(let k=0;k<3;k++)R('#c8b890',bx+(dr>0?1.8:.4),byy-1.6+k*.7,.5,.3)}if(L.hunt&&c!==sk){R(shade(c,-16),lx+(dr>0?.3:.2),by-8,2,2);R(shade(c,-28),lx+(dr>0?.3:.2),by-8,2,.4)}};
   if(skirt){leg(o2,skD,skD,lift2);leg(o1,sk,skD,lift1);}else{leg(o2,pcD,shade(pcD,-15),lift2);leg(o1,pc,pcD,lift1)}
- }else{const l1=mv?Math.max(0,sw)*1.5:0,l2=mv?Math.max(0,-sw)*1.5:0;
+ }else{const lk=o.run?2.4:1.5,l1=mv?Math.max(0,sw)*lk:0,l2=mv?Math.max(0,-sw)*lk:0,spr=o.sneak?.7:0;
   const leg=(lx,lf,c,cD)=>{R(c,lx,by-9.5,2.5,7.2-lf);R(cD,lx+1.9,by-9.5,.6,7.2-lf);if(!skirt){if(L.crease)R(shade(c,16),lx+1.05,by-9.3,.3,6.9-lf);if(L.cargoP){R(cD,lx+(lx<x?-.25:1.45),by-6.8,1.3,1.9);R(shade(c,12),lx+(lx<x?-.25:1.45),by-6.8,1.3,.3)}}if(L.pants==='jeans'&&!skirt)R(pcL,lx+.5,by-8,.4,4);if(L.pants==='bombacha'&&!skirt){R(c,lx-.5,by-8,3.5,3.8-lf);R(cD,lx+.4,by-7.5,.4,3)}
    const byy=y-2.6-lf;R(bt,lx-.15,byy,2.8,2.6);R(shade(bt,18),lx-.15,byy,2.8,.5);R(btD,lx-.3,byy+2.1,3.1,.5);if(L.bootP)luxBoot(R,L,lx-.15,byy-(L.tallBoot?2:0),2.8,2.6+(L.tallBoot?2:0));if(dir===0)R(shade(bt,10),lx+.3,byy+1.2,1.4,.6);if(L.tallBoot){R(bt,lx-.05,byy-2,2.6,2.2);R(shade(bt,15),lx-.05,byy-2,2.6,.4);if(dir===0)for(let k=0;k<3;k++)R('#c8b890',lx+1,byy-1.6+k*.7,.6,.3)}if(L.hunt&&c!==sk&&dir===0){R(shade(c,-16),lx+(lx<x?-.3:1.2),by-8.2,1.7,2.1);R(shade(c,-28),lx+(lx<x?-.3:1.2),by-8.2,1.7,.4)}};
-  if(skirt){leg(x-3,l1,sk,skD);leg(x+.5,l2,sk,skD)}else{leg(x-3,l1,pc,pcD);leg(x+.5,l2,pc,pcD);R(pc,x-1,by-9.5,2,1.5)}
+  if(skirt){leg(x-3-spr,l1,sk,skD);leg(x+.5+spr,l2,sk,skD)}else{leg(x-3-spr,l1,pc,pcD);leg(x+.5+spr,l2,pc,pcD);R(pc,x-1-spr,by-9.5,2+spr*2,1.5);if(spr){R(shade(pc,-14),x-3-spr,by-6.4,2.5,.6);R(shade(pc,-14),x+.5+spr,by-6.4,2.5,.6)}}
  }
  if(skirt){const top=by-11,h=6.8;for(let i=0;i<h;i+=.5){const w=(side?5.6:7)+i*.45;R(i%2?skirt:shade(skirt,-6),x-w/2,top+i,w,.5)}R(shade(skirt,-25),x-((side?5.6:7)+h*.45)/2,top+h-.5,(side?5.6:7)+h*.45,.5);R(shade(skirt,20),x-(side?2.8:3.5),top,(side?5.6:7),.5)}
  blot(x-3.2,by-9.5,6.4,7,id+3);
+ const lean=side&&mv&&o.run?dr*.9:side&&o.sneak?dr*1.1:0;if(lean){g.save();g.translate(Math.round(lean*PS)/PS,0)}HLEAN=lean;
  // ---------- braço de trás (perfil)
- const armSw=o.work?wk*2.6:sw*2.4,sleeve=L.shirt==='regata'?sk:(L.coat||L.slv||sc),sleeveD=shade(sleeve,-30);
- if(side){const ax=x-.8-armSw*dr*-1;R(sleeveD,ax,sY+1,1.7,5);R(shade(sk,-25),ax+.1,sY+6,1.5,1.4)}
+ const runA=!!(o.run&&mv&&!o.work),armSw=o.work?wk*2.6:sw*(runA?3.2:2.4),sleeve=L.shirt==='regata'?sk:(L.coat||L.slv||sc),sleeveD=shade(sleeve,-30);
+ if(side){const ax=x-.8-armSw*dr;if(runA){R(sleeveD,ax,sY+1,1.7,3.6);const fx=ax+(armSw*dr<0?dr*1.1:-dr*.5);R(sleeveD,fx,sY+3.8,1.7,1.7);R(shade(sk,-25),fx+dr*.3,sY+5.1,1.5,1.3)}else{R(sleeveD,ax,sY+1,1.7,5);R(shade(sk,-25),ax+.1,sY+6,1.5,1.4)}}
  // ---------- tronco
  const fem=f&&!L.coat;
  for(let i=0;i<7.4;i+=.5){const t=i/7.4,w=side?(5.2-t*.4+(fem&&t>.25&&t<.5?.6:0)):(f?8.2-t*1.6+(t>.8?.4:0):9-t*1.6);const tx=side?x-2.6+(fem&&t>.25&&t<.5&&dr>0?0:0):x-w/2;
@@ -88,8 +93,10 @@ function drawHuman(g,o,L){
   const kx=side?x-dr*.6-.5:x+3.3;if(dir!==1){R('#3a2414',kx,wY+.5,1.1,3.4);R('#c8c8c8',kx+.25,wY-.6,.6,1.2);R('#2a1a10',kx+.15,wY-1,.8,.5)}}
  // ---------- braços (frente)
  const hand=(hx,hy)=>{R(L.gloves||sk,hx,hy,1.7,1.6);R(L.gloves?shade(L.gloves,-20):skD,hx,hy+1.1,1.7,.5)};
- if(side){const ax=x-.8+armSw*dr,ay=sY+1+(o.work?-1.5:0);R(sleeve,ax-.1,ay-.6,1.9,5.6);R(sleeveD,ax+(dr>0?1.3:-.1),ay,.5,5);if(L.shirt!=='regata')R(L.cuff||shade(sleeve,20),ax-.1,ay+4.6,1.9,L.cuff?.7:.5);hand(ax,ay+5)}
- else{const a1=o.work?wk*2.5-1.5:sw*.9,a2=o.work?-wk*2.5-1.5:-sw*.9,ax1=x-(f?5.6:6),ax2=x+(f?3.9:4.3);
+ if(side){const ax=x-.8+armSw*dr,ay=sY+1+(o.work?-1.5:0);
+  if(runA){R(sleeve,ax-.1,ay-.6,1.9,4);R(sleeveD,ax+(dr>0?1.3:-.1),ay,.5,3.4);const fx=ax+(armSw*dr>0?dr*1.2:-dr*.5);R(sleeve,fx-.1,ay+2.6,1.9,1.9);if(L.shirt!=='regata')R(L.cuff||shade(sleeve,20),fx-.1,ay+4,1.9,.5);hand(fx+dr*.2,ay+4.2)}
+  else{R(sleeve,ax-.1,ay-.6,1.9,5.6);R(sleeveD,ax+(dr>0?1.3:-.1),ay,.5,5);if(L.shirt!=='regata')R(L.cuff||shade(sleeve,20),ax-.1,ay+4.6,1.9,L.cuff?.7:.5);hand(ax,ay+5)}}
+ else{const ka=runA?1.7:.9,a1=o.work?wk*2.5-1.5:sw*ka-(runA?1.6:0),a2=o.work?-wk*2.5-1.5:-sw*ka-(runA?1.6:0),ax1=x-(f?5.6:6),ax2=x+(f?3.9:4.3);
   R(sleeve,ax1,sY+.4+a1*.3,1.8,6+a1*.4);R(sleeve,ax2,sY+.4+a2*.3,1.8,6+a2*.4);R(sleeveD,ax1,sY+.4,.5,6);R(sleeveD,ax2+1.3,sY+.4,.5,6);
   if(L.shirt!=='regata'){R(L.cuff||shade(sleeve,22),ax1,sY+5.9+a1*.7-(L.cuff?.2:0),1.8,L.cuff?.7:.5);R(L.cuff||shade(sleeve,22),ax2,sY+5.9+a2*.7-(L.cuff?.2:0),1.8,L.cuff?.7:.5);if(L.slvHi){R(shade(sleeve,30),ax1+.3,sY+1+a1*.3,.35,3.5);R(shade(sleeve,30),ax2+.3,sY+1+a2*.3,.35,3.5)}}
   hand(ax1+.05,sY+6.3+a1*.7);hand(ax2+.05,sY+6.3+a2*.7)}
@@ -106,7 +113,7 @@ function drawHuman(g,o,L){
  if(dir===0){
   if(L.mask){R(L.mask,hx,hy+2.6,6.4,4.2);R(shade(L.mask,-18),hx,hy+4.6,6.4,.5)}
   if(blink){R(skD,hx+1.1,hy+3,1.3,.4);R(skD,hx+4,hy+3,1.3,.4)}
-  else{R('#f4f0e8',hx+1,hy+2.6,1.5,1.1);R('#f4f0e8',hx+3.9,hy+2.6,1.5,1.1);R(eyeC,hx+1.6,hy+2.6,.9,1.1);R(eyeC,hx+3.9,hy+2.6,.9,1.1);R('#fff',hx+1.7,hy+2.6,.35,.35);R('#fff',hx+4,hy+2.6,.35,.35);if(f){R('#1a1210',hx+.8,hy+2.3,1.8,.35);R('#1a1210',hx+3.8,hy+2.3,1.8,.35)}}
+  else{const lc=(frame+id*97)%640,lx=mv?0:lc<90?.45:lc>330&&lc<420?-.45:0;R('#f4f0e8',hx+1,hy+2.6,1.5,1.1);R('#f4f0e8',hx+3.9,hy+2.6,1.5,1.1);R(eyeC,hx+1.6+lx-(lx>0?.1:0),hy+2.6,.9,1.1);R(eyeC,hx+3.9+lx,hy+2.6,.9,1.1);R('#fff',hx+1.7+lx,hy+2.6,.35,.35);R('#fff',hx+4+lx,hy+2.6,.35,.35);if(f){R('#1a1210',hx+.8,hy+2.3,1.8,.35);R('#1a1210',hx+3.8,hy+2.3,1.8,.35)}}
   R(L.brow||hcD,hx+.9,hy+1.7,1.7,.45);R(L.brow||hcD,hx+3.8,hy+1.7,1.7,.45);
   if(!L.mask){R(skD,hx+2.9,hy+3.6,.7,1.2);R(shade(sk,-30),hx+2.7,hy+4.6,1,.3);
    R(f?'#c05a5a':shade(sk,-35),hx+2.2,hy+5.3,2,.45);if(o.smile)R(shade(sk,-35),hx+1.9,hy+5,.4,.4),R(shade(sk,-35),hx+4.1,hy+5,.4,.4);
@@ -165,6 +172,7 @@ function drawHuman(g,o,L){
  }
  // ferramenta
  if(o.tool&&o.work){const tx=x+(side?dr*4.5:5.5),ty=sY+wk*2.4;R('#6a4428',tx,ty-2,1,11);R('#9a9a9a',tx-(side&&dr<0?2:0),ty+8.4,3,1.2)}
+ if(lean)g.restore();
 }
 // ---------- visual do jogador e do parceiro (guarda-roupa) no boneco novo
 function lookToH(L){return{g:L.g,skin:LK.skin[L.skin]||LK.skin[1],hair:L.hair,hc:LK.hc[L.hc],hat:L.hat==='nenhum'?null:L.hat,hatc:LK.hatc[L.hatc],shirt:L.shirt==='colete'?'lisa':L.shirt,

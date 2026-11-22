@@ -171,7 +171,7 @@ bind('bHold',()=>{KEY.hold=1},()=>{KEY.hold=0});
 function getInput(){
  let x=(KEY.d||KEY.arrowright?1:0)-(KEY.a||KEY.arrowleft?1:0),y=(KEY.s||KEY.arrowdown?1:0)-(KEY.w||KEY.arrowup?1:0),run=!!KEY.shift;
  if(x||y){const m=Math.hypot(x,y);x/=m;y/=m;return{x,y,mag:1,run}}
- const m=Math.hypot(jx,jy);if(m>.15)return{x:jx/Math.max(m,1),y:jy/Math.max(m,1),mag:m,run:m>.93};
+ const m=Math.hypot(jx,jy);if(m>.15)return{x:jx/Math.max(m,1),y:jy/Math.max(m,1),mag:m,run:m>.88};
  return{x:0,y:0,mag:0,run:false};
 }
 function update(dt){
@@ -181,10 +181,10 @@ function update(dt){
   let sp=70;if(P.sneak)sp=34;else if(inp.run&&!AIM.bin)sp=(S.horse&&S.horseOn?HSPD():118);if(AIM.bin)sp*=.5;
   if(S.horse&&S.horseOn&&!P.sneak&&sp<110)sp=Math.max(sp,110);
   sp*=clamp(1-Math.max(0,P.carry-(S.h.gear.pack?70:35))/220,.55,1);
-  const on=inp.mag>.15,tvx=on?inp.x*sp:0,tvy=on?inp.y*sp:0,ac=(on?640:1100)*dt;
+  const on=inp.mag>.15,tvx=on?inp.x*sp:0,tvy=on?inp.y*sp:0,ac=(on?(P.vx*tvx+P.vy*tvy<0?1400:720):1100)*dt;
   P.vx+=clamp(tvx-P.vx,-ac,ac);P.vy+=clamp(tvy-P.vy,-ac,ac);
   const spd=Math.hypot(P.vx,P.vy);P.moving=spd>7?1:0;P.run=spd>96?1:0;
-  if(on)P.dir=Math.abs(inp.x)>Math.abs(inp.y)*1.1?(inp.x>0?3:2):(inp.y>0?0:1);
+  if(on){const ax=Math.abs(inp.x),ay=Math.abs(inp.y),hz=P.dir>=2?ax>ay*.7:ax>ay*1.4;P.dir=hz?(inp.x>0?3:2):(inp.y>0?0:1)}
   if(P.moving){
    const bx=P.x,by=P.y;movePlayer(P.vx*dt,0);if(P.x===bx&&Math.abs(P.vx)>1)P.vx=0;movePlayer(0,P.vy*dt);if(P.y===by&&Math.abs(P.vy)>1)P.vy=0;
    P.ph+=spd*dt*(P.sneak?.15:.135);
@@ -212,7 +212,7 @@ function loop(now){
   if(NEAR&&!P.aim){hint.style.display='block';hint.textContent=(isTouch?'✋ ':'[E] ')+NEAR.label}else hint.style.display='none';
   const pk=$('prog');if(AIM.pick){pk.style.display='block';$('progt').textContent='Coletando...';$('progb').style.width=Math.min(100,AIM.pick.t/AIM.pick.T*100)+'%'}else pk.style.display='none';
  }
- let tx=P.x-VW/2+P.vx*.2,ty=P.y-10-VH/2+P.vy*.2;if(P.aim){tx+=(AIM.rx-P.x)*.45;ty+=(AIM.ry-P.y)*.45}
+ const lead=P.run?.32:.2;let tx=P.x-VW/2+P.vx*lead,ty=P.y-10-VH/2+P.vy*lead;if(P.aim){tx+=(AIM.rx-P.x)*.45;ty+=(AIM.ry-P.y)*.45}
  tx=clamp(tx,XMIN*TS,WW-VW);ty=clamp(ty,YMIN*TS,WH-VH);
  if(!camInit){cam.x=tx;cam.y=ty;camInit=1}else{const k=1-Math.exp(-dt*8);cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k}
  drawScene();
