@@ -89,7 +89,7 @@ function dayTick(){
  if(dom===0){
   if(mon===4||mon===10){S.camp=S.day+30;toast('💉 Campanha de vacinação aberta por 30 dias!')}
   if(S.up.peao)cash(-2400,'Salário do peão');
-  cash(-(60+90*S.up.land+(typeof lotCap==='function'?lotCap()*4:0)),'Impostos (ITR) e taxas');
+  cash(-(60+90*(S.up.land||0)+(typeof lotCap==='function'?lotCap()*4:0)),'Impostos (ITR) e taxas');
   if(S.debt>0){const i=Math.round(S.debt*(typeof loanRate==='function'?loanRate():.012));S.debt+=i;toast('Juros do banco: '+R$(i),'bad')}
   toast('📒 Mês fechado: entrou '+R$(S.mIn)+', saiu '+R$(S.mOut));S.mIn=S.mOut=0;newStraws();
  }
@@ -126,6 +126,6 @@ function buyAnimal(a,price,label){
  if(S.herd.length>=Math.floor(cap()*1.5))return toast('Sem espaço! Compre mais pasto.','bad'),false;
  cash(-price,label+': '+a.name);S.stats.bought++;a.id=S.nid++;a.vacc=0;addA(a);return true;
 }
-function upCost(k){const u=UPS[k],l=S.up[k];return l>=u.c.length?null:u.c[l]}
+function upCost(k){const u=UPS[k],l=S.up[k]||0;return l>=u.c.length?null:u.c[l]}
 function save(){try{localStorage.setItem('fbo_save',JSON.stringify(S))}catch(e){}}
 function load(){try{const s=localStorage.getItem('fbo_save');if(s){const o=JSON.parse(s);if(o&&o.v===2){S=o;return true}}}catch(e){}return false}
