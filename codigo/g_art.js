@@ -39,7 +39,15 @@ prerender=function(){
   for(const[a,b]of[[1,0],[-1,0],[0,1],[0,-1],[-1,-1],[1,-1],[-1,1],[1,1]]){const n=gt(tx+a,ty+b);if(n>=0&&n!==2){if(!wcV)wLand=n;wcV=true}}
   for(const[a,b]of[[2,0],[-2,0],[0,2],[0,-2],[1,1],[-1,-1],[1,-1],[-1,1]]){const j=gt(tx+a,ty+b)===2?dep[ti(tx+a,ty+b)]:-1;if(j>=1){wNarV=false;break}}return wcV};
  const wNar=()=>wNarV;
- let lfC=.5;
+ let lfC=.5,TDK=0;
+ // tufos de capim estilo pixel-art (máscaras 7x6: 1 base escura, 2 meio, 3 ponta clara)
+ const TUFT=[];for(let v=0;v<14;v++){const M=new Uint8Array(63),nb=3+(v%3===0?2:v%3===1?1:0);for(let b=0;b<nb;b++){const c0=(nb-1)/2,x0=4+(b-c0)*1.6,mid=Math.abs(b-c0)<.8,h=3+((ih(v,b,91)*2)|0)+(mid?1:0),ln=(x0-4)*.55+(ih(b,v,92)-.5)*.9;
+  for(let y=0;y<h;y++){const x=Math.round(x0+ln*(y/(h-1))**1.4),r=6-y;if(x<0||x>8||r<0)continue;const c=y===0?1:y>=h-1?3:y===1?2:(ih(b,y,93)<.5?2:3);if(c>M[r*9+x])M[r*9+x]=c}
+  const xb=Math.round(x0);if(xb-1>=0&&!M[6*9+xb-1])M[6*9+xb-1]=4;if(xb+1<9&&!M[6*9+xb+1])M[6*9+xb+1]=4}TUFT.push(M)}
+ const tuft=(px,py,f)=>{const cx=Math.floor(px/10),cy=Math.floor(py/10),h=ih(cx,cy,77);if(h>=.62*f)return 0;const dn=(.13+.45*Math.min(1,Math.max(0,(vn(cx/5,cy/5,71)-.3)*2.4)))*f;if(h>=dn)return 0;
+  const ox=(ih(cx,cy,79)*2)|0,oy=(ih(cx,cy,80)*4)|0,lx=px-cx*10-ox,ly=py-cy*10-oy;if(lx<0||lx>8||ly<0||ly>6)return 0;return TUFT[(ih(cx,cy,78)*14)|0][ly*9+lx]};
+ const peb=(px,py)=>{const cx=Math.floor(px/6),cy=Math.floor(py/6);if(ih(cx,cy,83)>=.065)return 0;const w=2+(ih(cx,cy,84)<.5?1:0),ox=(ih(cx,cy,85)*3)|0,oy=(ih(cx,cy,86)*3)|0,lx=px-cx*6-ox,ly=py-cy*6-oy;if(lx<0||lx>=w||ly<0||ly>2)return 0;return ly===0?(lx===w-1?2:3):ly===1?2:1};
+ const BAY=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5].map(q=>(q/16-.5)*.5);
  const gt=(x,y)=>(x<XMIN||y<YMIN||x>=MW||y>=MH)?-1:G[ti(x,y)];
  const SH=256;// desenha em faixas para gastar menos memória no celular
  for(let sy=0;sy<GH;sy+=SH){const hh=Math.min(SH,GH-sy),img=g.createImageData(GW,hh),D=img.data;let o=0;
@@ -57,7 +65,7 @@ prerender=function(){
     }
     if(t===2&&m===2&&!(tx>=100&&ty<=40)&&wNear(tx,ty)){// margem orgânica: campo de profundidade suavizado + ondulação
      const d=depAt(px,py),e=d<0?(d+.3)/.6*16:8+d*16,amp=wNar(tx,ty)?4:12,wob=(vn(px/18,py/18,31)-.5)*amp+(vn(px/5,py/5,33)-.5)*2.5,v=e+wob;
-     if(v<3.6)m=100+wLand;else if(v<5)m=200}
+     if(v<1)m=wLand;else if(v<3.6)m=100+wLand;else if(v<5)m=200}
     if(t===3&&m===3){for(const[a,b]of[[-1,-1],[1,-1],[-1,1],[1,1]]){const n=gt(tx+a,ty+b);if(!grassy(n)||gt(tx+a,ty)!==3||gt(tx,ty+b)!==3)continue;const cx=a<0?lx:15-lx,cy=b<0?ly:15-ly;if(Math.hypot(cx,cy)<1.6+en*2.4){m=n;break}}}
    }
    let r,gg,bb;
@@ -71,17 +79,18 @@ prerender=function(){
    }else if(m>=100){
     const n=m-100,P=n===5?PAL.ice:n===6?PAL.mud:n===4?PAL.sand:n===1?PAL.mud:PAL.sand;[r,gg,bb]=P[Math.min(4,(1+vn(px/4,py/4,2)*2.5+(jn-.5)*.8)|0)];
    }else{
-    let P=PAL[m]||PAL[0],v=vn(px/7,py/7,m+1)*.65+vn(px/23,py/23,m+31)*.35,k=v*3.3+(jn-.5)*.9+.35;
+    let P=PAL[m]||PAL[0],v=vn(px/7,py/7,m+1)*.65+vn(px/23,py/23,m+31)*.35,k=v*(m===0?2.6:3.3)+(m===0?.6:0)+(m===0||m===1||m===3||m===4||m===6?(jn-.5)*.32+BAY[(py&3)*4+(px&3)]:(jn-.5)*.9)+.35;
     if(m===0||m===1||m===6||m===4||m===5){if((px&3)===0)lfC=lfAt(px,py);k+=(lfC-.5)*(m===5?1:1.7)}
     if(m===4){const rv=vn(px/26,py/26,77)+(en-.5)*.05;if(rv>.6){const e=rv-.665;if(e>.025||(e>-.045&&jn<(e+.045)/.07)){P=PAL.red;k=vn(px/5,py/5,8)*3+(jn-.5)+(e<.04?.6:0)}}}
     if(m===6&&vn(px/18,py/18,61)>.7){P=PAL.mud;k=vn(px/5,py/5,8)*3}
     if(m===1&&ih(px,py,21)<.07){P=PAL.litter;k=ih(px,py,22)*4.99}
     let kk=Math.max(0,Math.min(4,k|0));
-    if(m===0||m===1||m===6){const b0=ih(px,py,3)<.045,b1=ih(px,py+1,3)<.045,b2=ih(px,py-1,3)<.045;if(b0||b1)kk=Math.min(4,kk+(b0?2:1));else if(b2)kk=Math.max(0,kk-1)}
-    if(m===4&&(ih(px,py,3)<.035||ih(px,py+1,3)<.035))kk=4;
-    if(m===3){if(jn<.012)kk=4;else if(ih(px,py-1,7)<.012)kk=0}
+    if((m===0||m===1||m===6||(m===4&&P===PAL[4]))&&P!==PAL.litter&&P!==PAL.mud){const tc=tuft(px,py,m===1?.6:m===4?.75:m===6?1.15:1);if(tc){kk=tc===1?0:tc===2?3:tc===3?4:Math.max(0,Math.min(kk,2)-1);if(tc===1)TDK=1}}
+    
+    let pc=0;if(m===3){pc=peb(px,py);if(!pc&&ih(px,py,7)<.006)kk=0}
     if(m===5&&jn<.004)kk=4;
-    [r,gg,bb]=P[kk];
+    [r,gg,bb]=P[kk];if(TDK){r*=.8;gg*=.8;bb*=.8;TDK=0}
+    if(pc){if(pc===3){r=206;gg=196;bb=176}else if(pc===2){r=160;gg=148;bb=128}else{r=P[0][0]*.82;gg=P[0][1]*.82;bb=P[0][2]*.82}}
    }
    D[o]=r;D[o+1]=gg;D[o+2]=bb;D[o+3]=255;
   }
